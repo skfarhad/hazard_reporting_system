@@ -22,7 +22,6 @@ class IncidentAdmin(LeafletGeoAdmin):
         "status",
         "address",
         "created_at",
-        "updated_at",
     )
     search_fields = ("contact_number", "description", "status", "address")
     list_filter = ("status", "provider")
