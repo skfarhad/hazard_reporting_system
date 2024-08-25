@@ -1,0 +1,9 @@
+Django>=3.0,<4.0
+psycopg2-binary
+gunicorn
+django-redis
+celery
+python-dotenv
+djangorestframework
+djangorestframework-api-key==3.0.0
+django-leaflet
