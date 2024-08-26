@@ -118,7 +118,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
         <div ref={mapContainer} style={{ width: '100%', height: '90vh' }} />
       </div>
 
-      <div className="w-1/6 bg-gray-100 p-4 overflow-y-auto">
+      <div className="w-1/6 bg-gray-100 p-4 overflow-y-auto text-white">
         <ul className="space-y-4">
           {markers.map(marker => (
             <li key={marker.id} className="bg-blue-400 p-4 shadow rounded-lg" 
