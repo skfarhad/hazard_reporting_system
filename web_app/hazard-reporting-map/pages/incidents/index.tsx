@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 const IncidentListView = () => {
@@ -53,16 +54,19 @@ const IncidentListView = () => {
       },
     // Add more cards as needed
   ];
-
+const handleCardClick =(id:number)=>{
+   
+}
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Incidents</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card) => (
-          <div
+          <div onClick={(e)=>handleCardClick(card.id)}
             key={card.id}
             className="bg-white p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow duration-300"
           >
+            <Link href={`/incidents/${card.id}`}>
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-xl font-semibold">{card.title}</h2>
               <span
@@ -75,6 +79,7 @@ const IncidentListView = () => {
             </div>
             <h3 className="text-md font-medium text-gray-600 mb-4">{card.subtitle}</h3>
             <p className="text-gray-700">{card.description}</p>
+            </Link>
           </div>
         ))}
       </div>
