@@ -16,11 +16,18 @@ RUN apt-get update && apt-get install -y \
     libgdal-dev \
     gcc \
     python3-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt /code/
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Add Poetry to PATH
+ENV PATH="/root/.local/bin:$PATH"
+
+# Install Python dependencies with Poetry
+COPY pyproject.toml poetry.lock /code/
+RUN poetry install --no-dev
 
 # Copy the current directory contents into the container at /code/
 COPY . /code/

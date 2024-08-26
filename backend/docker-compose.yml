@@ -12,7 +12,7 @@ services:
 
   be:
     build: .
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    command: poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/code
     ports:
@@ -26,7 +26,7 @@ services:
 
   celery_worker:
     build: .
-    command: celery -A config worker --loglevel=info
+    command: poetry run celery -A config worker --loglevel=info
     volumes:
       - .:/code
     env_file:
