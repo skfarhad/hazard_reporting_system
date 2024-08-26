@@ -61,8 +61,8 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
 
     setMap(mapInstance);
 
-    markers.forEach(marker => {
-      const markerInstance = new mapboxgl.Marker({ element: createMarkerElement(marker.properties.icon) })
+    dummyMarkers.forEach(marker => {
+      const markerInstance = new mapboxgl.Marker({ element: createMarkerElement() })
         .setLngLat(marker.coordinates)
         .addTo(mapInstance!);
 
