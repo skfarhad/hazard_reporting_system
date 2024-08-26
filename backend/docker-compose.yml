@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  be:
+    build: .
+    command: poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - rabbitmq
+      - celery_worker
+
+  celery_worker:
+    build: .
+    command: poetry run celery -A config worker --loglevel=info
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - rabbitmq
+
+volumes:
+  postgres_data:
