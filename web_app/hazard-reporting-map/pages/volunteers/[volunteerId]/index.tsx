@@ -8,7 +8,7 @@ const VolunteerDetailsPage = () => {
   return (
     <div className='mx-auto px-8'>
       <div>
-      <h1 className="py-8 text-3xl font-bold text-gray-600 mb-6 text-center">Incident ID: {VolunteerId}</h1>
+      <h1 className="py-8 text-3xl font-bold text-gray-600 mb-6 text-center">Volunteer ID: {VolunteerId}</h1>
       </div>
     <div className="md:flex items-start justify-center">
       <div className="xl:w-2/6 lg:w-2/6 w-80 md:block hidden">
