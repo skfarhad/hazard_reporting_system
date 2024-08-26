@@ -37,3 +37,8 @@ For live dashboard, [Next.js](https://nextjs.org/) is the frameworks being adopt
 Docker and Kubernetes will be integrated as well.
 
 ![Tech stack](https://github.com/skfarhad/hazard_reporting_system/blob/main/HMS_tech_stack.jpg)
+
+## If you want to contribute
+
+Any contribution would be highly appreciated. Kindly go through the 
+[guidelines for contributing](CONTRIBUTING.md).

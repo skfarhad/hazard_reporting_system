@@ -51,8 +51,3 @@ Feature requests are highly appreciated. I would love to hear about how you migh
 ## License
 By contributing, you agree that your contributions will be licensed under its MIT License. 
 In short, when you submit code changes, your submissions are understood to be under the same [BSD-3 License](https://opensource.org/license/bsd-3-clause) that covers the project. Feel free to contact the maintainers if that's a concern.
-
-## If you want to contribute
-
-Any contribution would be highly appreciated. Kindly go through the 
-[guidelines for contributing](CONTRIBUTING.md).
