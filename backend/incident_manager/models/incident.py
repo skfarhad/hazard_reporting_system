@@ -15,7 +15,9 @@ class Incident(models.Model):
         geography=True, null=True, default=None
     )  # Using GeoDjango for geo fields
     description = models.TextField()
-    additional_info = models.JSONField()  # Requires PostgreSQL 9.4+
+    additional_info = models.JSONField(
+        default=dict
+    )  # Set default to an empty dictionary
     status = models.CharField(max_length=50)
     address = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)

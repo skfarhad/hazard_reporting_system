@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_api_key",
     "leaflet",
+    "rest_framework.authtoken",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -60,7 +62,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
+    "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework_api_key.permissions.HasAPIKey",
     ],
     "DEFAULT_THROTTLE_CLASSES": [
@@ -70,6 +72,7 @@ REST_FRAMEWORK = {
         "user": os.getenv("THROTTLE_RATE", "100/hour"),
     },
 }
+
 
 # Database settings
 DATABASES = {
