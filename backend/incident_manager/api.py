@@ -57,22 +57,27 @@ class IncidentCreateView(APIView):
         - `400`: Invalid data provided.
         - `403`: Invalid or missing API key.
         """
-        # Extract API key from Authorization header
-        auth_header = request.META.get("HTTP_AUTHORIZATION", "")
-        if auth_header.startswith("Api-Key "):
-            api_key = auth_header.split("Api-Key ")[1]
-        else:
+        api_key = self.get_api_key(request)
+        if not api_key:
             return Response(
                 {"detail": "Invalid API key format."}, status=status.HTTP_403_FORBIDDEN
             )
 
-        # Find the provider associated with the API key
         provider = get_object_or_404(Provider, api_key=api_key)
-
-        # Deserialize the incoming data
         serializer = IncidentSerializer(data=request.data)
         if serializer.is_valid():
-            # Save the incident with the associated provider
             serializer.save(provider=provider)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_api_key(self, request):
+        """
+        Extracts the API key from the Authorization header.
+
+        Returns:
+            str or None: The API key if present and valid, else None.
+        """
+        auth_header = request.META.get("HTTP_AUTHORIZATION", "")
+        if auth_header.startswith("Api-Key "):
+            return auth_header.split("Api-Key ")[1]
+        return None
