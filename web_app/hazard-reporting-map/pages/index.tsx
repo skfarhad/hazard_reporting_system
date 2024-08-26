@@ -48,7 +48,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
   }, []);
 
   useEffect(() => {
-    if (!isClient || map) return; // initialize map only on client
+    if (!isClient || map) return;
     
     setMarkers(dummyMarkers);
 
@@ -67,10 +67,16 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
         .addTo(mapInstance!);
 
       markerInstance.getElement().addEventListener('click', () => {
-        new mapboxgl.Popup()
-          .setLngLat(marker.coordinates)
-          .setHTML(`<h3>${marker.properties.title}</h3><p>${marker.properties.description}</p>`)
-          .addTo(mapInstance!);
+        const popupElement = document.createElement('div');
+          popupElement.className = 'popup bg-blue-400 text-white p-4 rounded-lg shadow-md';
+          popupElement.innerHTML = `<h3>${marker.properties.title}</h3><p>${marker.properties.description}</p>`;
+
+          setTimeout(() => {
+            new mapboxgl.Popup({ closeButton: false })
+              .setLngLat(marker.coordinates)
+              .setDOMContent(popupElement)
+              .addTo(mapInstance!);
+          }, 100);
       });
     });
 
@@ -78,7 +84,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
   }, [isClient]);
 
   if (!isClient) {
-    return null; // render nothing on server
+    return null;
   }
 
   const handleListItemClick = (coordinates: LngLatLike) => {
@@ -86,7 +92,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
       map.flyTo({
         center: coordinates,
         zoom: 10,
-        essential: true, // ensures the animation occurs even if the user has reduced motion settings
+        essential: true,
       });
     }
   };
@@ -113,7 +119,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
       <div className="w-1/6 bg-gray-100 p-4 overflow-y-auto">
         <ul className="space-y-4">
           {markers.map(marker => (
-            <li key={marker.id} className="bg-blue-300 p-4 shadow rounded-lg" 
+            <li key={marker.id} className="bg-blue-400 p-4 shadow rounded-lg" 
             onClick={() => handleListItemClick(marker.coordinates)}>
               <h2 className="font-semibold">{marker.properties.title}</h2>
               <p>{marker.properties.description}</p>
