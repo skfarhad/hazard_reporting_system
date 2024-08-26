@@ -12,7 +12,7 @@ const Volunteers = () => {
       <h1 className="text-2xl font-bold mb-4">Volunteer List</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full border-b border-neutral-200 dark:border-white/10">
-          <thead>
+          <thead className="text-left">
             <tr>
               <th className="py-2 px-4 border-b-2">Name</th>
               <th className="py-2 px-4 border-b-2">Phone</th>

@@ -61,7 +61,7 @@ const IncidentListView = () => {
         {cards.map((card) => (
           <div
             key={card.id}
-            className="bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow duration-300"
+            className="bg-white p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow duration-300"
           >
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-xl font-semibold">{card.title}</h2>
