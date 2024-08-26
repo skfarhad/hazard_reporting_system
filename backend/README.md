@@ -1,5 +1,4 @@
 
-```markdown
 # Hazard Reporting System
 
 ## Prerequisites
@@ -7,7 +6,7 @@
 - Poetry for Python dependency management
 
 ## Setup
-
+ 
 1. **Build and Start Containers**
    ```bashs
    docker-compose up --build
@@ -38,6 +37,7 @@
    The Django admin interface will be available at [http://localhost:8000/admin](http://localhost:8000/admin).
 
 ## Running Tests
+
 
 1. **Run Tests**
    To run tests, open the Poetry shell as described above and then run:
@@ -77,3 +77,4 @@
 ```
 
 This version includes updated instructions for using Poetry and running Django management commands within the Docker container.
+
