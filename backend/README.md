@@ -1,13 +1,10 @@
-Sure! Here’s the complete `README.md` file content in one block:
 
-```markdown
 # Hazard Reporting System
 
 ## Prerequisites
 - Docker and Docker Compose installed on your machine
 
-
-### Running with Docker
+## Running with Docker
 
 1. **Build and Start Containers**
    ```bash
@@ -32,7 +29,7 @@ Sure! Here’s the complete `README.md` file content in one block:
 5. **Access the Django Admin Interface**
    The Django admin interface will be available at [http://localhost:8000/admin](http://localhost:8000/admin).
 
-### Testing
+## Testing
 
 1. **Run Tests**
    To run tests, use:
@@ -40,9 +37,8 @@ Sure! Here’s the complete `README.md` file content in one block:
    docker-compose exec be python manage.py test
    ```
 
-
 ## Troubleshooting
 - Ensure that Docker and Docker Compose are correctly installed.
 - Check the `.env` file for any missing or incorrect values.
 - Review the logs for Docker services to diagnose any issues.
-
+```
