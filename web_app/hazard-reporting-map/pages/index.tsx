@@ -85,6 +85,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
     if (map) {
       map.flyTo({
         center: coordinates,
+        zoom: 10,
         essential: true, // ensures the animation occurs even if the user has reduced motion settings
       });
     }
