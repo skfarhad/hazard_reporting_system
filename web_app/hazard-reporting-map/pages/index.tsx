@@ -81,7 +81,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
     return null; // render nothing on server
   }
 
-  const handleMarkerClick = (coordinates: LngLatLike) => {
+  const handleListItemClick = (coordinates: LngLatLike) => {
     if (map) {
       map.flyTo({
         center: coordinates,
@@ -91,7 +91,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
     }
   };
 
-  const createMarkerElement = (iconName: string) => {
+  const createMarkerElement = () => {
     const el = document.createElement('div');
     el.className = 'marker-icon';
     el.style.width = '25px';
@@ -106,19 +106,20 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
     <main
       className={`flex flex-direction-column ${inter.className}`}
     >
+      <div className="flex-grow">
+        <div ref={mapContainer} style={{ width: '100%', height: '90vh' }} />
+      </div>
+
       <div className="w-1/6 bg-gray-100 p-4 overflow-y-auto">
         <ul className="space-y-4">
           {markers.map(marker => (
             <li key={marker.id} className="bg-blue-300 p-4 shadow rounded-lg" 
-            onClick={() => handleMarkerClick(marker.coordinates)}>
+            onClick={() => handleListItemClick(marker.coordinates)}>
               <h2 className="font-semibold">{marker.properties.title}</h2>
               <p>{marker.properties.description}</p>
             </li>
           ))}
         </ul>
-      </div>
-      <div className="flex-grow">
-        <div ref={mapContainer} style={{ width: '100%', height: '100vh' }} />
       </div>
     </main>
   );
