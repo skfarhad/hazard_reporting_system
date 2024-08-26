@@ -31,3 +31,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.mapboxgl-popup-content {
+  background: transparent !important;
+}
