@@ -29,7 +29,7 @@ The live dashboard will provide a birds-eye-view of the whole scenario
 of the incidents reported and the rescue mission status.
 Here is sample view of the live dashboard-
 
-![Architecture Roadmap](https://github.com/skfarhad/hazard_reporting_system/blob/main/live_dashboard.jpg)
+![Live Dashboard](https://github.com/skfarhad/hazard_reporting_system/blob/main/live_dashboard.jpeg)
 
 
 ### Tech Stack
