@@ -4,6 +4,7 @@ import mapboxgl, { LngLatLike } from 'mapbox-gl';
 import { MarkerData } from "@/types/MarkerData";
 
 import 'mapbox-gl/dist/mapbox-gl.css';
+import SummaryCardsComponent from "@/components/SummaryCards";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -112,6 +113,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
     <main
       className={`flex flex-direction-column ${inter.className}`}
     >
+      <SummaryCardsComponent />
       <div className="flex-grow">
         <div ref={mapContainer} style={{ width: '100%', height: '90vh' }} />
       </div>
