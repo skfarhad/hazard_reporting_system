@@ -4,6 +4,7 @@ from django.contrib.gis.db import models
 class Volunteer(models.Model):
     full_name = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=15)
+    email = models.EmailField(max_length=255, unique=True) # Email field for better communication
     location = models.PointField(geography=True)  # Using GeoDjango for geo fields
     address = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
