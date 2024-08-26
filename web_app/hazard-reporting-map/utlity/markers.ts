@@ -1,17 +1,6 @@
-import { LngLatLike } from "mapbox-gl";
+import { MarkerData } from "@/types/MarkerData";
 
-export interface MarkerData {
-    id: string;
-    coordinates: LngLatLike; // [longitude, latitude]
-    properties: {
-      title: string;
-      description: string;
-      [key: string]: any; // Optional additional properties
-    };
-  }
-  
-
-export const dummyMarkers : MarkerData[] = [
+const dummyMarkers : MarkerData[] = [
     {
         id: '1',
         coordinates: {lat: 23.555, lng: 90.76335},
@@ -37,3 +26,5 @@ export const dummyMarkers : MarkerData[] = [
         },
     },
 ];
+
+export default dummyMarkers;

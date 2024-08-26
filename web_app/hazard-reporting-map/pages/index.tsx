@@ -1,10 +1,39 @@
 import { Inter } from "next/font/google";
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl, { LngLatLike } from 'mapbox-gl';
-import { dummyMarkers, MarkerData } from "@/utlity/markers";
+import { MarkerData } from "@/types/MarkerData";
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 const inter = Inter({ subsets: ["latin"] });
+
+const dummyMarkers : MarkerData[] = [
+  {
+      id: '1',
+      coordinates: {lat: 23.555, lng: 90.76335},
+      properties: {
+      title: 'Marker 1',
+      description: 'This is marker 1.',
+      },
+  },
+  {
+      id: '2',
+      coordinates: {lat: 23.35454, lng: 90.54657},
+      properties: {
+      title: 'Marker 2',
+      description: 'This is marker 2.',
+      },
+  },
+  {
+      id: '3',
+      coordinates: {lat: 23.6543, lng: 90.4345456},
+      properties: {
+      title: 'Marker 3',
+      description: 'This is marker 3.',
+      },
+  },
+];
+
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
@@ -64,9 +93,9 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
   const createMarkerElement = (iconName: string) => {
     const el = document.createElement('div');
     el.className = 'marker-icon';
-    el.style.width = '30px';
-    el.style.height = '30px';
-    el.style.backgroundImage = `url(https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png)`;
+    el.style.width = '25px';
+    el.style.height = '25px';
+    el.style.backgroundImage = `url(./alert.png)`;
     el.style.backgroundSize = 'contain';
 
     return el;
