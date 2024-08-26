@@ -7,7 +7,9 @@ export default function Document() {
       <Head />
       <body>
         <nav className="bg-blue-600 text-white p-4 h-[8vh] z-100 flex items-center">
-          <h1 className="text-xl font-bold">Hazard Reporting 2024</h1>
+          <Link href="/" className="text-xl font-bold">
+            Hazard Reporting 2024
+          </Link>
           <ul className="flex space-x-6 ml-6">
             <li>
               <Link href="/incidents" className="hover:text-gray-300">
