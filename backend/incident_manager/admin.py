@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Provider, Incident
-
+from django.contrib import admin
+from .models import Division, District, Thana
 from leaflet.admin import LeafletGeoAdmin
 
 
@@ -28,9 +29,6 @@ class IncidentAdmin(LeafletGeoAdmin):
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "updated_at")
 
-
-from django.contrib import admin
-from .models import Division, District, Thana
 
 
 # Registering Division model
