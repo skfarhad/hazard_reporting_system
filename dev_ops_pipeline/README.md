@@ -6,9 +6,8 @@
 ![](https://img.shields.io/badge/GitHub-Actions-blue?style=plastic&logo=githubactions)&nbsp;
 
 </div>
-----------
 
-## Table of contents
+# Table of contents
 - [Branching Strategy](#branching-strategy)
 - [CI/CD](#cicd-pipeline)
   - [CI](#ci-on-source-code-repository)
