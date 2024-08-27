@@ -3,6 +3,13 @@ from .provider import Provider
 
 
 class Incident(models.Model):
+
+    VALIDATION_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('validated', 'Validated'),
+        ('rejected', 'Rejected'),
+    ]
+
     contact_number = models.CharField(max_length=15)
     provider = models.ForeignKey(
         Provider,
@@ -24,3 +31,8 @@ class Incident(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )  # Automatically set the field to now every time the object is saved
+    validation_status = models.CharField(
+        max_length=10,
+        choices=VALIDATION_STATUS_CHOICES,
+        default='pending'
+    )
