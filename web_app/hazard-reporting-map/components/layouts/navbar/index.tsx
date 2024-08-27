@@ -38,7 +38,7 @@ export default function Navbar() {
     },
   ];
   return (
-    <header>
+    <header className="sticky top-0">
       <nav className="bg-card  text-card-foreground text-sm">
         <Container>
           <ul className="flex items-center justify-between">
