@@ -1,5 +1,5 @@
 # How to contribute
-I appreciate your valuable input! Let's build a community that cares for the investors of Bangladesh capital market.
+I appreciate your valuable input! Let's build a community that cares for situation in Bangladesh.
 <br>I want to make contributing to this project as easy and transparent as possible, whether it's:
 
 - Reporting a bug
@@ -18,7 +18,7 @@ Pull requests are the best way to propose changes to the codebase. I will be act
 
 
 ## Reporting bugs
-Let's use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/skfarhad/stocksurferbd/issues).
+Let's use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/skfarhad/hazard_reporting_system/issues).
 
 #### Write bug reports with detailed summery and sample code. Great bug reports tend to have-
 
@@ -42,7 +42,7 @@ People *love* thorough bug reports. I'm not even kidding.
 
 ## Feature requests
 Feature requests are highly appreciated. I would love to hear about how you might use this tool in your professional/research work.
-<b>  [The project issue tracker](https://github.com/skfarhad/stocksurferbd/issues) can be used for feature requests also.
+<b>  [The project issue tracker](https://github.com/skfarhad/hazard_reporting_system/issues) can be used for feature requests also.
 
 - Provide the specific use cases of the requested features in details
 - You may also suggest slight enhancements of existing features
