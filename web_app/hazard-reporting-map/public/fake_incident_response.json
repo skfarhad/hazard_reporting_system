@@ -1,0 +1,44 @@
+{
+  "data":[
+    {
+      "name": "Abdul Hamid",
+      "district": "Feni",
+      "thana": "Parshuram",
+      "hazard_description": "Need food immediately",
+      "lat": 23.3122,
+      "lon": 90.123
+    },
+        {
+      "name": "Akkas ali",
+      "district": "Feni",
+      "thana": "Parshuram",
+      "hazard_description": "Khabar dorkar joldi",
+      "lat": 23.3122,
+      "lon": 90.123
+    },
+    {
+      "name": "Abdur Rahman",
+      "district": "Khagracchari ",
+      "thana": "Dighinala",
+      "hazard_description": "Need doctor support",
+      "lat": 23.3122,
+      "lon": 90.123
+    },
+    {
+      "name": "Abdur Rahman",
+      "district": "Comilla",
+      "thana": "Chandina",
+      "hazard_description": "Need relocation with boad",
+      "lat": 23.3122,
+      "lon": 90.123
+    },
+    {
+      "name": "Mannan Hossain",
+      "district": "Feni",
+      "thana": "Parshuram",
+      "hazard_description": "Need Medicine",
+      "lat": 23.3122,
+      "lon": 90.123
+    }
+  ]
+}

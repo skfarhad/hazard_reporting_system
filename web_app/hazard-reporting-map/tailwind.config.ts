@@ -38,10 +38,10 @@ const config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       colors: {
-        paper: "rgba(var(--paper, 1))",
+        paper: "rgba(var(--paper), 1)",
         card: "rgba(var(--card), 1)",
         "card-foreground": "rgba(var(--card-foreground),1)",
-        primary: "rgba(var(--primary, 1))",
+        primary: "rgba(var(--primary),1)",
         "primary-foreground": "rgba(var(--primary-foreground),1)",
         destructive: "rgba(var(--destructive), 1)",
       },
