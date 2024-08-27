@@ -1,11 +1,19 @@
 from django.contrib.gis.db import models
 from .provider import Provider
+from .address import Thana
 
 
 class Incident(models.Model):
     contact_number = models.CharField(max_length=15)
     provider = models.ForeignKey(
         Provider,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="incidents",
+    )
+    thana = models.ForeignKey(
+        Thana,
         null=True,
         default=None,
         on_delete=models.SET_NULL,
@@ -24,3 +32,6 @@ class Incident(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )  # Automatically set the field to now every time the object is saved
+
+    def __str__(self):
+        return f"Incident {self.id} - {self.status}"
