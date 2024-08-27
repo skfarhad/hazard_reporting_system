@@ -11,7 +11,7 @@ I appreciate your valuable input! Let's build a community that cares for the nat
 ### [Github flow](https://guides.github.com/introduction/flow/index.html) will be maintained. So, all contributions will be integrated through pull requests
 Pull requests are the best way to propose changes to the codebase. I will be actively looking for your pull requests:
 
-- Fork the repo and create your branch from `master`.
+- Fork the repo and create your branch from `main`.
 - If you've added code that should be tested, add tests.
 - If you've changed APIs, update the documentation.
 - Issue that pull request!
