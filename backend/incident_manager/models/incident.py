@@ -1,4 +1,6 @@
 from django.contrib.gis.db import models
+
+from incident_manager.constants import IncidentStatus
 from .provider import Provider
 from .address import Thana
 
@@ -26,7 +28,11 @@ class Incident(models.Model):
     additional_info = models.JSONField(
         default=dict
     )  # Set default to an empty dictionary
-    status = models.CharField(max_length=50)
+    status = models.CharField(
+        max_length=50,
+        choices=IncidentStatus.choices(),
+        default=IncidentStatus.PENDING.value,
+    )
     address = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(
