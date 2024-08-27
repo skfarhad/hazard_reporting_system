@@ -24,7 +24,12 @@ services:
 
   be:
     build: .
-    command: poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    command: >
+      sh -c "if [ "$DEBUG" = "True" ]; then
+              poetry run python manage.py runserver 0.0.0.0:8000;
+            else
+              poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000;
+            fi"
     volumes:
       - .:/code
     ports:
