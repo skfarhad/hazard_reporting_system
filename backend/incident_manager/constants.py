@@ -9,3 +9,13 @@ class IncidentStatus(Enum):
     @classmethod
     def choices(cls):
         return [(key.value, key.name) for key in cls]
+
+
+class TaskStatus(Enum):
+    OPEN = "open"
+    CLOSED = "closed"
+    POSTPONED = "postponed"
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]

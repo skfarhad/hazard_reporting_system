@@ -23,7 +23,7 @@ class IncidentModelTest(TestCase):
             provider=self.provider,
             description="Another Test Incident",
             additional_info={"key": "value"},
-            status=IncidentStatus.PENDING.value,  # Initial status is not 'validated'
+            validation_status=IncidentStatus.PENDING.value,  # Initial status is not 'validated'
             address="456 Test Avenue",
         )
 
@@ -31,7 +31,7 @@ class IncidentModelTest(TestCase):
         mock_process_incident.assert_not_called()
 
         # Update the status to 'validated'
-        incident.status = IncidentStatus.VALIDATED.value
+        incident.validation_status = IncidentStatus.VALIDATED.value
         incident.save()
 
         # Now the task should be triggered
@@ -47,7 +47,7 @@ class IncidentModelTest(TestCase):
             provider=self.provider,
             description="Test Incident",
             additional_info={"key": "value"},
-            status=IncidentStatus.PENDING.value,
+            validation_status=IncidentStatus.PENDING.value,
             address="789 Test Boulevard",
         )
 
@@ -65,11 +65,11 @@ class IncidentModelTest(TestCase):
             provider=None,
             description="Incident with No Provider",
             additional_info={"key": "value"},
-            status=IncidentStatus.REJECTED.value,
+            validation_status=IncidentStatus.REJECTED.value,
             address="789 Test Boulevard",
         )
 
         self.assertIsInstance(incident, Incident)
         self.assertIsNone(incident.provider)
         self.assertEqual(incident.description, "Incident with No Provider")
-        self.assertEqual(incident.status, IncidentStatus.REJECTED.value)
+        self.assertEqual(incident.validation_status, IncidentStatus.REJECTED.value)

@@ -20,15 +20,21 @@ class IncidentAdmin(LeafletGeoAdmin):
         "contact_number",
         "provider",
         "description",
-        "status",
+        "validation_status",
+        "task_status",
         "address",
         "created_at",
     )
-    search_fields = ("contact_number", "description", "status", "address")
-    list_filter = ("status", "provider")
+    search_fields = (
+        "contact_number",
+        "description",
+        "validation_status",
+        "task_status",
+        "address",
+    )
+    list_filter = ("validation_status", "task_status", "provider")
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "updated_at")
-
 
 
 # Registering Division model

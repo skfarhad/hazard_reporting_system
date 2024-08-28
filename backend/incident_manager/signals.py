@@ -11,10 +11,10 @@ def incident_pre_save(sender, instance, **kwargs):
         # Fetch the previous instance from the database
         previous_instance = Incident.objects.get(pk=instance.pk)
 
-        # Check if the status is changing to 'validated'
+        # Check if the validation_status is changing to 'validated'
         if (
-            previous_instance.status != instance.status
-            and instance.status == IncidentStatus.VALIDATED.value
+            previous_instance.validation_status != instance.validation_status
+            and instance.validation_status == IncidentStatus.VALIDATED.value
         ):
             # Trigger the background task
             process_incident_and_send_sms.delay(instance.id)

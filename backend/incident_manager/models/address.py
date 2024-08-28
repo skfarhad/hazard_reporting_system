@@ -4,6 +4,7 @@ from django.contrib.gis.db import models
 class Division(models.Model):
     name = models.CharField(max_length=100, unique=True)
     polygon = models.MultiPolygonField(null=True, blank=True)
+    center = models.PointField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -16,6 +17,7 @@ class District(models.Model):
         Division, on_delete=models.CASCADE, related_name="districts"
     )
     polygon = models.MultiPolygonField(null=True, blank=True)
+    center = models.PointField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -28,6 +30,7 @@ class Thana(models.Model):
         District, on_delete=models.CASCADE, related_name="thanas"
     )
     polygon = models.MultiPolygonField(null=True, blank=True)
+    center = models.PointField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
