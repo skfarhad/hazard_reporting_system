@@ -59,11 +59,15 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PORT: 5432
     healthcheck:
+<<<<<<< HEAD
       test:
         [
           "CMD-SHELL",
           "poetry run celery -A config inspect ping -d celery@$$HOSTNAME || exit 1",
         ]
+=======
+      test: ["CMD-SHELL", "poetry run celery -A config inspect ping -d celery@$$HOSTNAME || exit 1"]
+>>>>>>> base/main
       interval: 30s
       timeout: 10s
       retries: 3
@@ -106,4 +110,8 @@ services:
       retries: 3
 
 volumes:
+<<<<<<< HEAD
   postgres_data:
+=======
+  postgres_data:
+>>>>>>> base/main
