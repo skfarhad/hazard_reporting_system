@@ -35,7 +35,6 @@ class VolunteerViewSet(viewsets.ModelViewSet):
                        filters.SearchFilter]
     # Assuming thana__district is the relation to District
     # filterset_fields = ['thana', 'thana__district']
-    # search_fields = ['address']
 
     def get_permissions(self):
         if self.request.method in SAFE_METHODS:
@@ -58,6 +57,6 @@ class VolunteerViewSet(viewsets.ModelViewSet):
             point = Point(float(lon), float(lat))
             print(point)
             queryset = queryset.filter(location__distance_lte=(
-                point, D(km=10)))  # Filter within 10km radius
+                point, D(km=1)))  # Filter within 1km radius
 
         return queryset
