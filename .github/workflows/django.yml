@@ -1,0 +1,57 @@
+name: Run Django Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+    
+    - name: Build and Start Services
+      run: |
+        docker-compose up -d --build
+    
+    - name: Wait for Database to be ready
+      run: |
+        until docker-compose exec postgres pg_isready --timeout=0 --dbname=${{ secrets.POSTGRES_DB }}; do
+          echo "Waiting for database connection..."
+          sleep 5
+        done
+    
+    - name: Run Migrations
+      run: |
+        docker-compose exec be poetry run python manage.py migrate
+    
+    - name: Run Tests
+      env:
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DEBUG: False
+        ALLOWED_HOSTS: "*"
+        THROTTLE_RATE: "1000/hour"
+      run: |
+        docker-compose exec be poetry run python manage.py test
+    
+    - name: Stop Services
+      if: always()
+      run: |
+        docker-compose down
