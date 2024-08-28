@@ -31,3 +31,6 @@ RUN poetry install --no-dev
 
 # Copy the current directory contents into the container at /code/
 COPY . /code/
+
+# Collect static files
+RUN poetry run python manage.py collectstatic --noinput
