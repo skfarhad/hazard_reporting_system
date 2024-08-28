@@ -14,6 +14,21 @@ jobs:
       matrix:
         python-version: [3.8]
 
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }}" 
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
     - uses: actions/checkout@v3
     
@@ -44,7 +59,7 @@ jobs:
         echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
         echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-        echo "POSTGRES_HOST=postgres" >> .env
+        echo "POSTGRES_HOST=localhost" >> .env  # This should be localhost now
         echo "POSTGRES_PORT=5432" >> .env
         echo "GDAL_LIBRARY_PATH=$(gdal-config --libs | cut -d' ' -f1)" >> .env
 
@@ -56,7 +71,7 @@ jobs:
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_HOST: "localhost"
+        POSTGRES_HOST: "localhost"  # Use localhost since the DB is running in the same container
         POSTGRES_PORT: 5432
         GDAL_LIBRARY_PATH: $(gdal-config --libs | cut -d' ' -f1)
       run: |
