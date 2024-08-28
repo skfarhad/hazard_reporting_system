@@ -1,36 +1,36 @@
-import { Inter } from "next/font/google";
-import { useEffect, useRef, useState } from "react";
-import mapboxgl, { LngLatLike } from "mapbox-gl";
-import { MarkerData } from "@/types/MarkerData";
+import { Inter } from 'next/font/google';
+import { useEffect, useRef, useState } from 'react';
+import mapboxgl, { LngLatLike } from 'mapbox-gl';
+import { MarkerData } from '@/types/MarkerData';
 
-import "mapbox-gl/dist/mapbox-gl.css";
-import SummaryCardsComponent from "@/components/SummaryCards";
+import 'mapbox-gl/dist/mapbox-gl.css';
+import SummaryCardsComponent from '@/components/SummaryCards';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 const dummyMarkers: MarkerData[] = [
   {
-    id: "1",
+    id: '1',
     coordinates: { lat: 23.555, lng: 90.76335 },
     properties: {
-      title: "Marker 1",
-      description: "This is marker 1.",
+      title: 'Marker 1',
+      description: 'This is marker 1.',
     },
   },
   {
-    id: "2",
+    id: '2',
     coordinates: { lat: 23.35454, lng: 90.54657 },
     properties: {
-      title: "Marker 2",
-      description: "This is marker 2.",
+      title: 'Marker 2',
+      description: 'This is marker 2.',
     },
   },
   {
-    id: "3",
+    id: '3',
     coordinates: { lat: 23.6543, lng: 90.4345456 },
     properties: {
-      title: "Marker 3",
-      description: "This is marker 3.",
+      title: 'Marker 3',
+      description: 'This is marker 3.',
     },
   },
 ];
@@ -57,7 +57,7 @@ export default function Home({
 
     const mapInstance = new mapboxgl.Map({
       container: mapContainer.current!,
-      style: "mapbox://styles/mapbox/streets-v11",
+      style: 'mapbox://styles/mapbox/streets-v11',
       center: center,
       zoom: zoom,
     });
@@ -71,10 +71,10 @@ export default function Home({
         .setLngLat(marker.coordinates)
         .addTo(mapInstance!);
 
-      markerInstance.getElement().addEventListener("click", () => {
-        const popupElement = document.createElement("div");
+      markerInstance.getElement().addEventListener('click', () => {
+        const popupElement = document.createElement('div');
         popupElement.className =
-          "popup bg-blue-400 text-white p-4 rounded-lg shadow-md";
+          'popup bg-blue-400 text-white p-4 rounded-lg shadow-md';
         popupElement.innerHTML = `<h3>${marker.properties.title}</h3><p>${marker.properties.description}</p>`;
 
         setTimeout(() => {
@@ -104,12 +104,12 @@ export default function Home({
   };
 
   const createMarkerElement = () => {
-    const el = document.createElement("div");
-    el.className = "marker-icon";
-    el.style.width = "25px";
-    el.style.height = "25px";
+    const el = document.createElement('div');
+    el.className = 'marker-icon';
+    el.style.width = '25px';
+    el.style.height = '25px';
     el.style.backgroundImage = `url(./alert.png)`;
-    el.style.backgroundSize = "contain";
+    el.style.backgroundSize = 'contain';
 
     return el;
   };
@@ -118,7 +118,7 @@ export default function Home({
     <main className={`flex flex-direction-column`}>
       <SummaryCardsComponent />
       <div className="flex-grow">
-        <div ref={mapContainer} style={{ width: "100%", height: "90vh" }} />
+        <div ref={mapContainer} style={{ width: '100%', height: '90vh' }} />
       </div>
 
       <div className="w-1/6 bg-gray-100 p-4 overflow-y-auto">

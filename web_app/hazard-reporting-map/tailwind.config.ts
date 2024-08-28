@@ -44,6 +44,7 @@ const config = {
         primary: "rgba(var(--primary),1)",
         "primary-foreground": "rgba(var(--primary-foreground),1)",
         destructive: "rgba(var(--destructive), 1)",
+        gray: "rgba(var(--gray), 1)",
       },
     },
   },

@@ -1,12 +1,11 @@
-import Container from "@/components/layouts/Container";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import InputWithButton from "@/components/ui/InputWithButton";
-import { Cloud, Download, Search } from "lucide-react";
-import React, { Fragment } from "react";
-import { BsPersonPlus } from "react-icons/bs";
-import data from "@/public/fake_incident_response.json";
-import DataTable, { TDataTableColumn } from "@/components/DataTable";
+import Container from '@/components/layouts/Container';
+import { Button } from '@/components/ui/button';
+import InputWithButton from '@/components/ui/InputWithButton';
+import { Cloud, Download, Search } from 'lucide-react';
+import React from 'react';
+import { BsPersonPlus } from 'react-icons/bs';
+import data from '@/public/fake_incident_response.json';
+import DataTable, { TDataTableColumn } from '@/components/DataTable';
 import {
   Pagination,
   PaginationContent,
@@ -15,44 +14,43 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
+} from '@/components/ui/pagination';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 export default function Dashboard() {
-  console.log(data);
   const columns: TDataTableColumn[] = [
     {
-      title: "Name",
-      width: "20px",
-      selector: "name",
+      title: 'Name',
+      width: '20px',
+      selector: 'name',
       hidden: false,
     },
     {
-      title: "District",
-      width: "40px",
-      selector: "district",
+      title: 'District',
+      width: '40px',
+      selector: 'district',
     },
     {
-      title: "Thana",
-      selector: "thana",
+      title: 'Thana',
+      selector: 'thana',
     },
     {
-      title: "Hazard Description",
-      selector: "hazard_description",
+      title: 'Hazard Description',
+      selector: 'hazard_description',
     },
     {
-      title: "LAT",
-      selector: "lat",
+      title: 'Latitude',
+      selector: 'lat',
     },
     {
-      title: "LON",
-      selector: "lon",
+      title: 'Longitude',
+      selector: 'lon',
     },
   ];
   const loading = false;
@@ -70,7 +68,7 @@ export default function Dashboard() {
                 />
               </div>
               <Button className=" gap-2">
-                Download Csv{" "}
+                Download Csv{' '}
                 <span>
                   <Download size={16} />
                 </span>
@@ -78,7 +76,7 @@ export default function Dashboard() {
             </div>
             <div className="flex gap-2">
               <Button className="gap-2">
-                Upload CSV{" "}
+                Upload CSV{' '}
                 <span>
                   <Cloud size={16} />
                 </span>

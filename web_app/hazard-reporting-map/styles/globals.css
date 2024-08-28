@@ -43,29 +43,3 @@ body {
 .mapboxgl-popup-content {
   background: transparent !important;
 }
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: rgb(var(--card));
-  color: rgba(var(--card-foreground), 1);
-  border-radius: 1rem;
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: left;
-}
-
-th {
-  background-color: rgba(var(--gray), 0.5);
-  font-weight: bold;
-}
-
-tr:nth-child(even) {
-  background-color: rgba(var(--gray), 0.3);
-}
-
-tr:hover {
-  background-color: rgba(var(--gray), 1);
-}

@@ -1,39 +1,27 @@
-import React from "react";
-import Container from "../Container";
-import Link from "next/link";
-import { MdDashboard } from "react-icons/md";
-import { IconType } from "react-icons";
-import { FaMapMarker, FaUsers } from "react-icons/fa";
-import { FaChartSimple, FaGear } from "react-icons/fa6";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import Container from '../Container';
+import Link from 'next/link';
+import { FaMapMarker } from 'react-icons/fa';
+import { cn } from '@/lib/utils';
+import { LuFlagTriangleRight, LuUser2 } from 'react-icons/lu';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
+  const pathname = usePathname();
   const user = {
-    name: "John Doe",
+    name: 'John Doe',
   };
   const navItems = [
     {
-      title: "Dashboard",
-      icon: <MdDashboard />,
-      link: "/dashboard",
+      title: 'Volunteers',
+      icon: <LuUser2 />,
+      link: '/volunteers',
       isHidden: false,
     },
     {
-      title: "Users",
-      icon: <FaUsers />,
-      link: "/",
-      isHidden: false,
-    },
-    {
-      title: "Settings",
-      icon: <FaGear />,
-      link: "/",
-      isHidden: false,
-    },
-    {
-      title: "Reports",
-      icon: <FaChartSimple />,
-      link: "/",
+      title: 'Incidents',
+      icon: <LuFlagTriangleRight />,
+      link: '/incidents',
       isHidden: false,
     },
   ];
@@ -56,9 +44,9 @@ export default function Navbar() {
                 return (
                   <Link key={index + 1} href={item.link}>
                     <div
-                      className={cn("flex gap-2 items-center px-4  py-5 ", {
-                        "border-b-4 border-primary text-primary font-semibold":
-                          item.link === "/dashboard",
+                      className={cn('flex gap-2 items-center px-4  py-5 ', {
+                        'border-b-4 border-primary text-primary font-semibold':
+                          item.link === pathname,
                       })}
                     >
                       {item.icon} {item.title}
