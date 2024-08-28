@@ -27,10 +27,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y docker-compose
     
-    - name: Copy .env file
+    - name: Set up Environment Variables
       working-directory: ./backend
       run: |
-        cp .env.example .env # If you have a .env.example file, or set the variables here manually.
+        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+        echo "DEBUG=False" >> .env
+        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
     
     - name: Build and Start Services
       working-directory: ./backend
@@ -38,8 +42,6 @@ jobs:
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_HOST: postgres
-        POSTGRES_PORT: 5432
         DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         DEBUG: False
       run: |
@@ -66,5 +68,11 @@ jobs:
     - name: Stop Services
       if: always()
       working-directory: ./backend
+      env:
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DEBUG: False
       run: |
         docker-compose down
