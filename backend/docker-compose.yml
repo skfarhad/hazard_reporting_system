@@ -21,7 +21,7 @@ services:
   postgres:
     image: postgis/postgis:latest
     volumes:
-      - postgres_data:/var/lib/postgresql/datas
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}
@@ -59,15 +59,11 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PORT: 5432
     healthcheck:
-<<<<<<< HEAD
       test:
         [
           "CMD-SHELL",
           "poetry run celery -A config inspect ping -d celery@$$HOSTNAME || exit 1",
         ]
-=======
-      test: ["CMD-SHELL", "poetry run celery -A config inspect ping -d celery@$$HOSTNAME || exit 1"]
->>>>>>> base/main
       interval: 30s
       timeout: 10s
       retries: 3
@@ -79,7 +75,7 @@ services:
       sh -c "if [ "$DEBUG" = "True" ]; then
                poetry run python manage.py runserver 0.0.0.0:8000;
              else
-               poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000;
+               poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8001;
              fi"
     volumes:
       - .:/code
@@ -110,8 +106,4 @@ services:
       retries: 3
 
 volumes:
-<<<<<<< HEAD
   postgres_data:
-=======
-  postgres_data:
->>>>>>> base/main
