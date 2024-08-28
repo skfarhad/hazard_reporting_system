@@ -44,7 +44,7 @@ jobs:
         echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
         echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-        echo "POSTGRES_HOST=localhost" >> .env
+        echo "POSTGRES_HOST=postgres" >> .env
         echo "POSTGRES_PORT=5432" >> .env
         echo "GDAL_LIBRARY_PATH=$(gdal-config --libs | cut -d' ' -f1)" >> .env
 
