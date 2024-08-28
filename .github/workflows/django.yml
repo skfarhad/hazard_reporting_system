@@ -21,58 +21,25 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    
-    - name: Install Docker Compose
+
+    - name: Install Poetry
       run: |
-        sudo apt-get update
-        sudo apt-get install -y docker-compose
-    
-    - name: Set up Environment Variables
+        curl -sSL https://install.python-poetry.org | python3 -
+
+    - name: Install Dependencies
       working-directory: ./backend
       run: |
-        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-        echo "DEBUG=False" >> .env
-        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
-    
-    - name: Build and Start Services
-      working-directory: ./backend
-      env:
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        DEBUG: False
-      run: |
-        docker-compose up -d --build
-    
-    - name: Wait for Database to be ready
-      working-directory: ./backend
-      run: |
-        until docker-compose exec postgres pg_isready --timeout=0 --dbname=${{ secrets.POSTGRES_DB }}; do
-          echo "Waiting for database connection..."
-          sleep 5
-        done
-    
-    - name: Run Migrations
-      working-directory: ./backend
-      run: |
-        docker-compose exec be poetry run python manage.py migrate
-    
+        poetry install
+
     - name: Run Tests
       working-directory: ./backend
-      run: |
-        docker-compose exec be poetry run python manage.py test
-    
-    - name: Stop Services
-      if: always()
-      working-directory: ./backend
       env:
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DEBUG: False
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        DEBUG: False
+        POSTGRES_HOST: "localhost"
+        POSTGRES_PORT: 5432
       run: |
-        docker-compose down
+        poetry run python manage.py test
