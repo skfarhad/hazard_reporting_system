@@ -24,9 +24,9 @@ jobs:
       run: |
         cat <<EOF > .env
         POSTGRES_ENGINE=django.contrib.gis.db.backends.postgis
-        POSTGRES_DB=x
-        POSTGRES_USER=tashfik
-        POSTGRES_PASSWORD=1234rtyu
+        POSTGRES_DB=db_name
+        POSTGRES_USER=db_user
+        POSTGRES_PASSWORD=db_password
         POSTGRES_HOST=postgres
         POSTGRES_PORT=5432
         DJANGO_SECRET_KEY=your_secret_key
