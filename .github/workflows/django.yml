@@ -22,6 +22,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gdal-bin libgdal-dev
+
     - name: Install Poetry
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
@@ -30,6 +35,11 @@ jobs:
       working-directory: ./backend
       run: |
         poetry install
+
+    - name: Set GDAL Library Path
+      working-directory: ./backend
+      run: |
+        echo "GDAL_LIBRARY_PATH=$(gdal-config --libs | cut -d' ' -f1)" >> .env
 
     - name: Run Tests
       working-directory: ./backend
@@ -41,5 +51,6 @@ jobs:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         POSTGRES_HOST: "localhost"
         POSTGRES_PORT: 5432
+        GDAL_LIBRARY_PATH: $(gdal-config --libs | cut -d' ' -f1)
       run: |
         poetry run python manage.py test
