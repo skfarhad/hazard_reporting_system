@@ -5,73 +5,20 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
-      matrix:
-        python-version: [3.8]
 
-    services:
-      postgres:
-        image: postgres:13
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        options: >-
-          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }}" 
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+jobs:
+  test:
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+    - name: Check out the code
+      uses: actions/checkout@v3
 
-    - name: Install System Dependencies
+    - name: Set up Docker Compose
       run: |
-        sudo apt-get update
-        sudo apt-get install -y gdal-bin libgdal-dev
+        docker-compose up -d postgres redis rabbitmq  # Start necessary services
+        docker-compose run be poetry run python manage.py test  # Run the Django tests
 
-    - name: Install Poetry
+    - name: Clean up
       run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-
-    - name: Install Dependencies
-      working-directory: ./backend
-      run: |
-        poetry install
-
-    - name: Set Environment Variables
-      working-directory: ./backend
-      run: |
-        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
-        echo "DEBUG=False" >> .env
-        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-        echo "POSTGRES_HOST=localhost" >> .env  # This should be localhost now
-        echo "POSTGRES_PORT=5432" >> .env
-        echo "GDAL_LIBRARY_PATH=$(gdal-config --libs | cut -d' ' -f1)" >> .env
-
-    - name: Run Tests
-      working-directory: ./backend
-      env:
-        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        DEBUG: False
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_HOST: "localhost"  # Use localhost since the DB is running in the same container
-        POSTGRES_PORT: 5432
-        GDAL_LIBRARY_PATH: $(gdal-config --libs | cut -d' ' -f1)
-      run: |
-        poetry run python manage.py test
+        docker-compose down  # Stop and remove containers, networks, volumes
