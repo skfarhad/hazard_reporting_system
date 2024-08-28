@@ -27,8 +27,21 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y docker-compose
     
+    - name: Copy .env file
+      working-directory: ./backend
+      run: |
+        cp .env.example .env # If you have a .env.example file, or set the variables here manually.
+    
     - name: Build and Start Services
       working-directory: ./backend
+      env:
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_HOST: postgres
+        POSTGRES_PORT: 5432
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DEBUG: False
       run: |
         docker-compose up -d --build
     
@@ -47,12 +60,6 @@ jobs:
     
     - name: Run Tests
       working-directory: ./backend
-      env:
-        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        DEBUG: False
-        ENABLE_SILK: False
-        ALLOWED_HOSTS: "*"
-        THROTTLE_RATE: "1000/hour"
       run: |
         docker-compose exec be poetry run python manage.py test
     
