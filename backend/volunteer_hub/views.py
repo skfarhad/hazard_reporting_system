@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework import viewsets, filters
-# from rest_framework_gis.filters import DistanceToPointFilter
+from rest_framework_gis.filters import DistanceToPointFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework import status
@@ -31,9 +31,9 @@ class VolunteerViewSet(viewsets.ModelViewSet):
     queryset = Volunteer.objects.all()
     serializer_class = VolunteerSerializer
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter]
+                       filters.SearchFilter, DistanceToPointFilter]
     # Assuming thana__district is the relation to District
-    # filterset_fields = ['thana', 'thana__district']
+    filterset_fields = ['thana', 'thana__district']
 
     def get_permissions(self):
         if self.request.method in SAFE_METHODS:

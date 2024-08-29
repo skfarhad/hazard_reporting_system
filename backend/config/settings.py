@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "volunteer_hub",
     "rest_framework",
     "rest_framework_api_key",
+    "django_filters",
     "leaflet",
     "rest_framework.authtoken",
     "drf_yasg",
