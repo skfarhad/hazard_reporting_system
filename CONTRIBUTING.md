@@ -1,20 +1,30 @@
 # How to contribute
-I appreciate your valuable input! Let's build a community that cares for the natural disaster affected people of Bangladesh.
-<br>I want to make contributing to this project as easy and transparent as possible, whether it's:
+We appreciate your valuable input! Let's build a community that cares about 
+the natural disaster affected people of Bangladesh.
+<br>I want to make contributing to this project as easy and transparent 
+as possible, whether it's:
 
 - Reporting a bug
 - Discussing the current state of the code
 - Submitting a fix
 - Proposing new features
+- Suggesting architectural improvements
 - Becoming a maintainer
 
 ### [Github flow](https://guides.github.com/introduction/flow/index.html) will be maintained. So, all contributions will be integrated through pull requests
 Pull requests are the best way to propose changes to the codebase. I will be actively looking for your pull requests:
 
+- Analyze the open issues and choose one for making a contribution
+- If you feel something novel need to be done then discuss with other collaborators
+and then create the issue
+- Join the communication platform (currently it's slack) being used 
+by the collaborators
 - Fork the repo and create your branch from `main`.
 - If you've added code that should be tested, add tests.
 - If you've changed APIs, update the documentation.
-- Issue that pull request!
+- Create a pull request with necessary descriptions, images etc so that it's clear
+what you have done!
+- PRs without proper documentation will not be accepted.
 
 
 ## Reporting bugs
