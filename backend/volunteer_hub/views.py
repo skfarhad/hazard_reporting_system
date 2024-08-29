@@ -28,7 +28,6 @@ class VolunteerListView(APIView):
 
 
 class VolunteerViewSet(viewsets.ModelViewSet):
-    # permission_classes = [AllowAny]
     queryset = Volunteer.objects.all()
     serializer_class = VolunteerSerializer
     filter_backends = [DjangoFilterBackend,
