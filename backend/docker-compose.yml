@@ -39,7 +39,7 @@ services:
 
   celery_worker:
     build: .
-    command: sh -c "sleep 10 && poetry run celery -A config worker --loglevel=info"
+    command: sh -c "sleep 10 && poetry run celery -A config worker --loglevel=info" 
     volumes:
       - .:/code
     env_file:

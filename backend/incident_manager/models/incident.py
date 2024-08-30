@@ -21,8 +21,12 @@ class Incident(models.Model):
         on_delete=models.SET_NULL,
         related_name="incidents",
     )
+    image = models.ImageField(
+        upload_to='Incident/', 
+        null=True, 
+    )
     location = models.PointField(
-        geography=True, null=True, default=None
+        geography=True, null=True, blank=True, default=None
     )  # Using GeoDjango for geo fields
     description = models.TextField()
     additional_info = models.JSONField(
@@ -45,4 +49,4 @@ class Incident(models.Model):
     )  # Automatically set the field to now every time the object is saved
 
     def __str__(self):
-        return f"Incident {self.id} - {self.status}"
+        return f"Incident {self.id} - {self.validation_status}"

@@ -20,6 +20,7 @@ class IncidentAdmin(LeafletGeoAdmin):
         "contact_number",
         "provider",
         "description",
+        "image",
         "validation_status",
         "task_status",
         "address",
