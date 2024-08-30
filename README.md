@@ -54,7 +54,7 @@ to coordinate the rescue missions.
 
 ### System Architecture
 
-The following are the system Components:
+The followings are the main Components of this system:
 
 - Live Dashboard for Incident & Volunteer monitoring
 - Volunteer and Incident management database.
@@ -64,20 +64,11 @@ The following are the system Components:
 - Background processes for automated volunteer-distress party matching.
 - SMS servers provide by telco provider to integrate SMS data to the back-end.
 
-
-#### System components
-
-There are three main components of this system-
-
-- Volunteer database
-- Volunteer info management portal
-- Live Dashboard for Incident monitoring
-- Back-end APIs for incident data and volunteer info integration
-- Background processes for automated volunteer-distress party matching
+<br>Here is a simplified diagram of the full system-
 
 ![Architecture Roadmap](https://github.com/skfarhad/hazard_reporting_system/blob/main/architecture_roadmap.jpg)
 
-The live dashboard will provide a birds-eye-view of the whole scenario
+<br>The live dashboard will provide a birds-eye-view of the whole scenario
 of the incidents reported and the rescue mission status.
 Here is sample view of the live dashboard-
 
