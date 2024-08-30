@@ -6,6 +6,13 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --paper: 242, 243, 243;
+  --card: 255, 255, 255;
+  --card-foreground: 90, 103, 110;
+  --primary: 37, 194, 122;
+  --primary-foreground: var(--card);
+  --destructive: 227, 196, 157;
+  --gray: 225, 228, 229;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,15 +22,16 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: rgba(var(--paper), 1);
+  height: 100%;
 }
 
 @layer utilities {
