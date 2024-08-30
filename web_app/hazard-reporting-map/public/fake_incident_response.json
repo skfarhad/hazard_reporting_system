@@ -1,20 +1,24 @@
 {
-  "data":[
+  "data": [
     {
       "name": "Abdul Hamid",
       "district": "Feni",
       "thana": "Parshuram",
       "hazard_description": "Need food immediately",
       "lat": 23.3122,
-      "lon": 90.123
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
     },
-        {
+    {
       "name": "Akkas ali",
       "district": "Feni",
       "thana": "Parshuram",
       "hazard_description": "Khabar dorkar joldi",
       "lat": 23.3122,
-      "lon": 90.123
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
     },
     {
       "name": "Abdur Rahman",
@@ -22,7 +26,9 @@
       "thana": "Dighinala",
       "hazard_description": "Need doctor support",
       "lat": 23.3122,
-      "lon": 90.123
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
     },
     {
       "name": "Abdur Rahman",
@@ -30,7 +36,9 @@
       "thana": "Chandina",
       "hazard_description": "Need relocation with boad",
       "lat": 23.3122,
-      "lon": 90.123
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
     },
     {
       "name": "Mannan Hossain",
@@ -38,7 +46,9 @@
       "thana": "Parshuram",
       "hazard_description": "Need Medicine",
       "lat": 23.3122,
-      "lon": 90.123
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
     }
   ]
 }

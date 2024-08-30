@@ -39,19 +39,19 @@ export default function Navbar() {
     },
   ];
   return (
-    <header className="sticky top-0 text-black shadow-sm shadow-gray">
-      <nav className="bg-secondary-background  text-card-foreground text-sm pt-2">
+    <header className="sticky top-0 text-black shadow-sm shadow-gray z-[99]">
+      <nav className="bg-secondary-background  text-card-foreground text-sm pt-2 md:pb-0 pb-2">
         <Container>
-          <ul className="flex items-end justify-between ">
+          <ul className="flex md:items-end  items-center justify-between ">
             <li className=" flex gap-4 items-center ">
-              <Link href="/" className=" text-base pb-2">
+              <Link href="/" className="text-xs md:text-base pb-0 md:pb-2">
                 <span>Hazard Reporting system</span>
               </Link>
               {/* divider */}
-              <div className="w-[2px] h-5 bg-gray"></div>
+              <div className="w-[2px] h-5 bg-gray hidden md:block"></div>
 
               {/* nav items */}
-              <div className="flex gap-2">
+              <div className="md:flex gap-2 hidden ">
                 {navItems.map((item, index) => {
                   if (item.isHidden) return null;
                   return (
@@ -76,7 +76,10 @@ export default function Navbar() {
 
             {/* user avatar */}
             <div className="flex gap-4 items-center pb-2">
-              <div>
+              <div className="relative ">
+                <div className="absolute bg-destructive text-primary-background -top-3 -right-2.5 px-[5px] py-0 rounded-md text-[9px]">
+                  <span>3</span>
+                </div>
                 <Bell size={16} />
               </div>
               {/* divider */}

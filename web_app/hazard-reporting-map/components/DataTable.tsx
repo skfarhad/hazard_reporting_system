@@ -1,11 +1,12 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 export type TDataTableColumn = {
-  title: string;
+  title?: string;
   width?: string;
-  selector: string;
+  selector?: string;
   hidden?: boolean;
   type?: 'action' | 'number';
-  cell?: (col: Record<string, string | number>, index: number) => void;
+  cell?: (col: Record<string, any>, index: number) => void;
+  header?: (col: Record<string, any>, index: number) => void;
 };
 type TProps = {
   columns: TDataTableColumn[];
@@ -14,58 +15,60 @@ type TProps = {
 };
 export default function DataTable({ columns, loading = false, data }: TProps) {
   return (
-    <table className="w-full border-collapse bg-card text-card-foreground rounded-md">
-      <thead>
-        <tr className="rounded-md">
-          {columns.map((itm: any) => {
-            return (
-              <th
-                key={itm.title}
-                style={{ width: `${itm.width ? itm.width : '40px'}` }}
-                className="p-4 text-left bg-gray/70 font-bold"
-              >
-                {itm.title}
-              </th>
-            );
-          })}
-        </tr>
-      </thead>
-      <tbody>
-        {loading ? (
-          <tr style={{ height: '30vh' }}>
-            <td className="p-8 text-left" colSpan={columns.length}>
-              loading...
-            </td>
+    <div className="w-full overflow-auto relative">
+      <table className="w-full border-collapse bg-card text-card-foreground rounded-md text-xs text-zinc-700 ">
+        <thead>
+          <tr className="rounded-md">
+            {columns.map((itm: any, index: number) => {
+              return (
+                <th
+                  key={itm.title}
+                  style={{ width: `${itm.width ? itm.width : '40px'}` }}
+                  className="p-2 bg-table-header-bg text-left font-semibold uppercase"
+                >
+                  {itm.title ? itm.title : itm.header(itm, index)}
+                </th>
+              );
+            })}
           </tr>
-        ) : (
-          data?.map((column: any, index: number) => (
-            <tr className="even:bg-gray/30 hover:bg-gray/50" key={index + 1}>
-              {columns.map((c: any, indx: number) => (
-                <Fragment key={indx + 1}>
-                  <td
-                    hidden={c?.hidden ?? false}
-                    id={`${indx}`}
-                    style={{
-                      textAlign:
-                        c.type === 'action'
-                          ? 'center'
-                          : c.type === 'number'
-                            ? 'right'
-                            : 'left',
-                    }}
-                    className="p-3 text-left"
-                  >
-                    {c?.cell ? c.cell(column, index) : column[c?.selector]}
-                  </td>
-                </Fragment>
-              ))}
+        </thead>
+        <tbody>
+          {loading ? (
+            <tr style={{ height: '30vh' }}>
+              <td className="p-8 text-left" colSpan={columns.length}>
+                loading...
+              </td>
             </tr>
-          ))
-        )}
-        <tr hidden={!!data?.length} className="no-data-row">
-          <td colSpan={columns.length}>There are no records to display</td>
-        </tr>
-      </tbody>
-    </table>
+          ) : (
+            data?.map((column: any, index: number) => (
+              <tr className="hover:bg-gray/50" key={index + 1}>
+                {columns.map((c: any, indx: number) => (
+                  <Fragment key={indx + 1}>
+                    <td
+                      hidden={c?.hidden ?? false}
+                      id={`${indx}`}
+                      style={{
+                        textAlign:
+                          c.type === 'action'
+                            ? 'center'
+                            : c.type === 'number'
+                              ? 'right'
+                              : 'left',
+                      }}
+                      className="p-3 text-left"
+                    >
+                      {c?.cell ? c.cell(column, index) : column[c?.selector]}
+                    </td>
+                  </Fragment>
+                ))}
+              </tr>
+            ))
+          )}
+          <tr hidden={!!data?.length} className="no-data-row">
+            <td colSpan={columns.length}>There are no records to display</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 }

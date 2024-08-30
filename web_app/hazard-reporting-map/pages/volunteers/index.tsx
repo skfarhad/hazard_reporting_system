@@ -1,15 +1,53 @@
-import { TDataTableColumn } from '@/components/DataTable';
+import DataTable, { TDataTableColumn } from '@/components/DataTable';
 import Container from '@/components/layouts/Container';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plus, Trash } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import data from '@/public/fake_incident_response.json';
+import { Edit, Filter, Plus, Search, Trash, Trash2 } from 'lucide-react';
 
 export default function Dashboard() {
   const columns: TDataTableColumn[] = [
     {
-      title: 'Name',
+      header: () => <Checkbox />,
+      cell: () => <Checkbox />,
+    },
+    {
+      title: 'Contact',
       width: '20px',
-      selector: 'name',
+      cell: (row) => (
+        <div>
+          <p className="font-semibold">{row.name}</p>
+          <p>{row.contact}</p>
+        </div>
+      ),
       hidden: false,
+    },
+    {
+      title: 'Short Biography',
+      selector: 'hazard_description',
+    },
+    {
+      title: 'Active Status',
+      width: '40px',
+      cell: () => <Badge>active</Badge>,
     },
     {
       title: 'District',
@@ -20,10 +58,7 @@ export default function Dashboard() {
       title: 'Thana',
       selector: 'thana',
     },
-    {
-      title: 'Hazard Description',
-      selector: 'hazard_description',
-    },
+
     {
       title: 'Latitude',
       selector: 'lat',
@@ -31,6 +66,19 @@ export default function Dashboard() {
     {
       title: 'Longitude',
       selector: 'lon',
+    },
+    {
+      title: 'Action',
+      cell: () => (
+        <div className="flex gap-4">
+          <button>
+            <Edit size={16} />
+          </button>
+          <button>
+            <Trash2 size={16} />
+          </button>
+        </div>
+      ),
     },
   ];
   const loading = false;
@@ -48,74 +96,73 @@ export default function Dashboard() {
             </Button>
           </div>
           {/* filters */}
-          {/* <div className="flex justify-between items-center">
+          <div className="bg-table-header-bg px-4 py-8 flex md:gap-8 gap-2 flex-wrap">
             <div className="flex gap-4">
-              <div className="">
-                <InputWithButton
-                  placeholder="Search.."
-                  buttonNode={<Search size={16} />}
-                />
-              </div>
-              <Button className=" gap-2">
-                Download Csv{' '}
-                <span>
-                  <Download size={16} />
-                </span>
+              <button className="border border-gray shadow-sm shadow-gray p-3 bg-primary-background rounded-md">
+                <Filter size={16} />
+              </button>
+              <Input placeholder="Search..." icon={<Search size={16} />} />
+            </div>
+            <div className="flex gap-3">
+              <Button variant={'ghost'} size={'sm'}>
+                Active
+              </Button>
+              <Button variant={'ghost'} size={'sm'}>
+                Feni
+              </Button>
+              <Button variant={'ghost'} size={'sm'}>
+                All thana
               </Button>
             </div>
-            <div className="flex gap-2">
-              <Button className="gap-2">
-                Upload CSV{' '}
-                <span>
-                  <Cloud size={16} />
-                </span>
-              </Button>
-              <Button className="gap-2">
-                Add User <BsPersonPlus />
-              </Button>
-            </div>
-          </div> */}
+          </div>
 
           {/* data table */}
-          {/* <div className="mt-8 rounded-md bg-card px-4 py-8">
+          <div className="rounded-md">
             <DataTable columns={columns} loading={false} data={data.data} />
-          </div> */}
-          {/* <div className="bg-card flex justify-between px-4 py-8">
-            <div className="flex items-center gap-4">
-              <span>Show</span>
-              <div className="w-[70px]">
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="10" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
+          </div>
+          <div className="bg-table-header-bg flex flex-col md:gap-0 justify-between px-4 py-6 md:py-2 text-xs items-center mt-8 md:flex-row gap-4">
+            <div>
+              <span>1-10 of 100</span>
+            </div>
+            <div className="flex md:flex-row  flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <span>Show</span>
+                <div className="w-[70px]">
+                  <Select>
+                    <SelectTrigger className="h-5 py-4">
+                      <SelectValue placeholder="10" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <span>Results</span>
               </div>
-              <span>Results</span>
+              <div className="">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious href="#" />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink size={'sm'} href="#">
+                        1
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext href="#" />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
             </div>
-            <div className="">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious href="#" />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#">1</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationNext href="#" />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          </div> */}
+          </div>
         </Container>
       </div>
     </div>

@@ -47,8 +47,10 @@ const config = {
         secondary: 'hsla(var(--color-secondary))',
         'primary-foreground': 'hsla(var(--color-primary-background))',
         destructive: 'hsla(var(--color-destructive))',
-
+        'table-header-bg': 'hsla(var(--color-table-header-bg))',
         gray: 'hsla(var(--color-gray))',
+        'status-active': 'hsla(var(--color-status-active))',
+        'disable-bg': 'hsla(var(--color-disable-bg))',
       },
     },
   },
