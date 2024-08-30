@@ -17,6 +17,7 @@ class IncidentSerializer(serializers.ModelSerializer):
             "contact_number",
             "latitude",
             "longitude",
+            "image",
             "description",
             "additional_info",
             "validation_status",
