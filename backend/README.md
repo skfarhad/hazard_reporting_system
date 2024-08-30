@@ -49,18 +49,24 @@
 
 ### Model Structure
 
-- **Incident**: Represents an incident report with fields for contact number, provider, location, description, additional info, status, and address.
+- **Incident**: Represents an incident report with fields for contact number, provider, image, location, description, additional info, status, and address.
 - **Provider**: Represents a provider with fields for name, description, API key, website link, and logo URL.
 - **Volunteer**: Represents a volunteer with fields for full name, contact number, location, address, activity status, notes, and assistance type.
 
 ### API Structure
 
-- **Incident API**: Allows providers to create incidents. Requires API key for authentication.
+- **Incident API**: 
+  Allows providers to create incidents. Requires API key for authentication.
+      
+  Allows you to retrieve information about incidents. You can either fetch details for a specific incident by its ID or retrieve a list of all incidents. Requires API key for authentication.
 - **Volunteer API**: Provides a list of active volunteers. No authentication required.
 
 ## How to Use the APIs
 
-- **Incident API**: To create an incident, make a POST request to `/api/incidents/` with the required fields and include the API key in the `Authorization` header in the format `Api-Key <your_api_key>`.
+- **Incident API**: 
+  To create an incident, make a POST request to `/api/incidents/` with the required fields and include the API key in the `Authorization` header in the format `Api-Key <your_api_key>`.
+  
+ To retrieve incident data, you can make a GET request to the `/api/incidents/view/` endpoint. This can be used to fetch either a list of all incidents or a specific incident by its `/api/incidents/view/<id>` ID. The request must include an API key in the `Authorization` header in the format `Api-Key <your_api_key>`.
   
 - **Volunteer API**: To retrieve the list of active volunteers, make a GET request to `/api/volunteers/`. No authentication is required.
 
