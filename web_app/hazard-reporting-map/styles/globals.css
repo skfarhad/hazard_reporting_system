@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
+  /* --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --paper: 242, 243, 243;
@@ -12,7 +12,17 @@
   --primary: 37, 194, 122;
   --primary-foreground: var(--card);
   --destructive: 227, 196, 157;
-  --gray: 225, 228, 229;
+  --gray: 225, 228, 229; */
+
+  --color-bg-secondary: 293, 100%, 98%; /* Background of the top bar */
+  --color-bg-primary: 0, 0%, 100%; /* Background of the content area */
+  --color-primary-button: 173, 75%, 41%; /* "Add button */
+  --color-secondary: 257, 19.8%, 54.5%;
+  --color-destructive: 335, 79%, 52%; /* Delete button */
+  --color-status-active: #4770ff; /* "Active" status label */
+  --color-text-primary: #252525; /* General text color */
+  --color-gray: 275, 24%, 90%; /* active nav item bg */
+  /* 129,116,162 */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,8 +39,9 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background-color: rgba(var(--paper), 1);
+  /* color: rgb(var(--color-text-primary)); */
+  color: black;
+  background-color: hsla(var(--color-bg-primary));
   height: 100%;
 }
 

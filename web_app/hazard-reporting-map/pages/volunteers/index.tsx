@@ -1,27 +1,7 @@
+import { TDataTableColumn } from '@/components/DataTable';
 import Container from '@/components/layouts/Container';
 import { Button } from '@/components/ui/button';
-import InputWithButton from '@/components/ui/InputWithButton';
-import { Cloud, Download, Search } from 'lucide-react';
-import React from 'react';
-import { BsPersonPlus } from 'react-icons/bs';
-import data from '@/public/fake_incident_response.json';
-import DataTable, { TDataTableColumn } from '@/components/DataTable';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Plus, Trash } from 'lucide-react';
 
 export default function Dashboard() {
   const columns: TDataTableColumn[] = [
@@ -58,8 +38,17 @@ export default function Dashboard() {
     <div className="h-screen bg-paper/10">
       <div className="my-8">
         <Container>
+          <div className="flex justify-end gap-4 items-center">
+            <Button size={'sm'} className="flex gap-2">
+              {' '}
+              <Plus size={16} /> Add volunteer
+            </Button>
+            <Button size={'sm'} variant={'destructive'} className="flex gap-2">
+              <Trash size={16} /> Bulk Delete
+            </Button>
+          </div>
           {/* filters */}
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <div className="flex gap-4">
               <div className="">
                 <InputWithButton
@@ -85,13 +74,13 @@ export default function Dashboard() {
                 Add User <BsPersonPlus />
               </Button>
             </div>
-          </div>
+          </div> */}
 
           {/* data table */}
-          <div className="mt-8 rounded-md bg-card px-4 py-8">
+          {/* <div className="mt-8 rounded-md bg-card px-4 py-8">
             <DataTable columns={columns} loading={false} data={data.data} />
-          </div>
-          <div className="bg-card flex justify-between px-4 py-8">
+          </div> */}
+          {/* <div className="bg-card flex justify-between px-4 py-8">
             <div className="flex items-center gap-4">
               <span>Show</span>
               <div className="w-[70px]">
@@ -126,7 +115,7 @@ export default function Dashboard() {
                 </PaginationContent>
               </Pagination>
             </div>
-          </div>
+          </div> */}
         </Container>
       </div>
     </div>
