@@ -51,6 +51,7 @@ const config = {
         gray: 'hsla(var(--color-gray))',
         'status-active': 'hsla(var(--color-status-active))',
         'disable-bg': 'hsla(var(--color-disable-bg))',
+        'status-success': 'hsla(var(--color-success))',
       },
     },
   },

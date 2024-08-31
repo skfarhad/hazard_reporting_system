@@ -3,31 +3,50 @@ import Container from '@/components/layouts/Container';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+
 import { Input } from '@/components/ui/input';
+
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import data from '@/public/fake_incident_response.json';
-import { Edit, Filter, Plus, Search, Trash, Trash2 } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Filter,
+  Plus,
+  Search,
+  Trash,
+  Trash2,
+} from 'lucide-react';
+import { useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import ClientComponent from '@/components/ClientComponent';
 
 export default function Dashboard() {
+  const [searchInput, setSearchInput] = useState('');
+  const [status, setStatus] = useState('');
+  const [district, setDistrict] = useState('');
+  const [thana, setThana] = useState('');
+  const [allData, setAllData] = useState(data.data);
+  const [pageCount, setPageCount] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
   const columns: TDataTableColumn[] = [
     {
       header: () => <Checkbox />,
+      type: 'action',
       cell: () => <Checkbox />,
+    },
+    {
+      title: '#',
+      cell: (row, i) => <span className="font-semibold">{i + 1}</span>,
     },
     {
       title: 'Contact',
@@ -41,13 +60,23 @@ export default function Dashboard() {
       hidden: false,
     },
     {
+      title: 'Address',
+      selector: 'address',
+    },
+    {
       title: 'Short Biography',
       selector: 'hazard_description',
     },
     {
       title: 'Active Status',
       width: '40px',
-      cell: () => <Badge>active</Badge>,
+      cell: (row) => {
+        if (row.status === 'active') {
+          return <Badge>Active</Badge>;
+        } else if (row.status === 'inactive') {
+          return <Badge variant={'inactive'}>Inactive</Badge>;
+        }
+      },
     },
     {
       title: 'District',
@@ -81,90 +110,207 @@ export default function Dashboard() {
       ),
     },
   ];
-  const loading = false;
-  return (
-    <div className="h-screen bg-paper/10">
-      <div className="my-8">
-        <Container>
-          <div className="flex justify-end gap-4 items-center">
-            <Button size={'sm'} className="flex gap-2">
-              {' '}
-              <Plus size={16} /> Add volunteer
-            </Button>
-            <Button size={'sm'} variant={'destructive'} className="flex gap-2">
-              <Trash size={16} /> Bulk Delete
-            </Button>
-          </div>
-          {/* filters */}
-          <div className="bg-table-header-bg px-4 py-8 flex md:gap-8 gap-2 flex-wrap">
-            <div className="flex gap-4">
-              <button className="border border-gray shadow-sm shadow-gray p-3 bg-primary-background rounded-md">
-                <Filter size={16} />
-              </button>
-              <Input placeholder="Search..." icon={<Search size={16} />} />
-            </div>
-            <div className="flex gap-3">
-              <Button variant={'ghost'} size={'sm'}>
-                Active
-              </Button>
-              <Button variant={'ghost'} size={'sm'}>
-                Feni
-              </Button>
-              <Button variant={'ghost'} size={'sm'}>
-                All thana
-              </Button>
-            </div>
-          </div>
 
-          {/* data table */}
-          <div className="rounded-md">
-            <DataTable columns={columns} loading={false} data={data.data} />
-          </div>
-          <div className="bg-table-header-bg flex flex-col md:gap-0 justify-between px-4 py-6 md:py-2 text-xs items-center mt-8 md:flex-row gap-4">
-            <div>
-              <span>1-10 of 100</span>
+  const statusArr = ['All', 'Active', 'Inactive'];
+  const districtsArr = ['Feni', 'Noakhali', 'Habiganj', 'MouloviBazar'];
+  const thanaArr = ['Parshuram', 'Dighinala', 'Chandina'];
+  const loading = false;
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+    if (e.target.value.length > 0) {
+      const filteredData = data.data.filter(
+        (itm) =>
+          itm.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          itm.address.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+      setAllData(filteredData);
+    } else {
+      setAllData(data.data);
+    }
+  };
+
+  const handlePagination = (page: Record<string, number>) => {
+    setCurrentPage(page.selected + 1);
+  };
+
+  const handleStatus = (status: string) => {
+    setStatus(status);
+    if (status === 'All') {
+      setAllData(data.data);
+    } else {
+      const filteredData = data.data.filter(
+        (itm) => itm.status.toLocaleLowerCase() === status.toLocaleLowerCase()
+      );
+      setAllData(filteredData);
+    }
+  };
+  const handleDistrict = (district: string) => {
+    setDistrict(district);
+    const filteredData = data.data.filter(
+      (itm) => itm.district.toLocaleLowerCase() === district.toLocaleLowerCase()
+    );
+    setAllData(filteredData);
+  };
+  const handleThana = (thana: string) => {
+    setThana(thana);
+    const filteredData = data.data.filter(
+      (itm) => itm.thana.toLocaleLowerCase() === thana.toLocaleLowerCase()
+    );
+    setAllData(filteredData);
+  };
+  return (
+    <ClientComponent>
+      <div className="h-screen bg-paper/10">
+        <div className="my-8">
+          <Container>
+            <div className="flex justify-end gap-4 items-center pl-2 md:pl-0">
+              <Button size={'sm'} className="flex gap-2">
+                {' '}
+                <Plus size={16} /> Add volunteer
+              </Button>
+              <Button
+                size={'sm'}
+                variant={'destructive'}
+                className="flex gap-2"
+              >
+                <Trash size={16} /> Remove volunteer
+              </Button>
             </div>
-            <div className="flex md:flex-row  flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <span>Show</span>
-                <div className="w-[70px]">
-                  <Select>
-                    <SelectTrigger className="h-5 py-4">
-                      <SelectValue placeholder="10" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <span>Results</span>
+            {/* filters */}
+            <div className="bg-secondary-background px-4 py-8 flex md:gap-8 gap-2 flex-wrap mt-3 rounded">
+              <div className="flex gap-4">
+                <button className="border border-gray shadow-sm shadow-gray p-3 bg-primary-background rounded-md">
+                  <Filter size={14} />
+                </button>
+                <Input
+                  onChange={handleSearch}
+                  placeholder="Search..."
+                  icon={<Search size={16} />}
+                />
               </div>
+              <div className="flex gap-3 flex-wrap">
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    {' '}
+                    <Button
+                      className="gap-2 px-6 text-xs capitalize"
+                      variant={'ghost'}
+                      size={'sm'}
+                    >
+                      {status.length > 0 ? status : 'All'}{' '}
+                      <ChevronDown size={10} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Status</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    {statusArr.map((itm) => (
+                      <DropdownMenuItem
+                        key={itm}
+                        onClick={() => handleStatus(itm)}
+                      >
+                        {itm}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    {' '}
+                    <Button
+                      className="gap-2 px-6 text-xs capitalize"
+                      variant={'ghost'}
+                      size={'sm'}
+                    >
+                      {district.length > 0 ? district : 'Feni'}{' '}
+                      <ChevronDown size={10} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>District</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    {districtsArr.map((itm) => (
+                      <DropdownMenuItem
+                        key={itm}
+                        onClick={() => handleDistrict(itm)}
+                      >
+                        {itm}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    {' '}
+                    <Button
+                      className="gap-2 px-6 text-xs capitalize"
+                      variant={'ghost'}
+                      size={'sm'}
+                    >
+                      {thana.length > 0 ? thana : 'Thana'}{' '}
+                      <ChevronDown size={10} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Thana</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    {thanaArr.map((itm) => (
+                      <DropdownMenuItem
+                        key={itm}
+                        onClick={() => handleThana(itm)}
+                      >
+                        {itm}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            {/* data table */}
+            <div className="rounded-md">
+              <DataTable columns={columns} loading={false} data={allData} />
+            </div>
+            {/* pagination */}
+            <div className="bg-table-header-bg flex justify-center md:justify-end px-4 py-6 md:py-2 text-xs items-center mt-8  rounded ">
               <div className="">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious href="#" />
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink size={'sm'} href="#">
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationNext href="#" />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+                <ReactPaginate
+                  previousLabel={
+                    <ChevronLeft
+                      size={16}
+                      className="size-9 p-2 rounded font-semibold border border-gray"
+                    />
+                  }
+                  nextLabel={
+                    <ChevronRight
+                      size={16}
+                      className="size-9 p-2 rounded font-semibold border border-gray"
+                    />
+                  }
+                  pageCount={pageCount || 1}
+                  activeClassName="border border-[#4200FF] text-[#4200FF] font-semibold"
+                  forcePage={currentPage !== 0 ? currentPage - 1 : 0}
+                  onPageChange={(page) => handlePagination(page)}
+                  pageClassName={
+                    'py-2 px-3.5 rounded font-semibold border border-gray'
+                  }
+                  nextLinkClassName={'page-link'}
+                  nextClassName={'page-item next'}
+                  previousClassName={'page-item prev'}
+                  previousLinkClassName={'page-link'}
+                  pageLinkClassName={'page-link'}
+                  containerClassName={'flex items-center'}
+                />
               </div>
             </div>
-          </div>
-        </Container>
+          </Container>
+        </div>
       </div>
-    </div>
+    </ClientComponent>
   );
 }

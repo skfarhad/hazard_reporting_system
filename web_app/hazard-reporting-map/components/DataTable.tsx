@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { Fragment } from 'react';
 export type TDataTableColumn = {
   title?: string;
@@ -24,7 +25,12 @@ export default function DataTable({ columns, loading = false, data }: TProps) {
                 <th
                   key={itm.title}
                   style={{ width: `${itm.width ? itm.width : '40px'}` }}
-                  className="p-2 bg-table-header-bg text-left font-semibold uppercase"
+                  className={cn(
+                    'py-4 px-3 bg-secondary-background text-left font-semibold uppercase',
+                    {
+                      'text-center': itm.header,
+                    }
+                  )}
                 >
                   {itm.title ? itm.title : itm.header(itm, index)}
                 </th>
@@ -41,7 +47,10 @@ export default function DataTable({ columns, loading = false, data }: TProps) {
             </tr>
           ) : (
             data?.map((column: any, index: number) => (
-              <tr className="hover:bg-gray/50" key={index + 1}>
+              <tr
+                className="hover:bg-gray/50 even:bg-table-header-bg"
+                key={index + 1}
+              >
                 {columns.map((c: any, indx: number) => (
                   <Fragment key={indx + 1}>
                     <td

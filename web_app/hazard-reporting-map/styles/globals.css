@@ -12,7 +12,9 @@
   --color-text-primary: #252525; /* General text color */
   --color-gray: 275, 24%, 90%; /* active nav item bg */
   --color-table-header-bg: 220, 60%, 98%;
-  --color-disable-bg: 209, 29%, 96%;
+  --color-disable-bg: 204, 26.3%, 96.3%;
+  --color-disable-border: 210, 36.8%, 85.1%;
+  --color-success: 90, 100%, 21.6%;
 }
 
 @media (prefers-color-scheme: dark) {

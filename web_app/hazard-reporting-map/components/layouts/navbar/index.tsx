@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Bell } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LiaMapMarkerAltSolid } from 'react-icons/lia';
@@ -40,7 +40,7 @@ export default function Navbar() {
   ];
   return (
     <header className="sticky top-0 text-black shadow-sm shadow-gray z-[99]">
-      <nav className="bg-secondary-background  text-card-foreground text-sm pt-2 md:pb-0 pb-2">
+      <nav className="bg-secondary-background  text-card-foreground text-sm pt-3.5 md:pb-0 pb-2">
         <Container>
           <ul className="flex md:items-end  items-center justify-between ">
             <li className=" flex gap-4 items-center ">
@@ -58,7 +58,7 @@ export default function Navbar() {
                     <Link key={index + 1} href={item.link}>
                       <div
                         className={cn(
-                          'flex gap-2 items-center py-2 rounded-t-md text-xs px-4',
+                          'flex gap-2 items-center py-2.5 rounded-t-md text-xs px-4',
                           {
                             'bg-gray text-zinc-800 border-b-[3px] border-secondary font-semibold':
                               item.link === pathname,
@@ -74,8 +74,8 @@ export default function Navbar() {
               </div>
             </li>
 
-            {/* user avatar */}
-            <div className="flex gap-4 items-center pb-2">
+            <div className="md:flex hidden gap-4 items-center pb-2">
+              {/* notification */}
               <div className="relative ">
                 <div className="absolute bg-destructive text-primary-background -top-3 -right-2.5 px-[5px] py-0 rounded-md text-[9px]">
                   <span>3</span>
@@ -84,7 +84,16 @@ export default function Navbar() {
               </div>
               {/* divider */}
               <div className="w-[2px] h-5 bg-gray"></div>
+              {/* user avatar */}
               <div className="size-8  bg-zinc-300 rounded-full"></div>
+            </div>
+            {/* mobile view */}
+            <div className="flex gap-2 items-center border border-gray shadow-sm px-2 py-1 rounded-full cursor-pointer md:hidden">
+              {/* user avatar */}
+              <div className="size-6  bg-zinc-300 rounded-full"></div>
+              <div className="text-secondary">
+                <Menu />
+              </div>
             </div>
           </ul>
         </Container>
