@@ -60,15 +60,12 @@ export default function Dashboard() {
       hidden: false,
     },
     {
-      title: 'Address',
-      selector: 'address',
-    },
-    {
-      title: 'Short Biography',
+      title: 'Description',
       selector: 'hazard_description',
     },
+
     {
-      title: 'Active Status',
+      title: 'Status',
       width: '40px',
       cell: (row) => {
         if (row.status === 'active') {
@@ -89,12 +86,8 @@ export default function Dashboard() {
     },
 
     {
-      title: 'Latitude',
-      selector: 'lat',
-    },
-    {
-      title: 'Longitude',
-      selector: 'lon',
+      title: 'Address',
+      selector: 'address',
     },
     {
       title: 'Action',
@@ -158,6 +151,12 @@ export default function Dashboard() {
     );
     setAllData(filteredData);
   };
+  const count = Number(Math.ceil(data.data.length / 5));
+
+  const indexOfLastData = currentPage * 5;
+  const indexOfFirstData = indexOfLastData - 5;
+
+  const dataSlice = data.data.slice(indexOfFirstData, indexOfLastData);
   return (
     <ClientComponent>
       <div className="h-screen bg-paper/10">
@@ -185,6 +184,7 @@ export default function Dashboard() {
                 <Input
                   onChange={handleSearch}
                   placeholder="Search..."
+                  value={searchInput}
                   icon={<Search size={16} />}
                 />
               </div>
@@ -274,7 +274,7 @@ export default function Dashboard() {
 
             {/* data table */}
             <div className="rounded-md">
-              <DataTable columns={columns} loading={false} data={allData} />
+              <DataTable columns={columns} loading={false} data={dataSlice} />
             </div>
             {/* pagination */}
             <div className="bg-table-header-bg flex justify-center md:justify-end px-4 py-6 md:py-2 text-xs items-center mt-8  rounded ">
@@ -292,18 +292,14 @@ export default function Dashboard() {
                       className="size-9 p-2 rounded font-semibold border border-gray"
                     />
                   }
-                  pageCount={pageCount || 1}
-                  activeClassName="border border-[#4200FF] text-[#4200FF] font-semibold"
+                  pageCount={count || 1}
+                  activeClassName="border border-t-[#4200FF] border-r-[#4200FF] border-l-[#4200FF] border-b-[#4200FF] text-[#4200FF] font-semibold"
                   forcePage={currentPage !== 0 ? currentPage - 1 : 0}
                   onPageChange={(page) => handlePagination(page)}
                   pageClassName={
-                    'py-2 px-3.5 rounded font-semibold border border-gray'
+                    'rounded py-2 font-semibold border border-gray'
                   }
-                  nextLinkClassName={'page-link'}
-                  nextClassName={'page-item next'}
-                  previousClassName={'page-item prev'}
-                  previousLinkClassName={'page-link'}
-                  pageLinkClassName={'page-link'}
+                  pageLinkClassName=" py-2 px-3.5 "
                   containerClassName={'flex items-center'}
                 />
               </div>

@@ -54,6 +54,72 @@
       "lon": 90.123,
       "contact": "0180000055",
       "status": "active"
+    },
+    {
+      "name": "Abdur Rahman",
+      "district": "Habiganj",
+      "address": "Dighinala, Habiganj",
+      "thana": "Dighinala",
+      "hazard_description": "Need doctor support",
+      "lat": 23.3122,
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
+    },
+    {
+      "name": "Abdul Hamid",
+      "district": "Feni",
+      "thana": "Parshuram",
+      "hazard_description": "Need food immediately",
+      "address": "Parshuram, Feni",
+      "lat": 23.3122,
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "inactive"
+    },
+    {
+      "name": "Abdul Hamid",
+      "district": "Feni",
+      "thana": "Parshuram",
+      "hazard_description": "Need food immediately",
+      "address": "Parshuram, Feni",
+      "lat": 23.3122,
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "inactive"
+    },
+    {
+      "name": "Akkas ali",
+      "district": "Noakhali",
+      "thana": "Parshuram",
+      "hazard_description": "Khabar dorkar joldi",
+      "address": "Parshuram, Noakhali",
+      "lat": 23.3122,
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
+    },
+    {
+      "name": "Abdur Rahman",
+      "district": "Habiganj",
+      "address": "Dighinala, Habiganj",
+      "thana": "Dighinala",
+      "hazard_description": "Need doctor support",
+      "lat": 23.3122,
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
+    },
+    {
+      "name": "Abdur Rahman",
+      "district": "MouloviBazar",
+      "thana": "Chandina",
+      "address": "Chandina, MouloviBazar",
+      "hazard_description": "Need relocation with boad",
+      "lat": 23.3122,
+      "lon": 90.123,
+      "contact": "0180000055",
+      "status": "active"
     }
   ]
 }
