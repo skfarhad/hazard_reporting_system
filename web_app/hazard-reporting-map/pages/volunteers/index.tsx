@@ -162,18 +162,23 @@ export default function Dashboard() {
       <div className="h-screen bg-paper/10">
         <div className="my-8">
           <Container>
-            <div className="flex justify-end gap-4 items-center pl-2 md:pl-0">
-              <Button size={'sm'} className="flex gap-2">
-                {' '}
-                <Plus size={16} /> Add volunteer
-              </Button>
-              <Button
-                size={'sm'}
-                variant={'destructive'}
-                className="flex gap-2"
-              >
-                <Trash size={16} /> Remove volunteer
-              </Button>
+            <div className="flex md:flex-row flex-col md:justify-between gap-4 md:gap-0 md:items-center pl-2 md:pl-0">
+              <div className="font-semibold">
+                <h2>All volunteers</h2>
+              </div>
+              <div className="flex gap-4">
+                <Button size={'sm'} className="flex gap-2">
+                  {' '}
+                  <Plus size={16} /> Add volunteer
+                </Button>
+                <Button
+                  size={'sm'}
+                  variant={'destructive'}
+                  className="flex gap-2"
+                >
+                  <Trash size={16} /> Remove volunteer
+                </Button>
+              </div>
             </div>
             {/* filters */}
             <div className="bg-secondary-background px-4 py-8 flex md:gap-8 gap-2 flex-wrap mt-3 rounded">
