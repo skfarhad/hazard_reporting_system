@@ -1,9 +1,10 @@
+import { icons } from '@/assets/icons';
 import { cn } from '@/lib/utils';
 import { Bell, Menu } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LiaMapMarkerAltSolid } from 'react-icons/lia';
-import { LuFlagTriangleRight, LuUsers2 } from 'react-icons/lu';
 import { MdOutlineDashboard } from 'react-icons/md';
 import Container from '../Container';
 
@@ -15,25 +16,40 @@ export default function Navbar() {
   const navItems = [
     {
       title: 'Dashboard',
-      icon: <MdOutlineDashboard />,
+      icon: <MdOutlineDashboard size={20} />,
       link: '/',
       isHidden: false,
     },
-    {
-      title: 'Volunteers',
-      icon: <LuUsers2 />,
-      link: '/volunteers',
-      isHidden: false,
-    },
+
     {
       title: 'Incidents',
-      icon: <LuFlagTriangleRight />,
+      icon: (
+        <Image
+          height={20}
+          width={20}
+          src={icons.IncidentIcon}
+          alt="incident icon"
+        />
+      ),
       link: '/incidents',
       isHidden: false,
     },
     {
-      title: 'Location',
-      icon: <LiaMapMarkerAltSolid />,
+      title: 'Volunteers',
+      icon: <Image height={20} width={20} src={icons.Users} alt="users icon" />,
+      link: '/volunteers',
+      isHidden: false,
+    },
+    {
+      title: 'Analytics',
+      icon: (
+        <Image
+          height={20}
+          width={20}
+          src={icons.Location}
+          alt="Analytics icon"
+        />
+      ),
       link: '/location',
       isHidden: false,
     },

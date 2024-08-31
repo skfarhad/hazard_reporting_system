@@ -1,4 +1,6 @@
+import { icons } from '@/assets/icons';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import { Fragment } from 'react';
 export type TDataTableColumn = {
   title?: string;
@@ -8,6 +10,7 @@ export type TDataTableColumn = {
   type?: 'action' | 'number';
   cell?: (col: Record<string, any>, index: number) => void;
   header?: (col: Record<string, any>, index: number) => void;
+  sortable?: boolean;
 };
 type TProps = {
   columns: TDataTableColumn[];
@@ -26,13 +29,25 @@ export default function DataTable({ columns, loading = false, data }: TProps) {
                   key={itm.title}
                   style={{ width: `${itm.width ? itm.width : '40px'}` }}
                   className={cn(
-                    'py-4 px-3 bg-secondary-background text-left font-semibold uppercase',
+                    'py-4 px-3 bg-secondary-background text-left font-semibold uppercase ',
                     {
                       'text-center': itm.header,
                     }
                   )}
                 >
-                  {itm.title ? itm.title : itm.header(itm, index)}
+                  <div
+                    className={cn('', {
+                      'flex gap-2': itm.sortable,
+                    })}
+                  >
+                    {itm.title ? itm.title : itm.header(itm, index)}{' '}
+                    {itm.sortable ? (
+                      <div className="flex flex-col gap-[2px]">
+                        <Image src={icons.ChevronUp} alt="icon" />
+                        <Image src={icons.ChevronDown} alt="icon" />
+                      </div>
+                    ) : null}
+                  </div>
                 </th>
               );
             })}

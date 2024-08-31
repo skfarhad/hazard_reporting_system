@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 import { Input } from '@/components/ui/input';
 
+import ClientComponent from '@/components/ClientComponent';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +29,6 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import ClientComponent from '@/components/ClientComponent';
 
 export default function Dashboard() {
   const [searchInput, setSearchInput] = useState('');
@@ -47,6 +47,7 @@ export default function Dashboard() {
     {
       title: '#',
       cell: (row, i) => <span className="font-semibold">{i + 1}</span>,
+      sortable: true,
     },
     {
       title: 'Contact',
@@ -57,6 +58,7 @@ export default function Dashboard() {
           <p>{row.contact}</p>
         </div>
       ),
+      sortable: true,
       hidden: false,
     },
     {
@@ -167,21 +169,20 @@ export default function Dashboard() {
                 <h2>All volunteers</h2>
               </div>
               <div className="flex gap-4">
-                <Button size={'sm'} className="flex gap-2">
+                <Button className="flex gap-2 text-xs px-6">
                   {' '}
                   <Plus size={16} /> Add volunteer
                 </Button>
                 <Button
-                  size={'sm'}
                   variant={'destructive'}
-                  className="flex gap-2"
+                  className="flex gap-2 text-xs px-6"
                 >
                   <Trash size={16} /> Remove volunteer
                 </Button>
               </div>
             </div>
             {/* filters */}
-            <div className="bg-secondary-background px-4 py-8 flex md:gap-8 gap-2 flex-wrap mt-3 rounded">
+            <div className="bg-secondary-background px-4 py-8 flex md:gap-24 gap-2 flex-wrap mt-3 rounded">
               <div className="flex gap-4">
                 <button className="border border-gray shadow-sm shadow-gray p-3 bg-primary-background rounded-md">
                   <Filter size={14} />
