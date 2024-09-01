@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import AddVolunteer from '@/components/modals/volunteers/AddVolunteer';
 
 export default function Dashboard() {
   const [searchInput, setSearchInput] = useState('');
@@ -169,10 +170,11 @@ export default function Dashboard() {
                 <h2>All volunteers</h2>
               </div>
               <div className="flex gap-4">
-                <Button className="flex gap-2 text-xs px-6">
+                {/* <Button className="flex gap-2 text-xs px-6">
                   {' '}
                   <Plus size={16} /> Add volunteer
-                </Button>
+                </Button> */}
+                <AddVolunteer />
                 <Button
                   variant={'destructive'}
                   className="flex gap-2 text-xs px-6"

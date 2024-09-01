@@ -53,6 +53,9 @@ const config = {
         'disable-bg': 'hsla(var(--color-disable-bg))',
         'status-success': 'hsla(var(--color-success))',
       },
+      fontFamily: {
+        poppins: ['var(--font-poppins)'],
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],

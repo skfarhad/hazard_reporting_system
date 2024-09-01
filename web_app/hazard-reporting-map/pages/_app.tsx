@@ -7,10 +7,11 @@ const poppins = Poppins({
   weight: ['400', '600', '800', '900'],
   style: ['normal', 'italic'],
   subsets: ['latin'],
+  variable: '--font-poppins',
 });
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={`relative text-sm ${poppins.className}`}>
+    <main className={`relative text-sm ${poppins.variable} font-poppins`}>
       <Navbar />
       <Component {...pageProps} />
     </main>

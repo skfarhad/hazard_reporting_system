@@ -55,7 +55,7 @@ export default function Navbar() {
     },
   ];
   return (
-    <header className="sticky top-0 text-black shadow-sm shadow-gray z-[99]">
+    <header className="sticky top-0 text-black shadow-sm shadow-gray z-[10]">
       <nav className="bg-secondary-background  text-card-foreground text-sm pt-3.5 md:pb-0 pb-2">
         <Container>
           <ul className="flex md:items-end  items-center justify-between ">
