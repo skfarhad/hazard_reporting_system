@@ -31,36 +31,31 @@ import { MarkerData } from '@/types/MarkerData';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
-const dummyMarkers: MarkerData[] = [
-  {
-    id: '1',
-    coordinates: { lat: 23.555, lng: 90.76335 },
-    properties: {
-      title: 'Marker 1',
-      description: 'This is marker 1.',
-    },
-  },
-];
 
 export default function AddVolunteer() {
   const center = { lat: 23.4667, lng: 90.4354546 };
-  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const mapContainer = useRef<HTMLDivElement | null>('');
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
+  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    if (map) return;
-    const mapInstance = new mapboxgl.Map({
-      container: mapContainer.current!,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [lng, lat],
-      zoom: zoom,
-    });
-    setMap(mapInstance);
-    return () => mapInstance.remove();
-  }, []);
+  // useEffect(() => {
+  //   setIsClient(true);
+  //   if (!isClient || map) return;
+
+  //     const mapInstance = new mapboxgl.Map({
+  //       container: mapContainer?.current!,
+  //       style: 'mapbox://styles/mapbox/streets-v11',
+  //       center: center,
+  //       zoom: zoom,
+  //     });
+
+  //     setMap(mapInstance);
+
+  //   return () => mapInstance.remove();
+  // }, [isClient]);
 
   return (
     <Drawer>
@@ -209,17 +204,23 @@ export default function AddVolunteer() {
                     <Textarea placeholder="Write a few sentences about the hazard..." />
                   </div>
                 </div>
-                <div className="md:w-1/2 w-full  border">
+                <div className="md:w-1/2 w-full  border" ref={mapContainer}>
                   {' '}
-                  <div ref={mapContainer} className="h-[50vh] w-full" />
+                  <div style={{ width: '100%', height: '60vh' }} />
                 </div>
               </div>
             </div>
             <DrawerFooter>
-              <Button>Submit</Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
+              <div className="flex md:flex-row flex-col justify-center items-center gap-5 ">
+                <DrawerClose asChild>
+                  <Button variant="outline" className="w-[290px]">
+                    Cancel
+                  </Button>
+                </DrawerClose>
+                <Button variant={'purple'} className="w-[290px] ">
+                  Confirm
+                </Button>
+              </div>
             </DrawerFooter>
           </Container>
         </div>

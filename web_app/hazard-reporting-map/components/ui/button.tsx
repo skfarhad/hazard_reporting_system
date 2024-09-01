@@ -22,6 +22,7 @@ const buttonVariants = cva(
         ghost:
           'bg-disable-bg border border-[#CBD9E7] dark:hover:bg-slate-800 dark:hover:text-slate-50',
         link: 'text-slate-900 underline-offset-4 hover:underline dark:text-slate-50',
+        purple: 'bg-purple hover:bg-purple/90 text-white',
         pageActive:
           'border-[2px] border-[#4200FF] text-[#4200FF] font-semibold',
       },

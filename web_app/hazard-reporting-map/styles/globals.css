@@ -15,6 +15,7 @@
   --color-disable-bg: 204, 26.3%, 96.3%;
   --color-disable-border: 210, 36.8%, 85.1%;
   --color-success: 90, 100%, 21.6%;
+  --color-purple: 258.8, 63.3%, 59.4%;
 }
 
 @media (prefers-color-scheme: dark) {
