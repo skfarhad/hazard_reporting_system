@@ -57,8 +57,7 @@
 
 - **Incident API**: 
   Allows providers to create incidents. Requires API key for authentication.
-      
-  Allows you to retrieve information about incidents. You can either fetch details for a specific incident by its ID or retrieve a list of all incidents. Requires API key for authentication.
+  
 - **Volunteer API**: Provides a list of active volunteers. No authentication required.
 
 ## How to Use the APIs
