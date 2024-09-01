@@ -133,8 +133,8 @@ export default function Dashboard() {
     if (status === 'All') {
       setAllData(data.data);
     } else {
-      const filteredData = data.data.filter(
-        (itm) => itm.status.toLocaleLowerCase() === status.toLocaleLowerCase()
+      const filteredData = allData.filter(
+        (itm) => itm.status.toLowerCase() === status.toLowerCase()
       );
       setAllData(filteredData);
     }
@@ -142,14 +142,14 @@ export default function Dashboard() {
   const handleDistrict = (district: string) => {
     setDistrict(district);
     const filteredData = data.data.filter(
-      (itm) => itm.district.toLocaleLowerCase() === district.toLocaleLowerCase()
+      (itm) => itm.district.toLowerCase() === district.toLowerCase()
     );
     setAllData(filteredData);
   };
   const handleThana = (thana: string) => {
     setThana(thana);
     const filteredData = data.data.filter(
-      (itm) => itm.thana.toLocaleLowerCase() === thana.toLocaleLowerCase()
+      (itm) => itm.thana.toLowerCase() === thana.toLowerCase()
     );
     setAllData(filteredData);
   };
@@ -158,7 +158,7 @@ export default function Dashboard() {
   const indexOfLastData = currentPage * 5;
   const indexOfFirstData = indexOfLastData - 5;
 
-  const dataSlice = data.data.slice(indexOfFirstData, indexOfLastData);
+  const dataSlice = allData.slice(indexOfFirstData, indexOfLastData);
   return (
     <ClientComponent>
       <div className="h-screen bg-paper/10">
@@ -182,7 +182,7 @@ export default function Dashboard() {
               </div>
             </div>
             {/* filters */}
-            <div className="bg-secondary-background px-4 py-8 flex md:gap-24 gap-2 flex-wrap mt-3 rounded">
+            <div className="bg-secondary-background px-4 py-8 flex md:gap-24 gap-2 flex-wrap mt-3 rounded ">
               <div className="flex gap-4">
                 <button className="border border-gray shadow-sm shadow-gray p-3 bg-primary-background rounded-md">
                   <Filter size={14} />
@@ -194,7 +194,7 @@ export default function Dashboard() {
                   icon={<Search size={16} />}
                 />
               </div>
-              <div className="flex gap-3 flex-wrap">
+              <div className="flex gap-3 flex-wrap ">
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     {' '}
@@ -283,7 +283,7 @@ export default function Dashboard() {
               <DataTable columns={columns} loading={false} data={dataSlice} />
             </div>
             {/* pagination */}
-            <div className="bg-table-header-bg flex justify-center md:justify-end px-4 py-6 md:py-2 text-xs items-center mt-8  rounded ">
+            <div className=" flex justify-center md:justify-end px-4 py-6 md:py-2 text-xs items-center mt-8  rounded ">
               <div className="">
                 <ReactPaginate
                   previousLabel={
