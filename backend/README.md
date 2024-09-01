@@ -66,7 +66,6 @@
 - **Incident API**: 
   To create an incident, make a POST request to `/api/incidents/` with the required fields and include the API key in the `Authorization` header in the format `Api-Key <your_api_key>`.
   
- To retrieve incident data, you can make a GET request to the `/api/incidents/view/` endpoint. This can be used to fetch either a list of all incidents or a specific incident by its `/api/incidents/view/<id>` ID. The request must include an API key in the `Authorization` header in the format `Api-Key <your_api_key>`.
   
 - **Volunteer API**: To retrieve the list of active volunteers, make a GET request to `/api/volunteers/`. No authentication is required.
 

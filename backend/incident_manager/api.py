@@ -8,19 +8,6 @@ from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-class IncidentApiView(APIView):
-    def get(request, id=None):
-        if id:
-            try:
-                incident = Incident.objects.get(id=id)
-                serializer = IncidentSerializer(incident)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except Incident.DoesNotExist:
-                return Response({'error': 'Incident not found'}, status=status.HTTP_400_BAD_REQUEST)
-        incidents = Incident.objects.all()
-        serializer = IncidentSerializer(incidents, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class IncidentCreateView(APIView):
     permission_classes = [HasAPIKey]

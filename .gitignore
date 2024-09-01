@@ -6,8 +6,8 @@ __pycache__/
 # C extensions
 *.so
 staticfiles/
-backend/Incident
-backend/media
+/backend/Incident/
+/backend/media/
 # Distribution / packaging
 .Python
 build/
