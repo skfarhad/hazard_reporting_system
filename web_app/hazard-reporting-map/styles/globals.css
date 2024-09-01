@@ -3,9 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-bg-secondary: 293, 100%, 98%; /* Background of the top bar */
+  --color-bg-primary: 0, 0%, 100%; /* Background of the content area */
+  --color-primary-button: 173, 75%, 41%; /* "Add button */
+  --color-secondary: 257, 19.8%, 54.5%;
+  --color-destructive: 335, 79%, 52%; /* Delete button */
+  --color-status-active: 226.6, 100%, 63.9%; /* "Active" status label */
+  --color-text-primary: #252525; /* General text color */
+  --color-gray: 275, 24%, 90%; /* active nav item bg */
+  --color-table-header-bg: 220, 60%, 98%;
+  --color-disable-bg: 204, 26.3%, 96.3%;
+  --color-disable-border: 210, 36.8%, 85.1%;
+  --color-success: 90, 100%, 21.6%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,15 +24,17 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  /* color: rgb(var(--color-text-primary)); */
+  color: black;
+  background-color: hsla(var(--color-bg-primary));
+  height: 100%;
 }
 
 @layer utilities {
