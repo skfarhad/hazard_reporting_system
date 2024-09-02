@@ -57,16 +57,36 @@
 
 - **Incident API**: 
   Allows providers to create incidents. Requires API key for authentication.
-  
+
 - **Volunteer API**: Provides a list of active volunteers. No authentication required.
 
 ## How to Use the APIs
 
-- **Incident API**: 
+### Incident API
   To create an incident, make a POST request to `/api/incidents/` with the required fields and include the API key in the `Authorization` header in the format `Api-Key <your_api_key>`.
+
+### Incident Search and Filter API
+  The `SearchFilterIncidentAPIView` allows users to filter and search `Incident` records based on. Requires API key for authentication.
+- **District** and **Thana**
+- **Address** (full-text search)
+- **Latitude/Longitude** (geographic proximity)
+
+### API Details
+
+- **Endpoint:** `/api/incidents/search/`
+- **Method:** `POST`
+- 
+### Request Parameters
+
+- `district` (optional): District name to filter by.
+- `thana` (optional): Thana name to filter by.
+- `address` (optional): Address to search via full-text.
+- `latitude` (optional): Latitude for geographic search.
+- `longitude` (optional): Longitude for geographic search.
   
   
-- **Volunteer API**: To retrieve the list of active volunteers, make a GET request to `/api/volunteers/`. No authentication is required.
+### Volunteer API
+ To retrieve the list of active volunteers, make a GET request to `/api/volunteers/`. No authentication is required.
 
 ## Signals and Background Tasks
 

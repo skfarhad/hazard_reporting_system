@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models
-
+from django.contrib.postgres.search import SearchVector
 from incident_manager.constants import IncidentStatus, TaskStatus
 from .provider import Provider
 from .address import Thana

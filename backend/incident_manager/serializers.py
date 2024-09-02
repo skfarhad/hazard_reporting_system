@@ -38,7 +38,11 @@ class IncidentSerializer(serializers.ModelSerializer):
         return incident
 
     def get_location_latitude(self, obj):
-        return obj.location.y
+        if obj.location:
+            return obj.location.y
+        return None
 
     def get_location_longitude(self, obj):
-        return obj.location.x
+        if obj.location:
+            return obj.location.x
+        return None
