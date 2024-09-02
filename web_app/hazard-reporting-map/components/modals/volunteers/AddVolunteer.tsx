@@ -43,6 +43,9 @@ export default function AddVolunteer() {
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
     if (!isClient || map) return;
 
     const mapInstance = new mapboxgl.Map({
@@ -204,9 +207,14 @@ export default function AddVolunteer() {
                     <Textarea placeholder="Write a few sentences about the hazard..." />
                   </div>
                 </div>
-                <div className="md:w-1/2 w-full  border" ref={mapContainer}>
+                <div className="md:w-1/2 w-full  border">
                   {' '}
-                  <div style={{ width: '100%', height: '60vh' }} />
+                  <div className="flex-grow">
+                    <div
+                      ref={mapContainer}
+                      style={{ width: '100%', height: '90vh' }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
