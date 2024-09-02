@@ -34,28 +34,28 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
 export default function AddVolunteer() {
   const center = { lat: 23.4667, lng: 90.4354546 };
-  const mapContainer = useRef<HTMLDivElement | null>('');
+  const mapContainer = useRef<HTMLDivElement | null>(null);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
   const [isClient, setIsClient] = useState(false);
 
-  // useEffect(() => {
-  //   setIsClient(true);
-  //   if (!isClient || map) return;
+  useEffect(() => {
+    setIsClient(true);
+    if (!isClient || map) return;
 
-  //     const mapInstance = new mapboxgl.Map({
-  //       container: mapContainer?.current!,
-  //       style: 'mapbox://styles/mapbox/streets-v11',
-  //       center: center,
-  //       zoom: zoom,
-  //     });
+    const mapInstance = new mapboxgl.Map({
+      container: mapContainer?.current!,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: center,
+      zoom: zoom,
+    });
 
-  //     setMap(mapInstance);
+    setMap(mapInstance);
 
-  //   return () => mapInstance.remove();
-  // }, [isClient]);
+    return () => mapInstance.remove();
+  }, [isClient]);
 
   return (
     <Drawer>
