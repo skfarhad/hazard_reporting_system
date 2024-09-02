@@ -1,5 +1,5 @@
 import { icons } from '@/assets/icons';
-import { cn } from '@/libtest/utils';
+import { cn } from '@/libs/utils';
 import { Bell, Menu } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

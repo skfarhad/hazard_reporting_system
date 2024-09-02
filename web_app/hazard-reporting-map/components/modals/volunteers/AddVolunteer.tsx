@@ -1,4 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Minus, Plus, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -32,13 +39,22 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
-export default function AddVolunteer() {
+type TDrawerProps = {
+  open: boolean;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  children: ReactNode;
+};
+
+export default function AddVolunteer({
+  open,
+  onOpenChange,
+  children,
+}: TDrawerProps) {
+  const zoom = 6;
   const center = { lat: 23.4667, lng: 90.4354546 };
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
+
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -46,28 +62,35 @@ export default function AddVolunteer() {
   }, []);
 
   useEffect(() => {
-    if (!isClient || map) return;
+    console.log(mapContainer.current);
 
-    const mapInstance = new mapboxgl.Map({
-      container: mapContainer?.current!,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: center,
-      zoom: zoom,
-    });
+    if (open && isClient && !map) {
+      setTimeout(() => {
+        const mapInstance = new mapboxgl.Map({
+          container: mapContainer.current!,
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: center,
+          zoom: zoom,
+        });
+        setMap(mapInstance);
+      }, 200);
+    }
+  }, [open, isClient]);
+  console.log('map', map, open);
 
-    setMap(mapInstance);
-
-    return () => mapInstance.remove();
-  }, [isClient]);
-
+  useEffect(() => {
+    if (!open && map) {
+      map.remove();
+      setMap(null);
+    }
+  }, [open, map]);
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button className="flex gap-2 text-xs px-6 ">
-          {' '}
-          <Plus size={16} /> Add volunteer
-        </Button>
-      </DrawerTrigger>
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      onClose={() => onOpenChange(!open)}
+    >
+      <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <div className="h-[90vh] overflow-y-auto">
           <Container className="mx-auto w-full ">
@@ -212,7 +235,7 @@ export default function AddVolunteer() {
                   <div className="flex-grow">
                     <div
                       ref={mapContainer}
-                      style={{ width: '100%', height: '90vh' }}
+                      style={{ width: '100%', height: '60vh' }}
                     />
                   </div>
                 </div>

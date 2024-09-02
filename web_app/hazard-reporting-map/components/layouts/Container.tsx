@@ -1,4 +1,4 @@
-import { cn } from '@/libtest/utils';
+import { cn } from '@/libs/utils';
 import React from 'react';
 
 type TProps = {
