@@ -118,7 +118,7 @@ export default function AddVolunteer({
                 <div className="md:w-1/2 w-full  p-3 flex flex-col gap-4">
                   {/* name, number, org */}
                   <div className="w-full flex flex-col gap-5 ">
-                    <div className="flex flex-col md:flex-row md:items-center w-full  gap-2 md:gap-24">
+                    <div className="flex flex-col lg:flex-row lg:items-center w-full  gap-2 2xl:gap-24 lg:gap-18">
                       <Label className="w-[160px]  text-nowrap">
                         Volunteer name
                       </Label>
@@ -127,7 +127,7 @@ export default function AddVolunteer({
                         placeholder="Name of the Volunteer"
                       />
                     </div>
-                    <div className="flex flex-col md:flex-row md:items-center w-full  gap-2 md:gap-24">
+                    <div className="flex flex-col lg:flex-row lg:items-center w-full  gap-2 2xl:gap-24 lg:gap-18">
                       <Label className="w-[160px]  text-nowrap">
                         Contact number
                       </Label>
@@ -136,7 +136,7 @@ export default function AddVolunteer({
                         placeholder="+8801800xxxxxxx"
                       />
                     </div>
-                    <div className="flex flex-col md:flex-row md:items-center w-full  gap-2 md:gap-24">
+                    <div className="flex flex-col lg:flex-row lg:items-center w-full  gap-2 2xl:gap-24 lg:gap-18">
                       <Label className="w-[160px]  text-nowrap">
                         Organization
                       </Label>
@@ -148,7 +148,7 @@ export default function AddVolunteer({
                   </div>
                   <Separator />
                   {/* status */}
-                  <div className="flex items-center gap-20 w-full  md:w-1/2">
+                  <div className="flex items-center gap-20 w-full lg:w-1/2">
                     <Label className="">Status</Label>
                     <Select value={'active'} onValueChange={(value) => {}}>
                       <SelectTrigger className="w-full bg-[#F3F6F8]">
@@ -161,7 +161,7 @@ export default function AddVolunteer({
                     </Select>
                   </div>
                   {/* district  , thana*/}
-                  <div className="flex md:gap-6 gap-3 md:flex-row flex-col">
+                  <div className="flex md:gap-6 gap-3 lg:flex-row flex-col">
                     <div className="flex items-center gap-20 w-full">
                       <Label className="">District</Label>
                       <Select value={'Feni'} onValueChange={(value) => {}}>
@@ -207,7 +207,7 @@ export default function AddVolunteer({
                     />
                   </div>
                   {/* latitude and longitude */}
-                  <div className="flex gap-3 md:gap-6 flex-col md:flex-row">
+                  <div className="flex gap-3 md:gap-6 flex-col lg:flex-row">
                     <div className="flex flex-col md:flex-row justify-between md:items-center w-full">
                       <Label className=" w-[160px]">Latitude</Label>
                       <Input
@@ -230,7 +230,7 @@ export default function AddVolunteer({
                     <Textarea placeholder="Write a few sentences about the hazard..." />
                   </div>
                 </div>
-                <div className="md:w-1/2 w-full  border">
+                <div className="md:w-1/2 w-full  rounded overflow-hidden">
                   {' '}
                   <div className="flex-grow">
                     <div
