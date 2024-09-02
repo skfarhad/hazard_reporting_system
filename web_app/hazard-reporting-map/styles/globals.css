@@ -70,7 +70,7 @@ body {
   }
 
   .login-form {
-    @apply flex flex-col my-6;
+    @apply flex flex-col my-3;
   }
 
   .login-form div {
@@ -89,6 +89,8 @@ body {
     @apply bg-gray-500 cursor-default
   }
 }
+
+
 
 .mapboxgl-popup-content {
   background: transparent !important;

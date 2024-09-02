@@ -34,17 +34,18 @@ const LoginForm = () => {
             {error && <div className="text-xl text-red-500 text-center">{error}</div>}
             <form className="login-form" onSubmit={onSubmit}>
                 <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" name="email" id="email" />
+                    <label htmlFor="email" className="text-gray-600">Email</label>
+                    <input type="email" name="email" id="email" placeholder="Enter your email address" />
                 </div>
 
                 <div>
-                    <label htmlFor="password">Password</label>
+                    <label htmlFor="password" className="text-gray-600">Password</label>
                     <div className="relative w-full">
                         <input
                             type={isPasswordVisible ? "text" : "password"}
-                            placeholder="Password"
+                            placeholder="Enter your Password"
                             className="w-full px-4 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
+
                         />
                         <button
                             className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600"

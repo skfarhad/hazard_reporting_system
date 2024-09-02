@@ -41,33 +41,49 @@ const RegistrationForm = () => {
             {error && <div className="text-2xl text-center text-red-500">{error}</div>}
             <form className="login-form" onSubmit={onSubmit}>
                 <div>
-                    <label htmlFor="fname">Full Name</label>
-                    <input type="text" name="fname" id="fname" />
+                    <label htmlFor="fname" className="text-gray-600">
+                        Full Name
+                    </label>
+                    <input type="text" name="fname" id="fname" placeholder="Enter your name" />
                 </div>
 
                 <div>
-                    <label htmlFor="mobile">Mobile No.</label>
-                    <input type="text" name="mobile" id="mobile" />
+                    <label htmlFor="mobile" className="text-gray-600">
+                        Mobile No.
+                    </label>
+                    <input type="text" name="mobile" id="mobile" placeholder="Enter your mobile number" />
                 </div>
 
                 <div>
-                    <label htmlFor="organization">Organization</label>
-                    <input type="text" name="organization" id="organization" />
+                    <label htmlFor="organization" className="text-gray-600">
+                        Organization
+                    </label>
+
+                    <select
+                        placeholder="Choose your organization"
+                        name="organization"
+                        id="organization"                        
+                    >
+                        <option value="BRAC">BRAC</option>
+                    </select>
                 </div>
 
                 <div>
-                    <label htmlFor="thana">Thana</label>
-                    <input type="text" name="thana" id="thana" />
+                    <label htmlFor="thana" className="text-gray-600">
+                        Thana
+                    </label>
+                    <select placeholder="Choose your thana" name="thana" id="thana">
+                        <option value="Feni">Feni</option>
+                    </select>
                 </div>
 
                 <div>
-                    <label htmlFor="organization">Organization</label>
-                    <input type="organization" name="organization" id="organization" />
-                </div>
-
-                <div>
-                    <label htmlFor="zilla">Zilla</label>
-                    <input type="text" name="zilla" id="zilla" />
+                    <label htmlFor="zilla" className="text-gray-600">
+                        Zilla
+                    </label>
+                    <select placeholder="Choose your zilla" name="zilla" id="zilla">
+                        <option value="Cumilla">Cumilla</option>
+                    </select>
                 </div>
 
                 <div className="flex flex-row">

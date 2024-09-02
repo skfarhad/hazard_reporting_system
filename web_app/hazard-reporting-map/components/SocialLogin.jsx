@@ -17,7 +17,7 @@ const SocialLogins = ({ mode }) => {
                     onClick={() => {
                         handleAuth("google");
                     }}
-                    className=" w-full mt-4 py-2 border-gray-600/30 border rounded-md flex items-center gap-2 justify-center"
+                    className=" w-full border-gray-600/30 border rounded-md flex items-center gap-2 justify-center"
                 >
                     <Image src="/google.png" alt="google" width={40} height={40} />
                     <span>Continue with Google</span>
