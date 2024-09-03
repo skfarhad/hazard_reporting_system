@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Minus, Plus, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,7 +23,8 @@ import Container from '@/components/layouts/Container';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import mapboxgl, { LngLatLike } from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl';
+import { SearchBox } from '@mapbox/search-js-react';
 import {
   Select,
   SelectContent,
@@ -37,7 +38,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { MarkerData } from '@/types/MarkerData';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
+const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
+
+mapboxgl.accessToken = accessToken;
 
 type TDrawerProps = {
   open: boolean;
@@ -230,14 +233,31 @@ export default function AddVolunteer({
                     <Textarea placeholder="Write a few sentences about the hazard..." />
                   </div>
                 </div>
-                <div className="md:w-1/2 w-full  rounded overflow-hidden">
-                  {' '}
-                  <div className="flex-grow">
-                    <div
-                      ref={mapContainer}
-                      style={{ width: '100%', height: '60vh' }}
+                <div className="md:w-1/2 w-full  rounded overflow-hidden relative">
+                  <div className="w-3/5  absolute  volunteer-form-map left-5 top-5 rounded-full  z-[10] ">
+                    <SearchBox
+                      accessToken={accessToken}
+                      map={map}
+                      mapboxgl={mapboxgl}
+                      value={''}
+                      placeholder="Search location"
+                      onChange={(d) => {
+                        // setInputValue(d);
+                      }}
+                      marker
+                      theme={{
+                        variables: {
+                          unit: '14px',
+                          borderRadius: '20px',
+                          boxShadow: 'none',
+                        },
+                      }}
                     />
                   </div>
+                  <div
+                    ref={mapContainer}
+                    style={{ width: '100%', height: '60vh' }}
+                  />
                 </div>
               </div>
             </div>

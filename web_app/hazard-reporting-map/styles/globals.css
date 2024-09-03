@@ -47,3 +47,17 @@ body {
 .mapboxgl-popup-content {
   background: transparent !important;
 }
+.mbx0b7a4510--SearchIcon {
+  right: 0;
+}
+
+.volunteer-form-map input {
+  background-color: hsla(var(--color-bg-secondary));
+  color: #49454f;
+  padding: 10px 30px;
+  font-weight: semibold;
+  border-radius: 20px;
+}
+/* .volunteer-form-map svg {
+  display: none;
+} */

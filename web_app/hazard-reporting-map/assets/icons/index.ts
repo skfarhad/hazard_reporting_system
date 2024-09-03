@@ -4,6 +4,7 @@ import IncidentIcon from './incident.svg';
 import Users from './users.svg';
 import Location from './location.svg';
 import Location2 from './loation2.svg';
+import Magnifier from './magnifier.svg';
 
 export const icons = {
   ChevronDown,
@@ -12,4 +13,5 @@ export const icons = {
   Users,
   Location,
   Location2,
+  Magnifier,
 };
