@@ -37,6 +37,7 @@ import { icons } from '@/assets/icons';
 import { Textarea } from '@/components/ui/textarea';
 import { MarkerData } from '@/types/MarkerData';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { toast } from 'sonner';
 
 const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
@@ -49,11 +50,25 @@ type TDrawerProps = {
   children: ReactNode;
 };
 
+const initialFormInfo = {
+  volunteerName: '',
+  contactNumber: '',
+  organization: '',
+  status: '',
+  district: '',
+  thana: '',
+  address: '',
+  lat: '',
+  lon: '',
+  biography: '',
+};
 export default function AddVolunteer({
   open,
   onOpenChange,
   children,
 }: TDrawerProps) {
+  const [formInfo, setFormInfo] = useState({ ...initialFormInfo });
+  const [isFormLoading, setIsFormLoading] = useState(false);
   const zoom = 6;
   const center = { lat: 23.4667, lng: 90.4354546 };
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -66,8 +81,6 @@ export default function AddVolunteer({
   }, []);
 
   useEffect(() => {
-    console.log(mapContainer.current);
-
     if (open && isClient && !map) {
       setTimeout(() => {
         const mapInstance = new mapboxgl.Map({
@@ -80,7 +93,6 @@ export default function AddVolunteer({
       }, 200);
     }
   }, [open, isClient]);
-  console.log('map', map, open);
 
   useEffect(() => {
     if (!open && map) {
@@ -88,6 +100,50 @@ export default function AddVolunteer({
       setMap(undefined);
     }
   }, [open, map]);
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormInfo({ ...formInfo, [name]: value });
+  };
+
+  const handleDropDownChange = (value: string, name: string) => {
+    setFormInfo({ ...formInfo, [name]: value });
+  };
+
+  const handleFormSubmit = () => {
+    setIsFormLoading(true);
+    const promise = () =>
+      new Promise((resolve) =>
+        setTimeout(() => resolve(onOpenChange(!open)), 2000)
+      );
+
+    toast.promise(promise, {
+      loading: 'Wait a second...',
+      success: () => {
+        setIsFormLoading(false);
+        return `Volunteer added!`;
+      },
+      error: 'Error',
+    });
+  };
+
+  const handleDelete = () => {
+    setIsFormLoading(true);
+    const promise = () =>
+      new Promise((resolve) =>
+        setTimeout(() => resolve(onOpenChange(!open)), 2000)
+      );
+
+    toast.promise(promise, {
+      loading: 'Wait a second...',
+      success: () => {
+        setIsFormLoading(false);
+        return `Volunteer removed!`;
+      },
+      error: 'Error',
+    });
+  };
   return (
     <Drawer
       open={open}
@@ -103,7 +159,12 @@ export default function AddVolunteer({
                 Add Volunteer
               </DrawerTitle>
               <div className="flex justify-end gap-3">
-                <Button variant={'danger'} className="px-8">
+                <Button
+                  onClick={handleDelete}
+                  variant={'danger'}
+                  className="px-8"
+                  disabled={isFormLoading}
+                >
                   Delete
                 </Button>
                 <DrawerClose asChild>
@@ -129,6 +190,10 @@ export default function AddVolunteer({
                       <Input
                         className=" w-full border"
                         placeholder="Name of the Volunteer"
+                        name="volunteerName"
+                        onChange={handleInputChange}
+                        value={formInfo.volunteerName}
+                        disabled={isFormLoading}
                       />
                     </div>
                     <div className="flex flex-col lg:flex-row lg:items-center w-full  gap-2 2xl:gap-24 lg:gap-18">
@@ -138,6 +203,10 @@ export default function AddVolunteer({
                       <Input
                         className=" w-full border"
                         placeholder="+8801800xxxxxxx"
+                        name="contactNumber"
+                        onChange={handleInputChange}
+                        value={formInfo.contactNumber}
+                        disabled={isFormLoading}
                       />
                     </div>
                     <div className="flex flex-col lg:flex-row lg:items-center w-full  gap-2 2xl:gap-24 lg:gap-18">
@@ -147,6 +216,10 @@ export default function AddVolunteer({
                       <Input
                         className=" w-full border"
                         placeholder="Affiliated Organization"
+                        name="organization"
+                        onChange={handleInputChange}
+                        value={formInfo.organization}
+                        disabled={isFormLoading}
                       />
                     </div>
                   </div>
@@ -154,7 +227,13 @@ export default function AddVolunteer({
                   {/* status */}
                   <div className="flex items-center gap-20 w-full lg:w-1/2">
                     <Label className="">Status</Label>
-                    <Select value={'active'} onValueChange={(value) => {}}>
+                    <Select
+                      value={'active'}
+                      name="status"
+                      onValueChange={(value) =>
+                        handleDropDownChange(value, 'status')
+                      }
+                    >
                       <SelectTrigger className="w-full bg-[#F3F6F8]">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
@@ -168,7 +247,13 @@ export default function AddVolunteer({
                   <div className="flex md:gap-6 gap-3 lg:flex-row flex-col">
                     <div className="flex items-center gap-20 w-full">
                       <Label className="">District</Label>
-                      <Select value={'Feni'} onValueChange={(value) => {}}>
+                      <Select
+                        name="district"
+                        value={'Feni'}
+                        onValueChange={(value) =>
+                          handleDropDownChange(value, 'district')
+                        }
+                      >
                         <SelectTrigger className="w-full bg-[#F3F6F8]">
                           <Image
                             src={icons.Location2}
@@ -185,7 +270,13 @@ export default function AddVolunteer({
                     </div>
                     <div className="flex items-center gap-20 w-full">
                       <Label className="">Thana</Label>
-                      <Select value={'parshuram'} onValueChange={(value) => {}}>
+                      <Select
+                        name="thana"
+                        value={'parshuram'}
+                        onValueChange={(value) =>
+                          handleDropDownChange(value, 'thana')
+                        }
+                      >
                         <SelectTrigger className="w-full bg-[#F3F6F8]">
                           <Image
                             src={icons.Location2}
@@ -206,8 +297,12 @@ export default function AddVolunteer({
                   <div className="flex flex-col md:flex-row md:items-center w-full  gap-2 md:gap-24">
                     <Label className="w-[160px]  text-nowrap">Address</Label>
                     <Input
+                      name="address"
                       className=" w-full border"
                       placeholder="Area/Union/Ward details"
+                      onChange={handleInputChange}
+                      value={formInfo.address}
+                      disabled={isFormLoading}
                     />
                   </div>
                   {/* latitude and longitude */}
@@ -217,6 +312,10 @@ export default function AddVolunteer({
                       <Input
                         className=" w-full border"
                         placeholder="23.93933"
+                        name="lat"
+                        onChange={handleInputChange}
+                        value={formInfo.lat}
+                        disabled={isFormLoading}
                       />
                     </div>
                     <div className="flex flex-col md:flex-row justify-between md:items-center w-full">
@@ -224,6 +323,10 @@ export default function AddVolunteer({
                       <Input
                         className=" w-full border"
                         placeholder="91.36479"
+                        name="lon"
+                        onChange={handleInputChange}
+                        value={formInfo.lon}
+                        disabled={isFormLoading}
                       />
                     </div>
                   </div>
@@ -231,7 +334,13 @@ export default function AddVolunteer({
                   {/* biography */}
                   <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-10">
                     <Label>Biography</Label>
-                    <Textarea placeholder="Write a few sentences about the hazard..." />
+                    <Textarea
+                      name="biography"
+                      placeholder="Write a few sentences about the hazard..."
+                      onChange={handleInputChange}
+                      value={formInfo.biography}
+                      disabled={isFormLoading}
+                    />
                   </div>
                 </div>
                 <div className="md:w-1/2 w-full  rounded overflow-hidden relative">
@@ -242,10 +351,7 @@ export default function AddVolunteer({
                       mapboxgl={mapboxgl}
                       value={''}
                       placeholder="Search location"
-                      onChange={(d: string) => {
-                        // setInputValue(d);
-                        console.log(d);
-                      }}
+                      onChange={(d: string) => {}}
                       marker
                       theme={{
                         variables: {
@@ -267,11 +373,20 @@ export default function AddVolunteer({
             <DrawerFooter>
               <div className="flex md:flex-row flex-col justify-center items-center gap-5 ">
                 <DrawerClose asChild>
-                  <Button variant="outline" className="w-[290px]">
+                  <Button
+                    variant="outline"
+                    className="w-[290px]"
+                    disabled={isFormLoading}
+                  >
                     Cancel
                   </Button>
                 </DrawerClose>
-                <Button variant={'purple'} className="w-[290px] ">
+                <Button
+                  onClick={handleFormSubmit}
+                  variant={'purple'}
+                  className="w-[290px] "
+                  disabled={isFormLoading}
+                >
                   Confirm
                 </Button>
               </div>
