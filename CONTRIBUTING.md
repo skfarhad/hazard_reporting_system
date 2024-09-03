@@ -62,5 +62,4 @@ Feature requests are highly appreciated. I would love to hear about how you migh
 
 ## License
 By contributing, you agree that your contributions will be licensed under its BSD 3 License. 
-In short, when you submit code changes, your submissions are understood to be under the same [BSD-3 License](https://opensource.org/license/bsd-3-clause) 
 that covers the project. Feel free to contact the maintainers if that's a concern.
