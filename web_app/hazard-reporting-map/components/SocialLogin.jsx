@@ -6,7 +6,7 @@ import Link from "next/link";
 const SocialLogins = ({ mode }) => {
     const handleAuth = (e) => {
         if (e === "google") {
-            signIn("google", { callbackUrl: "http://localhost:3000/" });
+            signIn("google", { callbackUrl: process.env.NEXT_PUBLIC_CALLBACK_URL });
         }
     };
     

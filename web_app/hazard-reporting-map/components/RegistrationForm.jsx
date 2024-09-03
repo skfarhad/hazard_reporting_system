@@ -13,9 +13,8 @@ const RegistrationForm = () => {
             const formData = new FormData(event.currentTarget);
             const fname = formData.get("fname");
             const mobile = formData.get("mobile");
-            const organization = formData.get("organization");
-            const thana = formData.get("thana");
-            const zilla = formData.get("zilla");
+            const email = formData.get("email");
+            const contribution = formData.get("contribution");
 
             const response = await fetch("/api/auth/register", {
                 method: "POST",
@@ -25,9 +24,8 @@ const RegistrationForm = () => {
                 body: JSON.stringify({
                     fname,
                     mobile,
-                    organization,
-                    thana,
-                    zilla,
+                    email,
+                    contribution,
                 }),
             });
             response.status === 201 && router.push("/login");
@@ -51,38 +49,30 @@ const RegistrationForm = () => {
                     <label htmlFor="mobile" className="text-gray-600">
                         Mobile No.
                     </label>
-                    <input type="text" name="mobile" id="mobile" placeholder="Enter your mobile number" />
+                    <input
+                        type="text"
+                        name="mobile"
+                        id="mobile"
+                        placeholder="Enter your mobile number"
+                        pattern="\d{11}"
+                        title="Please enter a valid 10-digit mobile number"
+                        required
+                    />
                 </div>
 
                 <div>
-                    <label htmlFor="organization" className="text-gray-600">
-                        Organization
+                    <label htmlFor="email" className="text-gray-600">
+                        Email
                     </label>
-
-                    <select
-                        placeholder="Choose your organization"
-                        name="organization"
-                        id="organization"                        
-                    >
-                        <option value="BRAC">BRAC</option>
-                    </select>
+                    <input type="email" name="email" id="email" placeholder="Enter your email" required />
                 </div>
 
-                <div>
-                    <label htmlFor="thana" className="text-gray-600">
-                        Thana
-                    </label>
-                    <select placeholder="Choose your thana" name="thana" id="thana">
-                        <option value="Feni">Feni</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label htmlFor="zilla" className="text-gray-600">
-                        Zilla
-                    </label>
-                    <select placeholder="Choose your zilla" name="zilla" id="zilla">
-                        <option value="Cumilla">Cumilla</option>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <span className="text-gray-600">I want to contribute as-</span>
+                    <select placeholder="Select" name="contribute" id="contribute" className="w-32 ml-auto bg-[#F3F6F8]">
+                        <option value="Admin" selected>
+                            Admin
+                        </option>
                     </select>
                 </div>
 
