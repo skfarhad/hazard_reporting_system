@@ -1,10 +1,8 @@
 # Configure k8s master node
 
 ## Configure Master Node
-```
-################# CONTROL NODE Deploye ################
+```bash
 #Disable Swap Space
-
 sudo swapoff -a
 
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -34,9 +32,7 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt update
 
 sudo apt install docker-ce -y
-systemctl start docker
-
-
+sudo systemctl start docker
 
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
@@ -46,43 +42,39 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 }
 EOF
 
-rm -rf /etc/docker/daemon.json
-systemctl enable docker
-systemctl daemon-reload
-systemctl status docker
-
-
-
+# sudo rm -rf /etc/docker/daemon.json
+sudo systemctl enable docker
+sudo systemctl daemon-reload
+sudo systemctl status docker
 
 #Installing Kubernetes
-apt-get update
+sudo apt-get update
 mkdir -p -m 755 /etc/apt/keyrings
 
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-chmod 644 /etc/apt/sources.list.d/kubernetes.list
+sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.27/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.27/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+# curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
-apt-get update
+# insrall kubelet, kubeadm, kubectl binaries
+sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 kubeadm version
-mv /etc/containerd/config.toml /etc/containerd/config.toml.backup
-systemctl restart containerd
+sudo mv /etc/containerd/config.toml /etc/containerd/config.toml.backup
+sudo systemctl restart containerd
 
-
-kubeadm init  ## master node initialization/decl
-
-
+#### ----- on master node only -------- ####
+sudo kubeadm init  ## master node initialization/decl
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 OR 
-export KUBECONFIG=/etc/kubernetes/admin.conf # did this
+export KUBECONFIG=/etc/kubernetes/admin.conf 
 
 kubectl get nodes
 
@@ -99,6 +91,27 @@ kubectl get pods
 kubectl get pods --namespace kube-system
 kubectl get svc -A
 ip r s
+```
+
+# Configure Worker Node
+Run the above commands till the maste node only commands. Then label it as the worker node -
+```bash
+sudo kubectl label node <node-name> node-role.kubernetes.io/worker=worker
+```
+
+# Join the nodes -
+Run this on the master node 
+```bash
+sudo kubeadm token create --print-join-command
+```
+
+Run the output command on the worker node
+
+## Remove k8s binaries from a node -
+```bash
+kubeadm reset
+sudo apt-get purge kubeadm kubectl kubelet kubernetes-cni kube*   
+sudo rm -rf /etc/kubernetes/
 ```
 
 > reference: [1](https://medium.com/@DaalA/step-by-step-guide-on-how-to-set-up-kubernetes-on-a-virtual-machine-b741b02ad100), [2](https://phoenixnap.com/kb/install-kubernetes-on-ubuntu)
