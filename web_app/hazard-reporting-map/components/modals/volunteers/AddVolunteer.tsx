@@ -41,6 +41,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
 mapboxgl.accessToken = accessToken;
+const SafeSearchBox = SearchBox as React.ComponentType<any>;
 
 type TDrawerProps = {
   open: boolean;
@@ -56,7 +57,7 @@ export default function AddVolunteer({
   const zoom = 6;
   const center = { lat: 23.4667, lng: 90.4354546 };
   const mapContainer = useRef<HTMLDivElement | null>(null);
-  const [map, setMap] = useState<mapboxgl.Map | null>(null);
+  const [map, setMap] = useState<mapboxgl.Map | undefined>(undefined);
 
   const [isClient, setIsClient] = useState(false);
 
@@ -84,7 +85,7 @@ export default function AddVolunteer({
   useEffect(() => {
     if (!open && map) {
       map.remove();
-      setMap(null);
+      setMap(undefined);
     }
   }, [open, map]);
   return (
@@ -235,14 +236,15 @@ export default function AddVolunteer({
                 </div>
                 <div className="md:w-1/2 w-full  rounded overflow-hidden relative">
                   <div className="w-3/5  absolute  volunteer-form-map left-5 top-5 rounded-full  z-[10] ">
-                    <SearchBox
+                    <SafeSearchBox
                       accessToken={accessToken}
                       map={map}
                       mapboxgl={mapboxgl}
                       value={''}
                       placeholder="Search location"
-                      onChange={(d) => {
+                      onChange={(d: string) => {
                         // setInputValue(d);
+                        console.log(d);
                       }}
                       marker
                       theme={{
@@ -250,6 +252,7 @@ export default function AddVolunteer({
                           unit: '14px',
                           borderRadius: '20px',
                           boxShadow: 'none',
+                          padding: '1em',
                         },
                       }}
                     />
