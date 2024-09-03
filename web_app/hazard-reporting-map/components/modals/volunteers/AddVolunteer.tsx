@@ -100,6 +100,7 @@ export default function AddVolunteer({
       setMap(undefined);
     }
   }, [open, map]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -343,6 +344,8 @@ export default function AddVolunteer({
                     />
                   </div>
                 </div>
+
+                {/* map section */}
                 <div className="md:w-1/2 w-full  rounded overflow-hidden relative">
                   <div className="w-3/5  absolute  volunteer-form-map left-5 top-5 rounded-full  z-[10] ">
                     <SafeSearchBox
@@ -370,7 +373,7 @@ export default function AddVolunteer({
                 </div>
               </div>
             </div>
-            <DrawerFooter>
+            <DrawerFooter className="mt-10">
               <div className="flex md:flex-row flex-col justify-center items-center gap-5 ">
                 <DrawerClose asChild>
                   <Button
