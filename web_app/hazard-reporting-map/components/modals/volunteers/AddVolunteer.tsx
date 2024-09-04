@@ -9,16 +9,6 @@ import React, {
 import { X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
 import Container from '@/components/layouts/Container';
 import { Label } from '@/components/ui/label';
 import { Input, InputProps } from '@/components/ui/input';
@@ -35,10 +25,18 @@ import {
 import Image from 'next/image';
 import { icons } from '@/assets/icons';
 import { Textarea } from '@/components/ui/textarea';
-import { MarkerData } from '@/types/MarkerData';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { toast } from 'sonner';
 import { cn } from '@/libs/utils';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
@@ -111,7 +109,7 @@ const SmallInput = ({
 };
 interface DropDownOption<T> {
   value: T;
-  label: string; // Use string for label to handle text display
+  label: string;
 }
 
 interface TDropDown<T> {
@@ -257,19 +255,15 @@ export default function AddVolunteer({
     });
   };
   return (
-    <Drawer
-      open={open}
-      onOpenChange={onOpenChange}
-      onClose={() => onOpenChange(!open)}
-    >
-      <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent>
-        <div className="h-max overflow-y-auto">
-          <Container className="max-w-[1220px] w-full ">
-            <DrawerHeader className=" w-full  p-0 pb-8">
-              <DrawerTitle className="text-left font-semibold">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="max-w-[1220px] h-max overflow-y-auto">
+        <div className="h-[800px] overflow-y-auto">
+          <Container className=" w-full ">
+            <DialogHeader className=" w-full  p-0  pt-3 mb-8">
+              <DialogTitle className="text-left font-semibold">
                 Add Volunteer
-              </DrawerTitle>
+              </DialogTitle>
               <div className="flex justify-end gap-3">
                 <Button
                   onClick={handleDelete}
@@ -279,20 +273,20 @@ export default function AddVolunteer({
                 >
                   Delete
                 </Button>
-                <DrawerClose asChild>
+                <DialogClose asChild>
                   <Button
                     variant="outline"
                     className="bg-transparent rounded-none border-[#49454F] px-2 text-[#49454F]"
                   >
                     <X />
                   </Button>
-                </DrawerClose>
+                </DialogClose>
               </div>
-            </DrawerHeader>
+            </DialogHeader>
             <div className=" p-0 pb-0">
               <div className="flex md:flex-row flex-col gap-4 lg:gap-8 md:justify-between">
                 {/* inputs section */}
-                <div className="md:w-1/2 w-full  p-3 flex flex-col gap-4">
+                <div className="md:w-1/2 w-full  p-3 flex flex-col gap-5">
                   {/* name, number, org */}
                   <div className="w-full flex flex-col gap-5 ">
                     <WiderInput
@@ -450,9 +444,9 @@ export default function AddVolunteer({
                 </div>
               </div>
             </div>
-            <DrawerFooter className="mt-10">
+            <DialogFooter className="lg:mt-24 mt-16  flex lg:justify-center sm:justify-center">
               <div className="flex md:flex-row flex-col justify-center items-center gap-3 ">
-                <DrawerClose asChild>
+                <DialogClose asChild>
                   <Button
                     variant="outline"
                     className="w-[290px]"
@@ -460,7 +454,7 @@ export default function AddVolunteer({
                   >
                     Cancel
                   </Button>
-                </DrawerClose>
+                </DialogClose>
                 <Button
                   onClick={handleFormSubmit}
                   variant={'purple'}
@@ -470,10 +464,10 @@ export default function AddVolunteer({
                   Confirm
                 </Button>
               </div>
-            </DrawerFooter>
+            </DialogFooter>
           </Container>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 }
