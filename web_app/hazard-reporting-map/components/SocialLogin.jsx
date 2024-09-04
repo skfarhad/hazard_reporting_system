@@ -19,7 +19,7 @@ const SocialLogins = ({ mode }) => {
                     }}
                     className="w-full border-gray-600/30 border rounded-md flex items-center gap-2 justify-center"
                 >
-                    <Image src="/google.png" alt="google" width={40} height={40} />
+                    <Image src="/google.png" alt="google" width={40} height={40} className="p-[4px]"/>
                     {mode === "login" ? <span>Continue with Google</span> : <span>Sign up with Google</span>}
                 </button>
             </div>
