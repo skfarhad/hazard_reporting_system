@@ -66,7 +66,7 @@ export default function IncidentsLisPage() {
     {
       title: 'Description',
       selector: 'hazard_description',
-      width: "220px"
+      width: "140px"
     },
 
     {
