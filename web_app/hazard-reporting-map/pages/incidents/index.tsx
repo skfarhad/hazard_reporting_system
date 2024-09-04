@@ -31,7 +31,7 @@ import {
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 
-export default function IncidentsLisPage() {
+export default function IncidentsListPage() {
   const [searchInput, setSearchInput] = useState('');
   const [status, setStatus] = useState('');
   const [typeOfAid, setTypeOfAid] = useState('');
