@@ -264,9 +264,9 @@ export default function AddVolunteer({
     >
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
-        <div className="h-[90vh] overflow-y-auto">
+        <div className="h-max overflow-y-auto">
           <Container className="max-w-[1220px] w-full ">
-            <DrawerHeader className=" w-full  px-0">
+            <DrawerHeader className=" w-full  p-0 pb-8">
               <DrawerTitle className="text-left font-semibold">
                 Add Volunteer
               </DrawerTitle>
@@ -451,7 +451,7 @@ export default function AddVolunteer({
               </div>
             </div>
             <DrawerFooter className="mt-10">
-              <div className="flex md:flex-row flex-col justify-center items-center gap-5 ">
+              <div className="flex md:flex-row flex-col justify-center items-center gap-3 ">
                 <DrawerClose asChild>
                   <Button
                     variant="outline"
