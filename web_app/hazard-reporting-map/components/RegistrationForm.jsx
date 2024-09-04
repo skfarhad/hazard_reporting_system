@@ -69,9 +69,26 @@ const RegistrationForm = () => {
 
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <span className="text-gray-600">I want to contribute as-</span>
-                    <select placeholder="Select" name="contribute" id="contribute" className="w-32 ml-auto bg-[#F3F6F8]">
+                    <select
+                        placeholder="Select"
+                        name="contribute"
+                        id="contribute"
+                        className="w-32 ml-auto bg-[#F3F6F8]"
+                    >
                         <option value="Admin" selected>
                             Admin
+                        </option>
+                        <option value="Admin" selected>
+                            Admin
+                        </option>
+                        <option value="Informer" selected>
+                            Informer
+                        </option>
+                        <option value="Personnel" selected>
+                            Personnel
+                        </option>
+                        <option value="Guest" selected>
+                            Guest
                         </option>
                     </select>
                 </div>
