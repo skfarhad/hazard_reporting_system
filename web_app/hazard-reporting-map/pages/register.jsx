@@ -6,7 +6,7 @@ import SocialLogins from "../components/SocialLogin";
 
 export default function RegistrationPage() {
     return (
-        <section className="h-screen place-items-center" style={{ fontFamily: 'Manrope, sans-serif' }}>
+        <section className="h-screen place-items-center font-manrope">
             <div className="flex items-center">
                 <div className="max-w-[450px] w-full mx-auto p-6 mt-[124px] rounded-md">
                 <h4 className="font-manrope text-[28px] font-semibold leading-[38.25px] text-center">

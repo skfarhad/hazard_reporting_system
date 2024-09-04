@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Manrope } from '@next/font/google';
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl, { LngLatLike } from 'mapbox-gl';
 import { MarkerData } from "@/types/MarkerData";
@@ -6,7 +6,10 @@ import { MarkerData } from "@/types/MarkerData";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import SummaryCardsComponent from "@/components/SummaryCards";
 
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['400', '600'], 
+});
 
 const dummyMarkers : MarkerData[] = [
   {
@@ -111,7 +114,7 @@ export default function Home({ center = {lat: 23.4667, lng: 90.4354546}, zoom = 
 
   return (
     <main
-      className={`flex flex-direction-column ${inter.className}`}
+      className={`flex flex-direction-column ${manrope.className}`}
     >
       <SummaryCardsComponent />
       <div className="flex-grow">
