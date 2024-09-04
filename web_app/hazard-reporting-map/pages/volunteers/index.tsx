@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import AddVolunteer from '@/components/modals/volunteers/AddVolunteer';
 
 export default function Dashboard() {
   const [searchInput, setSearchInput] = useState('');
@@ -38,6 +39,8 @@ export default function Dashboard() {
   const [allData, setAllData] = useState(data.data);
   const [pageCount, setPageCount] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openAddModal, setOpenAddModal] = useState(false);
+
   const columns: TDataTableColumn[] = [
     {
       header: () => <Checkbox />,
@@ -169,10 +172,18 @@ export default function Dashboard() {
                 <h2>All volunteers</h2>
               </div>
               <div className="flex gap-4">
-                <Button className="flex gap-2 text-xs px-6">
-                  {' '}
-                  <Plus size={16} /> Add volunteer
-                </Button>
+                <AddVolunteer
+                  open={openAddModal}
+                  onOpenChange={setOpenAddModal}
+                >
+                  <Button
+                    onClick={() => setOpenAddModal(!openAddModal)}
+                    className="flex gap-2 text-xs px-6"
+                  >
+                    {' '}
+                    <Plus size={16} /> Add volunteer
+                  </Button>
+                </AddVolunteer>
                 <Button
                   variant={'destructive'}
                   className="flex gap-2 text-xs px-6"

@@ -3,7 +3,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300',
@@ -14,6 +14,7 @@ const buttonVariants = cva(
           'bg-primary text-slate-50 hover:bg-primary/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90',
         destructive:
           'bg-destructive text-slate-50 hover:bg-destructive/90 dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90',
+        danger: 'bg-[#EB4335] text-white',
         outline:
           'border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50',
         secondary:
@@ -21,6 +22,7 @@ const buttonVariants = cva(
         ghost:
           'bg-disable-bg border border-[#CBD9E7] dark:hover:bg-slate-800 dark:hover:text-slate-50',
         link: 'text-slate-900 underline-offset-4 hover:underline dark:text-slate-50',
+        purple: 'bg-purple hover:bg-purple/90 text-white',
         pageActive:
           'border-[2px] border-[#4200FF] text-[#4200FF] font-semibold',
       },
