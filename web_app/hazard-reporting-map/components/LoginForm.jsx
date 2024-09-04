@@ -6,7 +6,12 @@ import { useState } from "react";
 const LoginForm = () => {
     const router = useRouter();
     const [error, setError] = useState("");
-    const [isPasswordVisible, setIsPasswordVisible] = useState(true); 
+    const [isPasswordVisible, setIsPasswordVisible] = useState(true);
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible((prevState) => !prevState);
@@ -14,6 +19,16 @@ const LoginForm = () => {
 
     const onSubmit = async (event) => {
         event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+        const email = formData.get("email");
+        const password = formData.get("password");
+
+        if (!validateEmail(email)) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
         try {
             const formData = new FormData(event.currentTarget);
             const response = await login(formData);
@@ -44,12 +59,12 @@ const LoginForm = () => {
                     </label>
                     <div className="relative w-full">
                         <input
-                            type={isPasswordVisible ? "text" : "password"} 
+                            type={isPasswordVisible ? "text" : "password"}
                             placeholder="Enter your Password"
-                            className="w-full px-4 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
+                            className="w-full px-2 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
                         />
                         <button
-                            type="button" 
+                            type="button"
                             className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600"
                             onClick={togglePasswordVisibility}
                         >
@@ -91,7 +106,7 @@ const LoginForm = () => {
                             )}
                         </button>
                     </div>
-                    <span className="text-right text-xs text-blue-500">Forgot Password?</span>
+                    <span className="text-right text-xs text-blue-500 mt-[-25px] pb-6">Forgot Password?</span>
                 </div>
 
                 <button

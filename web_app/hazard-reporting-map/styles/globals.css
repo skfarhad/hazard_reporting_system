@@ -61,7 +61,7 @@ body {
   }
 
   .login-form div {
-    @apply flex flex-col gap-2 my-2 w-[415px];
+    @apply flex flex-col gap-2 mb-5 w-[415px];
   }
 
   .login-form input {
