@@ -11,7 +11,6 @@ export default function RegistrationPage() {
                 <div className="max-w-[450px] w-full mx-auto p-6 mt-[124px] rounded-md">
                 <h4 className="text-2xl text-center text-[#2F3646]">Welcome to Hazard Reporting</h4>
                 <h4 className="text-2xl text-center text-[#2F3646]">System</h4>
-                    <DropdownButton />
                     <RegistrationForm />
                     <SocialLogins mode={"register"} />
                 </div>            
