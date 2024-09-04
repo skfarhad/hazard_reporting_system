@@ -38,7 +38,6 @@ export default function IncidentsListPage() {
   const [district, setDistrict] = useState('');
   const [thana, setThana] = useState('');
   const [allData, setAllData] = useState(data.data);
-  const [filteredData, setFilteredData] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
   const columns: TDataTableColumn[] = [
     {
@@ -337,7 +336,7 @@ export default function IncidentsListPage() {
             </div>
             {/* pagination */}
             <div className=" flex justify-center md:justify-end px-4 py-6 md:py-2 text-xs items-center mt-8  rounded ">
-              <div className="">
+              <div>
                 <ReactPaginate
                   previousLabel={
                     <ChevronLeft
