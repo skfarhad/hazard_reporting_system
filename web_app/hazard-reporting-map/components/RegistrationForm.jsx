@@ -78,9 +78,6 @@ const RegistrationForm = () => {
                         <option value="Admin" selected>
                             Admin
                         </option>
-                        <option value="Admin" selected>
-                            Admin
-                        </option>
                         <option value="Informer" selected>
                             Informer
                         </option>
