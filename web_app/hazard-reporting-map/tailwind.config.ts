@@ -57,6 +57,9 @@ const config = {
       fontFamily: {
         poppins: ['var(--font-poppins)'],
       },
+	  fontFamily: {
+                manrope: ['Manrope', 'sans-serif'],
+            }
     },
   },
   plugins: [require('tailwindcss-animate')],
