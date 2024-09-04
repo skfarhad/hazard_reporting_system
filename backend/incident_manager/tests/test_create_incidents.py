@@ -31,7 +31,6 @@ class IncidentCreateViewTestCase(APITestCase):
             "longitude": 125.6,
             "description": "Test incident",
             "additional_info": {"info": "some additional info"},
-            "status": "new",
             "address": "1234 Example Street",
         }
 
@@ -60,7 +59,6 @@ class IncidentCreateViewTestCase(APITestCase):
             "latitude": 10.1,
             "longitude": 125.6,
             "description": "Test incident",
-            "status": "new",
         }
 
         response = self.client.post(self.url, data, format="json")
@@ -77,7 +75,6 @@ class IncidentCreateViewTestCase(APITestCase):
             "latitude": "invalid",
             "longitude": "invalid",
             "description": "Test incident",
-            "status": "new",
             "address": "1234 Example Street",
         }
 
@@ -95,7 +92,6 @@ class IncidentCreateViewTestCase(APITestCase):
             "latitude": 10.1,
             "longitude": 125.6,
             "description": "Test incident",
-            "status": "new",
             "address": "1234 Example Street",
             "extra_field": "This should not be accepted",
         }
@@ -127,7 +123,6 @@ class IncidentCreateViewTestCase(APITestCase):
             "latitude": 10.1,
             "longitude": 125.6,
             "description": "Test incident with different provider",
-            "status": "new",
             "address": "5678 Another Street",
         }
 
@@ -145,7 +140,6 @@ class IncidentCreateViewTestCase(APITestCase):
             "latitude": 10.1,
             "longitude": 125.6,
             "description": "Test incident",
-            "status": "new",
             "address": "1234 Example Street",
         }
 
@@ -167,7 +161,6 @@ class IncidentCreateViewTestCase(APITestCase):
             "latitude": 10.1,
             "longitude": 125.6,
             "description": "Test incident",
-            "status": "new",
             "address": "1234 Example Street",
         }
 

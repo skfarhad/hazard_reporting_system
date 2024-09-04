@@ -19,7 +19,7 @@ class IncidentSerializer(serializers.ModelSerializer):
             "longitude",
             "description",
             "additional_info",
-            "status",
+            "validation_status",
             "address",
             "location_latitude",
             "location_longitude",
