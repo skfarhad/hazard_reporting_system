@@ -5,6 +5,7 @@ from psycopg2 import sql
 from psycopg2 import OperationalError, Error
 from dotenv import load_dotenv
 
+
 def connect_db(host, dbname, user, password=None):
     """
     Establishes a connection to the PostgreSQL database.
@@ -15,16 +16,17 @@ def connect_db(host, dbname, user, password=None):
             "dbname": dbname,
             "user": user,
         }
-        
+
         if password is not None:
             conn_params["password"] = password
-        
+
         conn = psycopg2.connect(**conn_params)
         return conn
     except OperationalError as e:
         print(f"Error connecting to the database: {e}")
         return None
-    
+
+
 def enable_postgis(conn):
     """
     Enables the PostGIS extension in the PostgreSQL database.
@@ -36,6 +38,7 @@ def enable_postgis(conn):
         except Exception as e:
             print(f"Error enabling PostGIS extension: {e}")
             conn.rollback()
+
 
 def create_table(conn, create_table_query):
     """
@@ -59,8 +62,8 @@ def check_table_exists(conn, table_name):
             cur.execute(
                 sql.SQL(
                     """SELECT EXISTS (
-                        SELECT 1 
-                        FROM information_schema.tables 
+                        SELECT 1
+                        FROM information_schema.tables
                         WHERE table_name = %s
                     );"""
                 ),
@@ -75,6 +78,7 @@ def check_table_exists(conn, table_name):
     except Error as e:
         print(f"Error checking if table exists: {e}")
 
+
 def insert_geojson_to_db(conn, geojson_path, table_name):
     """
     Inserts GeoJSON data into the specified PostgreSQL table.
@@ -84,7 +88,7 @@ def insert_geojson_to_db(conn, geojson_path, table_name):
     except Exception as e:
         print(f"Error reading GeoJSON file '{geojson_path}': {e}")
         return
-    
+
     try:
         with conn.cursor() as cur:
             for _, row in gdf.iterrows():
@@ -102,29 +106,30 @@ def insert_geojson_to_db(conn, geojson_path, table_name):
                     fields=sql.SQL(', ').join(map(sql.Identifier, columns)),
                     values=sql.SQL(', ').join(sql.Placeholder() * len(values))
                 )
-                
+
                 cur.execute(insert_query, values + [geom])
                 # print(f"Inserted row into {table_name}")
 
             conn.commit()
     except Error as e:
         conn.rollback()
-        raise RuntimeError(\
+        raise RuntimeError(
             f"Error inserting data into table '{table_name}': {e}")
-    
+
+
 def count_rows(conn, table_name):
     """
     Counts the number of rows in the specified table.
     """
     try:
         with conn.cursor() as cur:
-            cur.execute(sql.SQL("SELECT COUNT(*) FROM {table};")\
-                .format(table=sql.Identifier(table_name)))
+            cur.execute(sql.SQL("SELECT COUNT(*) FROM {table};")
+                        .format(table=sql.Identifier(table_name)))
             row_count = cur.fetchone()[0]
             print(f"Table '{table_name}' has {row_count} rows.\n")
     except Error as e:
         print(f"Error counting rows in table '{table_name}': {e}")
-        
+
 
 def main():
     # Database connection details
@@ -133,18 +138,18 @@ def main():
     dbname = os.getenv("DB_NAME")
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
-    
+
     print(f'host = {host}\ndatabase = {dbname}\nuser = {user}\n')
-    
+
     # Connect to the database
     conn = connect_db(host, dbname, user, password)
     if not conn:
         print("Database connection failed. Exiting.")
         return
-    
+
     # Enable PostGIS
     enable_postgis(conn)
-    
+
     # Define table creation queries for each administrative level
     create_table_queries = {
         'adm0_country': """CREATE TABLE IF NOT EXISTS adm0_country (
@@ -243,13 +248,13 @@ def main():
             _ogr_geometry_ GEOMETRY(Geometry, 4326)
         );"""
     }
-    
+
     # Create tables
     for table_name, create_table_query in create_table_queries.items():
         create_table(conn, create_table_query)
-         # Check if the table was created
+        # Check if the table was created
         check_table_exists(conn, table_name)
-    
+
     # Insert GeoJSON data into each table
     # Since this is a one-time execution, locally populate the DB.
     # Replace '/path/to/...' with your geojson filepaths.
@@ -260,18 +265,19 @@ def main():
         # 'adm3_upazila': '/path/to/adm3.geojson',
         # 'adm4_thana_union': '/path/to/adm4.geojson',
     }
-    
+
     for table_name, geojson_path in geojson_files.items():
         print(f'Populating {table_name}')
         insert_geojson_to_db(conn, geojson_path, table_name)
         # Check the number of rows in the table
         count_rows(conn, table_name)
-    
+
     # Close the database connection
     conn.close()
+
 
 if __name__ == "__main__":
     # Load environment variables from the .env file
     load_dotenv()
-    
+
     main()
