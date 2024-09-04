@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Provider, Incident
-
+from django.contrib import admin
+from .models import Division, District, Thana
 from leaflet.admin import LeafletGeoAdmin
 
 
@@ -19,11 +20,42 @@ class IncidentAdmin(LeafletGeoAdmin):
         "contact_number",
         "provider",
         "description",
-        "status",
+        "validation_status",
+        "task_status",
         "address",
         "created_at",
     )
-    search_fields = ("contact_number", "description", "status", "address")
-    list_filter = ("status", "provider")
+    search_fields = (
+        "contact_number",
+        "description",
+        "validation_status",
+        "task_status",
+        "address",
+    )
+    list_filter = ("validation_status", "task_status", "provider")
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "updated_at")
+
+
+# Registering Division model
+@admin.register(Division)
+class DivisionAdmin(admin.ModelAdmin):
+    list_display = ("name", "description")  # Fields to display in list view
+    search_fields = ("name", "description")  # Fields to search by
+    list_filter = ("name",)  # Fields to filter by
+
+
+# Registering District model
+@admin.register(District)
+class DistrictAdmin(admin.ModelAdmin):
+    list_display = ("name", "division", "description")  # Fields to display in list view
+    search_fields = ("name", "description", "division__name")  # Fields to search by
+    list_filter = ("division",)  # Fields to filter by
+
+
+# Registering Thana model
+@admin.register(Thana)
+class ThanaAdmin(admin.ModelAdmin):
+    list_display = ("name", "district", "description")  # Fields to display in list view
+    search_fields = ("name", "description", "district__name")  # Fields to search by
+    list_filter = ("district",)  # Fields to filter by
