@@ -4,6 +4,7 @@
 
 
 body {
+  font-family: 'Manrope', sans-serif;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom,
       transparent,
@@ -62,6 +63,12 @@ body {
 
   .login-form div {
     @apply flex flex-col gap-2 mb-5 w-[415px];
+  }
+
+  .login-form input[type="text"],
+  .login-form input[type="password"],
+  .login-form input[type="email"] {
+    @apply w-[415px] h-[52px];
   }
 
   .login-form input {

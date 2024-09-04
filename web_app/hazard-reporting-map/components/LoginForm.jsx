@@ -6,7 +6,7 @@ import { useState } from "react";
 const LoginForm = () => {
     const router = useRouter();
     const [error, setError] = useState("");
-    const [isPasswordVisible, setIsPasswordVisible] = useState(true);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,7 +30,6 @@ const LoginForm = () => {
         }
 
         try {
-            const formData = new FormData(event.currentTarget);
             const response = await login(formData);
             if (!!response.error) {
                 setError(response.error.message);
@@ -68,7 +67,7 @@ const LoginForm = () => {
                             className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600"
                             onClick={togglePasswordVisibility}
                         >
-                            {isPasswordVisible ? (
+                            {!isPasswordVisible ? (
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"

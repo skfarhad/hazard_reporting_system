@@ -12,7 +12,7 @@ const SocialLogins = ({ mode }) => {
 
     return (
         <>
-            <div className="flex gap-4  w-[415px]">
+            <div className="flex gap-4 w-[415px]">
                 <button
                     onClick={() => {
                         handleAuth("google");
@@ -24,14 +24,14 @@ const SocialLogins = ({ mode }) => {
                 </button>
             </div>
             {mode === "register" ? (
-                <div className="text-center text-xs text-gray-500 mt-2">
+                <div className="text-center text-xs text-gray-500 mt-2 font-medium">
                     Already have an Account?{" "}
                     <Link className="text-blue-500" href="/login">
                         Login
                     </Link>
                 </div>
             ) : (
-                <div className="text-center text-xs text-gray-500 mt-2">
+                <div className="text-center text-xs text-gray-500 mt-2 font-medium">
                     Don’t have an Account?{" "}
                     <Link className="text-blue-500" href="/register">
                         Create Account

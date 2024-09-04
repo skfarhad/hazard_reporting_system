@@ -87,7 +87,7 @@ const RegistrationForm = () => {
                     <input type="email" name="email" id="email" placeholder="Enter your email" required />
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "row" }}>
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                     <span className="text-gray-600">I want to contribute as-</span>
                     <select
                         placeholder="Select"
@@ -115,6 +115,7 @@ const RegistrationForm = () => {
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
+                        paddingTop: "60px",
                     }}
                 >
                     <input
@@ -141,7 +142,7 @@ const RegistrationForm = () => {
 
                 <button
                     type="submit"
-                    className="btn-primary w-[415px] h-[52px] pt-[10px] pr-[150px] pb-[10px] pl-[150px] rounded-sm"
+                    className="btn-primary w-[415px] h-[52px] pt-[10px] pr-[150px] pb-[10px] pl-[150px] rounded-sm font-medium text-[20px]"
                 >
                     Create account
                 </button>
