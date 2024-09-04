@@ -14,6 +14,7 @@
   --color-disable-bg: 204, 26.3%, 96.3%;
   --color-disable-border: 210, 36.8%, 85.1%;
   --color-success: 90, 100%, 21.6%;
+  --color-purple: 258.8, 63.3%, 59.4%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -118,4 +119,15 @@ body {
 
 .mapboxgl-popup-content {
   background: transparent !important;
+}
+.mbx0b7a4510--SearchIcon {
+  right: 0;
+}
+
+.volunteer-form-map input {
+  background-color: hsla(var(--color-bg-secondary));
+  color: #49454f;
+  padding: 10px 30px;
+  font-weight: semibold;
+  border-radius: 20px;
 }

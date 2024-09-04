@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -10,7 +10,7 @@ export interface InputProps
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, icon, type, ...props }, ref) => {
     return (
-      <div className="w-max inline-block relative">
+      <div className="w-full inline-block relative">
         {icon ? (
           <span className="absolute left-3 top-1/2 -translate-y-1/2">
             {icon}
