@@ -7,15 +7,35 @@ const RegistrationForm = () => {
     const router = useRouter();
     const [error, setError] = useState("");
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validateMobile = (mobile) => {
+        const mobileRegex = /^01[3-9]\d{8}$/;
+        return mobileRegex.test(mobile);
+    };
+
     const onSubmit = async (event) => {
         event.preventDefault();
-        try {
-            const formData = new FormData(event.currentTarget);
-            const fname = formData.get("fname");
-            const mobile = formData.get("mobile");
-            const email = formData.get("email");
-            const contribution = formData.get("contribution");
+        const formData = new FormData(event.currentTarget);
+        const fname = formData.get("fname");
+        const mobile = formData.get("mobile");
+        const email = formData.get("email");
+        const contribution = formData.get("contribution");
 
+        if (!validateEmail(email)) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+
+        if (!validateMobile(mobile)) {
+            setError("Please enter a valid Bangladeshi mobile number.");
+            return;
+        }
+
+        try {
             const response = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: {
@@ -54,8 +74,8 @@ const RegistrationForm = () => {
                         name="mobile"
                         id="mobile"
                         placeholder="Enter your mobile number"
-                        pattern="\d{11}"
-                        title="Please enter a valid 10-digit mobile number"
+                        pattern="^01[3-9]\d{8}$"
+                        title="Please enter a valid 11-digit Bangladeshi mobile number starting with 01."
                         required
                     />
                 </div>
@@ -90,31 +110,39 @@ const RegistrationForm = () => {
                     </select>
                 </div>
 
-                <div className="flex flex-row">
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                    }}
+                >
+                    <input
+                        id="link-checkbox"
+                        type="checkbox"
+                        value=""
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
                     <label
                         htmlFor="link-checkbox"
-                        className="ms-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="text-sm font-medium text-[#0F172A] dark:text-[rgb(15,23,42)]"
                     >
                         {" "}
-                        <input
-                            id="link-checkbox"
-                            type="checkbox"
-                            value=""
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        />
                         I agree with{" "}
-                        <a href="#" className="text-blue-600 dark:text-blue-500 hover:underline">
+                        <a href="#" className="text-[#3076FF] dark:text-[#3076FF] underline hover:underline">
                             Privacy Policy
                         </a>{" "}
                         and{" "}
-                        <a href="#" className="text-blue-600 dark:text-blue-500 hover:underline">
+                        <a href="#" className="text-[#3076FF] dark:text-[#3076FF] underline hover:underline">
                             Terms and Conditions
                         </a>
-                        .
                     </label>
                 </div>
 
-                <button type="submit" className="btn-primary w-full mt-4">
+                <button
+                    type="submit"
+                    className="btn-primary w-[415px] h-[52px] pt-[10px] pr-[150px] pb-[10px] pl-[150px] rounded-sm"
+                >
                     Create account
                 </button>
             </form>

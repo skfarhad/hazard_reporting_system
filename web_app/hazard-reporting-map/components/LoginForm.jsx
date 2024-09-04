@@ -1,14 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
 
 const LoginForm = () => {
     const router = useRouter();
     const [error, setError] = useState("");
-
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(true); 
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible((prevState) => !prevState);
@@ -22,10 +20,10 @@ const LoginForm = () => {
             if (!!response.error) {
                 setError(response.error.message);
             } else {
-                //router.push("/");
+                router.push("/");
             }
         } catch (error) {
-            //setError(error.message);
+            setError(error.message);
         }
     };
 
@@ -34,20 +32,24 @@ const LoginForm = () => {
             {error && <div className="text-xl text-red-500 text-center">{error}</div>}
             <form className="login-form" onSubmit={onSubmit}>
                 <div>
-                    <label htmlFor="email" className="text-gray-600">Email</label>
+                    <label htmlFor="email" className="text-gray-600">
+                        Email
+                    </label>
                     <input type="email" name="email" id="email" placeholder="Enter your email address" />
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="text-gray-600">Password</label>
+                    <label htmlFor="password" className="text-gray-600">
+                        Password
+                    </label>
                     <div className="relative w-full">
                         <input
-                            type={isPasswordVisible ? "text" : "password"}
+                            type={isPasswordVisible ? "text" : "password"} 
                             placeholder="Enter your Password"
                             className="w-full px-4 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
-
                         />
                         <button
+                            type="button" 
                             className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-600"
                             onClick={togglePasswordVisibility}
                         >
@@ -89,10 +91,13 @@ const LoginForm = () => {
                             )}
                         </button>
                     </div>
-                    <span className="text-right text-xs text-blue-500">Forgot Password ?</span>
+                    <span className="text-right text-xs text-blue-500">Forgot Password?</span>
                 </div>
 
-                <button type="submit" className="btn-primary w-full mt-4">
+                <button
+                    type="submit"
+                    className="btn-primary w-[415px] h-[52px] pt-[10px] pr-[150px] pb-[10px] pl-[150px] rounded-sm"
+                >
                     Login
                 </button>
             </form>
