@@ -2,7 +2,7 @@
 name = "hazard-reporting-system-be"
 version = "0.1.0"
 description = "A Hazard Reporting System"
-authors = ["tasfiqulghani"]
+authors = ["tasfiqulghani", "skfarhad <sk.farhad.eee@gmail.com>"]
 license = "NA"
 readme = "README.md"
 
