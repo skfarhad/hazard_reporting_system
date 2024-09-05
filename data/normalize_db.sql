@@ -1,4 +1,10 @@
 /*
+ After converting geojson to postgres and renaming columns, login to the 
+ database from your local machine and execute the following SQL statements
+ table by table.
+*/
+
+/*
 adm0_country
 */
 -- Add a Unique Constraint to admin0_pcode in adm0_country
