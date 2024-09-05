@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2 import OperationalError, Error
 from dotenv import load_dotenv
 
+
 def connect_db(host, dbname, user, password=None):
     """
     Establishes a connection to the PostgreSQL database.
@@ -13,15 +14,16 @@ def connect_db(host, dbname, user, password=None):
             "dbname": dbname,
             "user": user,
         }
-        
+
         if password is not None:
             conn_params["password"] = password
-        
+
         conn = psycopg2.connect(**conn_params)
         return conn
     except OperationalError as e:
         print(f"Error connecting to the database: {e}")
         return None
+
 
 def rename_columns(conn, table_name, column_mapping):
     """
@@ -35,28 +37,31 @@ def rename_columns(conn, table_name, column_mapping):
                     RENAME COLUMN {old_name} TO {new_name};
                 """
                 cur.execute(alter_query)
-                print(f"Renamed column '{old_name}' to '{new_name}' in table '{table_name}'")
+                print(
+                    f"Renamed column '{old_name}' to '{new_name}' in table \
+                        '{table_name}'")
             conn.commit()
     except Error as e:
         conn.rollback()
         print(f"Error renaming columns in table '{table_name}': {e}")
 
+
 def main():
     # Load environment variables
     load_dotenv()
-    
+
     # Database connection details
     host = os.getenv("DB_HOST")
     dbname = os.getenv("DB_NAME")
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
-    
+
     # Connect to the database
     conn = connect_db(host, dbname, user, password)
     if not conn:
         print("Database connection failed. Exiting.")
         return
-    
+
     # Define column renaming mappings for each table
     column_mappings = {
         'adm0_country': {
@@ -140,13 +145,14 @@ def main():
             '_ogr_geometry_': 'ogr_geometry'
         }
     }
-    
+
     # Rename columns for each table
     for table_name, column_mapping in column_mappings.items():
         rename_columns(conn, table_name, column_mapping)
-    
+
     # Close the database connection
     conn.close()
+
 
 if __name__ == "__main__":
     main()
