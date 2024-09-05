@@ -44,7 +44,7 @@ jobs:
     - name: Run Django Tests
       working-directory: ./backend  # Specify the directory containing manage.py
       run: |
-        docker-compose run be poetry run python manage.py test  # Run the Django tests
+        docker-compose run be python manage.py test  # Run the Django tests
 
     - name: Clean up
       working-directory: ./backend  # Specify the directory containing docker-compose.yml
