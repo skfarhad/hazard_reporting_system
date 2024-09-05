@@ -67,16 +67,13 @@ services:
 
   be:
     build: .
-    command: >
-      sh -c "if [ "$DEBUG" = "True" ]; then
-               poetry run python manage.py runserver 0.0.0.0:8000;
-             else
-               poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000;
-             fi"
+#    command: >
+#      sh -c "poetry run python manage.py collectstatic --noinput;
+#      poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000;"
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8001:8000"
     env_file:
       - .env
     depends_on:
@@ -88,6 +85,7 @@ services:
         condition: service_healthy
       celery_worker:
         condition: service_healthy
+    entrypoint: "./start.sh"
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}

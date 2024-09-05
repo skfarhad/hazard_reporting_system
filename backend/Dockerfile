@@ -34,3 +34,5 @@ COPY . /code/
 
 # Collect static files
 RUN poetry run python manage.py collectstatic --noinput
+RUN chmod u+x ./start.sh
+CMD ["bash", "./start.sh"]

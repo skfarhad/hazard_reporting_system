@@ -18,6 +18,7 @@ django-leaflet = "^0.30.1"
 djangorestframework-api-key = "^3.0.0"
 drf-yasg = "^1.21.7"
 django = ">=4.2.0,<4.3.0"
+gevent = "^24.2.1"
 
 
 [build-system]
