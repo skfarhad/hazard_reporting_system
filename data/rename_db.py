@@ -38,8 +38,9 @@ def rename_columns(conn, table_name, column_mapping):
                 """
                 cur.execute(alter_query)
                 print(
-                    f"Renamed column '{old_name}' to '{new_name}' in table \
-                        '{table_name}'")
+                    f"Renamed column '{old_name}' to '{new_name}' in table "
+                    f"'{table_name}'"
+                )
             conn.commit()
     except Error as e:
         conn.rollback()
@@ -155,4 +156,5 @@ def main():
 
 
 if __name__ == "__main__":
+    load_dotenv()
     main()
