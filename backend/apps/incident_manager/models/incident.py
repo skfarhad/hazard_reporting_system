@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models
 
-from volunteer_hub.models.volunteer import Volunteer
-from incident_manager.constants import IncidentStatus, TaskStatus
+from apps.volunteer_hub.models.volunteer import Volunteer
+from apps.incident_manager.constants import IncidentStatus, TaskStatus
 from .provider import Provider
 from .address import District, Thana
 

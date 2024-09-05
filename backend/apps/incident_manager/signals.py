@@ -2,7 +2,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from .models import Incident
 from .tasks import process_incident_and_send_sms  # Import the background task
-from incident_manager.constants import IncidentStatus
+from apps.incident_manager.constants import IncidentStatus
 
 
 @receiver(pre_save, sender=Incident)

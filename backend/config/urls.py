@@ -27,8 +27,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/incidents/", include("incident_manager.urls")),
-    path("api/volunteers/", include("volunteer_hub.urls")),
+    path("api/incidents/", include("apps.incident_manager.urls")),
+    path("api/volunteers/", include("apps.volunteer_hub.urls")),
+    path('api/user/', include('apps.user.urls')),
     # Swagger and Redoc URLs
     path(
         "swagger/",

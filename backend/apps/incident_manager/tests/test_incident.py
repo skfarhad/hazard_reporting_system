@@ -1,7 +1,7 @@
 from django.test import TestCase
 from unittest.mock import patch
-from incident_manager.constants import IncidentStatus
-from incident_manager.models import Provider, Incident
+from apps.incident_manager.constants import IncidentStatus
+from apps.incident_manager.models import Provider, Incident
 
 
 class IncidentModelTest(TestCase):
@@ -13,7 +13,7 @@ class IncidentModelTest(TestCase):
             description="Test Provider Description",
         )
 
-    @patch("incident_manager.signals.process_incident_and_send_sms.delay")
+    @patch("apps.incident_manager.signals.process_incident_and_send_sms.delay")
     def test_signal_triggers_background_task_on_status_validated(
         self, mock_process_incident
     ):
@@ -37,7 +37,7 @@ class IncidentModelTest(TestCase):
         # Now the task should be triggered
         mock_process_incident.assert_called_once_with(incident.id)
 
-    @patch("incident_manager.signals.process_incident_and_send_sms.delay")
+    @patch("apps.incident_manager.signals.process_incident_and_send_sms.delay")
     def test_signal_does_not_trigger_task_if_status_unchanged(
         self, mock_process_incident
     ):
