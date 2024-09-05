@@ -1,5 +1,5 @@
 import { icons } from '@/assets/icons';
-import { cn } from '@/lib/utils';
+import { cn } from '@/libs/utils';
 import Image from 'next/image';
 import { Fragment } from 'react';
 export type TDataTableColumn = {
