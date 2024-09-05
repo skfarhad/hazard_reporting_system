@@ -1,3 +1,9 @@
+'''
+Postgres 16.4
+PostGIS 3.4.2
+sudo apt install postgis postgresql-16-postgis-3
+'''
+
 import os
 import geopandas as gpd
 import psycopg2
