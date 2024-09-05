@@ -36,17 +36,9 @@ jobs:
         CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
         EOF
 
-    - name: Set up Docker Compose
-      working-directory: ./backend  # Specify the directory containing docker-compose.yml
-      run: |
-        docker-compose up -d postgres redis rabbitmq  # Start necessary services
 
     - name: Run Django Tests
       working-directory: ./backend  # Specify the directory containing manage.py
       run: |
-        docker-compose run be python manage.py test  # Run the Django tests
+        docker-compose up unit_tests
 
-    - name: Clean up
-      working-directory: ./backend  # Specify the directory containing docker-compose.yml
-      run: |
-        docker-compose down  # Stop and remove containers, networks, volumes
