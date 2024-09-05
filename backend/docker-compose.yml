@@ -21,7 +21,7 @@ services:
   postgres:
     image: postgis/postgis:latest
     volumes:
-      - postgres_data:/var/lib/postgresql/datas
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}
@@ -64,7 +64,11 @@ services:
       TASK_MODULE: config
       LOG_LEVEL: info
     healthcheck:
-      test: ["CMD-SHELL", "celery -A config inspect ping -d celery@$$HOSTNAME || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "celery -A config inspect ping -d celery@$$HOSTNAME || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3

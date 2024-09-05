@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Volunteer
+from .models import Volunteer, VolunteerTeam
 
 
 class VolunteerSerializer(serializers.ModelSerializer):
@@ -10,6 +10,7 @@ class VolunteerSerializer(serializers.ModelSerializer):
         model = Volunteer
         fields = [
             "full_name",
+            "contact_number",
             "latitude",
             "longitude",
             "assistance_type",
@@ -21,3 +22,12 @@ class VolunteerSerializer(serializers.ModelSerializer):
 
     def get_longitude(self, obj):
         return obj.location.x
+
+
+class VolunteerTeamSerializer(serializers.ModelSerializer):
+    team_leader = VolunteerSerializer()
+    members = VolunteerSerializer(many=True)
+
+    class Meta:
+        model = VolunteerTeam
+        fields = ['id', 'name', 'team_leader', 'members']
