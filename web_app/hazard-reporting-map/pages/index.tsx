@@ -6,11 +6,6 @@ import { MarkerData } from '@/types/MarkerData';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import SummaryCardsComponent from '@/components/SummaryCards';
 
-// const manrope = Manrope({
-//   subsets: ['latin'],
-//   weight: ['400', '600'],
-// });
-
 const dummyMarkers: MarkerData[] = [
   {
     id: '1',

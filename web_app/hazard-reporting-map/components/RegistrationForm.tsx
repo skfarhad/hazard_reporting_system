@@ -69,6 +69,7 @@ const RegistrationForm = () => {
             name="fname"
             id="fname"
             placeholder="Enter your name"
+            className="w-full px-2 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
           />
         </div>
 
@@ -84,6 +85,7 @@ const RegistrationForm = () => {
             pattern="^01[3-9]\d{8}$"
             title="Please enter a valid 11-digit Bangladeshi mobile number starting with 01."
             required
+            className="w-full px-2 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
           />
         </div>
 
@@ -97,6 +99,7 @@ const RegistrationForm = () => {
             id="email"
             placeholder="Enter your email"
             required
+            className="w-full px-2 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
           />
         </div>
 

@@ -10,7 +10,6 @@ type TSocialLogin = {
 const SocialLogins = ({ mode }: TSocialLogin) => {
   const handleAuth = (e: string) => {
     if (e === 'google') {
-      //   signIn('google', { callbackUrl: process.env.NEXT_PUBLIC_CALLBACK_URL });
     }
   };
 
@@ -21,7 +20,7 @@ const SocialLogins = ({ mode }: TSocialLogin) => {
           onClick={() => {
             handleAuth('google');
           }}
-          className="w-full border-gray-600/30 border rounded-md flex items-center gap-2 justify-center"
+          className="w-full border border-gray  rounded-md flex items-center gap-2 justify-center h-[52px]"
         >
           <Image
             src="/google.png"

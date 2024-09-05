@@ -28,17 +28,6 @@ const LoginForm = () => {
       setError('Please enter a valid email address.');
       return;
     }
-
-    // try {
-    //   const response = await login(formData);
-    //   if (!!response.error) {
-    //     setError(response.error.message);
-    //   } else {
-    //     router.push('/');
-    //   }
-    // } catch (error: any) {
-    //   setError(error?.message);
-    // }
   };
 
   return (
@@ -56,6 +45,7 @@ const LoginForm = () => {
             name="email"
             id="email"
             placeholder="Enter your email address"
+            className="w-full px-2 py-2 text-base border border-gray-300 rounded outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
           />
         </div>
 
