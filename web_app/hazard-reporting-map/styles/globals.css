@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
   --color-bg-secondary: 293, 100%, 98%; /* Background of the top bar */
   --color-bg-primary: 0, 0%, 100%; /* Background of the content area */
   --color-primary-button: 173, 75%, 41%; /* "Add button */
@@ -30,90 +31,16 @@
   box-sizing: border-box;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   /* color: rgb(var(--color-text-primary)); */
-  font-family: 'Manrope', sans-serif;
   color: black;
   background-color: hsla(var(--color-bg-primary));
   height: 100%;
-
 }
 
 @layer utilities {
   .text-balance {
-    text-align: justify; /* `text-wrap` is not a standard property */
-  }
-
-  .container {
-    @apply max-w-7xl mx-auto w-full px-4;
-  }
-
-  select {
-    @apply w-full px-4 py-2 rounded-md border border-black/20 bg-transparent;
-  }
-
-  input[type="date"] {
-    @apply w-full px-4 py-2 rounded-md border border-black/20 bg-transparent;
-  }
-
-  .search-btn {
-    @apply bg-primary px-8 py-3 rounded-md block mx-auto text-white font-bold -translate-y-1/2 shadow-lg hover:shadow-primary/50 active:scale-95 transition-all;
-  }
-
-  .btn-primary {
-    @apply bg-primary px-8 py-2 rounded-md block text-white font-bold shadow-lg hover:shadow-primary/50 active:scale-95 transition-all;
-  }
-
-  .btn-disabled {
-    @apply bg-gray-500 px-8 py-2 rounded-md block text-white font-bold shadow-lg cursor-default;
-  }
-
-  #searchParams {
-    @apply bg-white w-full h-full py-10 lg:py-12 px-6 lg:px-8 rounded-xl border border-black/10 shadow-lg lg:flex items-center [&>*]:flex-1 [&>*]:px-4 [&>div>span]:mb-3 space-y-5 lg:space-y-0;
-  }
-
-  #searchParams span {
-    @apply font-bold;
-  }
-
-  .imageshowCase {
-    @apply h-[400px];
-  }
-
-  .imageshowCase img {
-    @apply h-full min-h-full w-full min-w-full object-cover;
-  }
-
-  .login-form {
-    @apply flex flex-col my-3;
-  }
-
-  .login-form div {
-    @apply flex flex-col gap-2 mb-5 w-[415px];
-  }
-
-  .login-form input[type="text"],
-  .login-form input[type="password"],
-  .login-form input[type="email"] {
-    @apply w-[415px] h-[52px];
-  }
-
-  .login-form input {
-    @apply border border-black/20 rounded-md px-4 py-2;
-  }
-
-  input[type="checkbox"] {
-    @apply mx-1;
-  }
-
-  button:disabled {
-    @apply bg-gray-500 cursor-default;
+    text-wrap: balance;
   }
 }
 
