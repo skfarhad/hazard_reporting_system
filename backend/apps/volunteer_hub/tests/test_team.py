@@ -1,5 +1,5 @@
 from django.test import TestCase
-from volunteer_hub.models import Volunteer, VolunteerTeam
+from apps.volunteer_hub.models import Volunteer, VolunteerTeam
 
 
 class VolunteerTeamModelTest(TestCase):

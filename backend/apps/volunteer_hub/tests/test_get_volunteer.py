@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.gis.geos import Point
-from volunteer_hub.models import Volunteer
+from apps.volunteer_hub.models import Volunteer
 
 
 class VolunteerListViewTestCase(APITestCase):

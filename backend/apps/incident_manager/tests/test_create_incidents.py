@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from django.contrib.gis.geos import Point
-from incident_manager.models import Provider, Incident
+from apps.incident_manager.models import Provider, Incident
 
 
 class IncidentCreateViewTestCase(APITestCase):

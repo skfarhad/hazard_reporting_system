@@ -39,12 +39,13 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 
 # Install Python dependencies with Poetry
 COPY pyproject.toml poetry.lock /code/
-RUN poetry install --no-dev
+RUN poetry install --no-root
 
 # Copy the current directory contents into the container at /code/
 
 COPY . /code/
 
 
-RUN chmod u+x ./entrypoint_worker.sh
+RUN chmod +x ./entrypoint_worker.sh
+#RUN git update-index --chmod=+x ./entrypoint_worker.sh
 CMD ["bash", "./entrypoint_worker.sh"]

@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_api_key.permissions import HasAPIKey
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Incident, Provider
 from .serializers import IncidentSerializer
 from django.shortcuts import get_object_or_404
@@ -11,6 +12,7 @@ from drf_yasg import openapi
 
 class IncidentCreateView(APIView):
     permission_classes = [HasAPIKey]
+    authentication_classes = []
 
     @swagger_auto_schema(
         operation_description="Create a new incident",

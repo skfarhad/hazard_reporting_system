@@ -71,7 +71,7 @@ services:
       start_period: 40s
 
   be:
-    build: &web_build
+    build: &be_build
       context: ./
       dockerfile: web.Dockerfile
     volumes:
@@ -90,7 +90,7 @@ services:
       celery_worker:
         condition: service_healthy
     entrypoint: "./entrypoint_web.sh"
-    environment:
+    environment: &be_environment
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -102,6 +102,28 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  unit_tests:
+    build:
+      <<: *be_build
+      args:
+        VERSION: dev
+        DEPENDENCIES: 'test'
+#    command: sh -c "python manage.py migrate; python manage.py test;"
+    environment: *be_environment
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    entrypoint: "./run_tests.sh"
+    volumes:
+      - .:/code
+#    entrypoint: ./run_test.sh
 
 volumes:
   postgres_data:

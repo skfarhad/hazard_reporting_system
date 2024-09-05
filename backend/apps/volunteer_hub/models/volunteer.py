@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models
-from incident_manager.models.address import District, Thana
+from apps.incident_manager.models.address import District, Thana
 
 
 class Volunteer(models.Model):

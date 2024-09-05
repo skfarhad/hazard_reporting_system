@@ -1,5 +1,5 @@
 from django.test import TestCase, RequestFactory
-from incident_manager.models import Provider
+from apps.incident_manager.models import Provider
 from rest_framework_api_key.models import APIKey
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework.views import APIView

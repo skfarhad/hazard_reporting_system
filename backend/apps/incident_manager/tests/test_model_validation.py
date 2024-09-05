@@ -9,10 +9,10 @@ thereby safeguarding against unintended modifications.
 
 from django.test import TestCase
 from django.contrib.gis.db import models as gis_models
-from incident_manager.models import Incident
-from volunteer_hub.models import Volunteer
-from incident_manager.models.address import Thana, District
-from incident_manager.constants import IncidentStatus, TaskStatus
+from apps.incident_manager.models import Incident
+from apps.volunteer_hub.models import Volunteer
+from apps.incident_manager.models.address import Thana, District
+from apps.incident_manager.constants import IncidentStatus, TaskStatus
 
 
 class VolunteerModelTest(TestCase):
