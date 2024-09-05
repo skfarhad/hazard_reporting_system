@@ -47,4 +47,5 @@ COPY . /code/
 
 
 RUN chmod +x ./entrypoint_worker.sh
+#RUN git update-index --chmod=+x ./entrypoint_worker.sh
 CMD ["bash", "./entrypoint_worker.sh"]

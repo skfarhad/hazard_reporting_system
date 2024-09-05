@@ -50,4 +50,6 @@ RUN poetry run python manage.py collectstatic --noinput
 
 RUN chmod +x ./entrypoint_web.sh
 RUN chmod +x ./run_tests.sh
+#RUN git update-index --chmod=+x ./run_tests.sh
+#RUN git update-index --chmod=+x ./entrypoint_web.sh
 CMD ["bash", "./entrypoint_web.sh"]
