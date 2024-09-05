@@ -12,7 +12,10 @@ from psycopg2 import OperationalError, Error
 from dotenv import load_dotenv
 
 
-def connect_db(host, dbname, user, password=None):
+def connect_db(host,
+               dbname,
+               user,
+               password=None):
     """
     Establishes a connection to the PostgreSQL database.
     """
