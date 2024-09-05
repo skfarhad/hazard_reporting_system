@@ -80,7 +80,7 @@ def main():
             'adm1alt1en': 'admin1_alt1_english',
             'adm1alt2en': 'admin1_alt2_english',
             'adm0_en': 'admin0_english',
-            'adm0_pcode': 'admin0_pcode',
+            'adm0_pcode': 'admin0_pcode_fkey',
             'validon': 'valid_on',
             'validto': 'valid_to',
             '_ogr_geometry_': 'ogr_geometry'
@@ -96,7 +96,7 @@ def main():
             'adm1_en': 'admin1_english',
             'adm1_pcode': 'admin1_pcode',
             'adm0_en': 'admin0_english',
-            'adm0_pcode': 'admin0_pcode',
+            'adm0_pcode': 'admin0_pcode_fkey',
             'validon': 'valid_on',
             'validto': 'valid_to',
             '_ogr_geometry_': 'ogr_geometry'
@@ -114,7 +114,7 @@ def main():
             'adm1_en': 'admin1_english',
             'adm1_pcode': 'admin1_pcode',
             'adm0_en': 'admin0_english',
-            'adm0_pcode': 'admin0_pcode',
+            'adm0_pcode': 'admin0_pcode_fkey',
             'validon': 'valid_on',
             'validto': 'valid_to',
             '_ogr_geometry_': 'ogr_geometry'
@@ -134,7 +134,7 @@ def main():
             'adm1_en': 'admin1_english',
             'adm1_pcode': 'admin1_pcode',
             'adm0_en': 'admin0_english',
-            'adm0_pcode': 'admin0_pcode',
+            'adm0_pcode': 'admin0_pcode_fkey',
             'validon': 'valid_on',
             'validto': 'valid_to',
             '_ogr_geometry_': 'ogr_geometry'
