@@ -38,8 +38,10 @@ services:
       retries: 5
 
   celery_worker:
-    build: .
-    command: sh -c "sleep 10 && poetry run celery -A config worker --loglevel=info"
+    build:
+      context: ./
+      dockerfile: worker.Dockerfile
+    command: sh -c "sleep 10 && celery -A config worker --loglevel=info"
     volumes:
       - .:/code
     env_file:
@@ -51,6 +53,7 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    entrypoint: "./entrypoint_worker.sh"
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}
@@ -58,18 +61,19 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PORT: 5432
+      TASK_MODULE: config
+      LOG_LEVEL: info
     healthcheck:
-      test: ["CMD-SHELL", "poetry run celery -A config inspect ping -d celery@$$HOSTNAME || exit 1"]
+      test: ["CMD-SHELL", "celery -A config inspect ping -d celery@$$HOSTNAME || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
   be:
-    build: .
-#    command: >
-#      sh -c "poetry run python manage.py collectstatic --noinput;
-#      poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000;"
+    build: &web_build
+      context: ./
+      dockerfile: web.Dockerfile
     volumes:
       - .:/code
     ports:
@@ -85,7 +89,7 @@ services:
         condition: service_healthy
       celery_worker:
         condition: service_healthy
-    entrypoint: "./start.sh"
+    entrypoint: "./entrypoint_web.sh"
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}
