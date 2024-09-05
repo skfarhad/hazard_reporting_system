@@ -52,7 +52,14 @@ const config = {
         'status-active': 'hsla(var(--color-status-active))',
         'disable-bg': 'hsla(var(--color-disable-bg))',
         'status-success': 'hsla(var(--color-success))',
+        purple: 'hsla(var(--color-purple))',
       },
+      fontFamily: {
+        poppins: ['var(--font-poppins)'],
+      },
+	  fontFamily: {
+                manrope: ['Manrope', 'sans-serif'],
+            }
     },
   },
   plugins: [require('tailwindcss-animate')],

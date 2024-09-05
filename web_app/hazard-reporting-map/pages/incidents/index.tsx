@@ -20,27 +20,25 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Edit,
+  Pencil,
   Filter,
   Plus,
   Search,
   Trash,
   Trash2,
+  Eye
 } from 'lucide-react';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import AddVolunteer from '@/components/modals/volunteers/AddVolunteer';
 
-export default function Dashboard() {
+export default function IncidentsListPage() {
   const [searchInput, setSearchInput] = useState('');
   const [status, setStatus] = useState('');
+  const [typeOfAid, setTypeOfAid] = useState('');
   const [district, setDistrict] = useState('');
   const [thana, setThana] = useState('');
   const [allData, setAllData] = useState(data.data);
-  const [pageCount, setPageCount] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [openAddModal, setOpenAddModal] = useState(false);
-
   const columns: TDataTableColumn[] = [
     {
       header: () => <Checkbox />,
@@ -67,6 +65,7 @@ export default function Dashboard() {
     {
       title: 'Description',
       selector: 'hazard_description',
+      width: "140px"
     },
 
     {
@@ -79,6 +78,11 @@ export default function Dashboard() {
           return <Badge variant={'inactive'}>Inactive</Badge>;
         }
       },
+    },
+    {
+      title: 'Type of Aid',
+      width: '40px',
+      selector: 'type_of_aid',
     },
     {
       title: 'District',
@@ -99,7 +103,10 @@ export default function Dashboard() {
       cell: () => (
         <div className="flex gap-4">
           <button>
-            <Edit size={16} />
+            <Eye size={16} />
+          </button>
+          <button>
+            <Pencil size={16} />
           </button>
           <button>
             <Trash2 size={16} />
@@ -112,11 +119,12 @@ export default function Dashboard() {
   const statusArr = ['All', 'Active', 'Inactive'];
   const districtsArr = ['Feni', 'Noakhali', 'Habiganj', 'MouloviBazar'];
   const thanaArr = ['Parshuram', 'Dighinala', 'Chandina'];
-  const loading = false;
+  const typeOfAidArr = ['All', 'Relif goods', 'Medicine/Doctor', 'Rehab', 'Infant care', 'Women Health'];
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     if (e.target.value.length > 0) {
-      const filteredData = data.data.filter(
+      const filteredData = allData.filter(
         (itm) =>
           itm.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
           itm.address.toLowerCase().includes(e.target.value.toLowerCase())
@@ -142,6 +150,19 @@ export default function Dashboard() {
       setAllData(filteredData);
     }
   };
+
+  const handleTypeOfAid = (type_of_aid: string) => {
+    setTypeOfAid(status);
+    if (type_of_aid === 'All') {
+      setAllData(data.data);
+    } else {
+      const filteredData = data.data.filter(
+        (itm) => itm.type_of_aid.toLowerCase() === type_of_aid.toLowerCase()
+      );
+      setAllData(filteredData);
+    }
+  };
+
   const handleDistrict = (district: string) => {
     setDistrict(district);
     const filteredData = data.data.filter(
@@ -169,36 +190,29 @@ export default function Dashboard() {
           <Container>
             <div className="flex md:flex-row flex-col md:justify-between gap-4 md:gap-0 md:items-center pl-2 md:pl-0">
               <div className="font-semibold">
-                <h2>All volunteers</h2>
+                <p className='text-base'>All Incidents</p>
               </div>
               <div className="flex gap-4">
-                <AddVolunteer
-                  open={openAddModal}
-                  onOpenChange={setOpenAddModal}
-                >
-                  <Button
-                    onClick={() => setOpenAddModal(!openAddModal)}
-                    className="flex gap-2 text-xs px-6"
-                  >
-                    {' '}
-                    <Plus size={16} /> Add volunteer
-                  </Button>
-                </AddVolunteer>
+                <Button className="flex gap-2 text-xs px-6">
+                  {' '}
+                  <Plus size={16} /> Add incident
+                </Button>
                 <Button
                   variant={'destructive'}
                   className="flex gap-2 text-xs px-6"
                 >
-                  <Trash size={16} /> Remove volunteer
+                  <Trash size={16} /> Remove incident
                 </Button>
               </div>
             </div>
             {/* filters */}
-            <div className="bg-secondary-background px-4 py-8 flex md:gap-24 gap-2 flex-wrap mt-3 rounded ">
+            <div className="bg-secondary-background px-4 pt-8 flex md:gap-24 gap-2 flex-wrap mt-3 rounded ">
               <div className="flex gap-4">
                 <button className="border border-gray shadow-sm shadow-gray p-3 bg-primary-background rounded-md">
                   <Filter size={14} />
                 </button>
                 <Input
+                  className='w-[322px]'
                   onChange={handleSearch}
                   placeholder="Search..."
                   value={searchInput}
@@ -210,7 +224,7 @@ export default function Dashboard() {
                   <DropdownMenuTrigger>
                     {' '}
                     <Button
-                      className="gap-2 px-6 text-xs capitalize"
+                      className="w-[120px] gap-2 px-6 text-xs capitalize"
                       variant={'ghost'}
                       size={'sm'}
                     >
@@ -237,7 +251,34 @@ export default function Dashboard() {
                   <DropdownMenuTrigger>
                     {' '}
                     <Button
-                      className="gap-2 px-6 text-xs capitalize"
+                      className="w-[120px] gap-2 px-6 text-xs capitalize"
+                      variant={'ghost'}
+                      size={'sm'}
+                    >
+                      {typeOfAid.length > 0 ? status : 'All'}{' '}
+                      <ChevronDown size={10} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Type of Aid</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    {typeOfAidArr.map((itm) => (
+                      <DropdownMenuItem
+                        key={itm}
+                        onClick={() => handleTypeOfAid(itm)}
+                      >
+                        {itm}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    {' '}
+                    <Button
+                      className="w-[120px] gap-2 px-6 text-xs capitalize"
                       variant={'ghost'}
                       size={'sm'}
                     >
@@ -264,7 +305,7 @@ export default function Dashboard() {
                   <DropdownMenuTrigger>
                     {' '}
                     <Button
-                      className="gap-2 px-6 text-xs capitalize"
+                      className="w-[120px] gap-2 px-6 text-xs capitalize"
                       variant={'ghost'}
                       size={'sm'}
                     >
@@ -295,7 +336,7 @@ export default function Dashboard() {
             </div>
             {/* pagination */}
             <div className=" flex justify-center md:justify-end px-4 py-6 md:py-2 text-xs items-center mt-8  rounded ">
-              <div className="">
+              <div>
                 <ReactPaginate
                   previousLabel={
                     <ChevronLeft

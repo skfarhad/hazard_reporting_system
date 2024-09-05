@@ -22,14 +22,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "incident_manager",
-    "volunteer_hub",
+    "django.contrib.gis",
     "rest_framework",
     "rest_framework_api_key",
     "django_filters",
     "leaflet",
     "rest_framework.authtoken",
     "drf_yasg",
+
+    "incident_manager",
+    "volunteer_hub",
+
 ]
 
 MIDDLEWARE = [
