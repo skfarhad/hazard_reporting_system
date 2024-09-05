@@ -120,8 +120,6 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
-      celery_worker:
-        condition: service_healthy
     entrypoint: "./run_tests.sh"
     volumes:
       - .:/code
