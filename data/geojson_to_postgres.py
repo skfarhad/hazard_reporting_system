@@ -145,8 +145,6 @@ def main():
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
 
-    print(f'host = {host}\ndatabase = {dbname}\nuser = {user}\n')
-
     # Connect to the database
     conn = connect_db(host, dbname, user, password)
     if not conn:
