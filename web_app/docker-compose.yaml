@@ -1,0 +1,7 @@
+services:
+  nextjs:
+    build:
+      context: ./
+      dockerfile: app.Dockerfile
+    ports:
+      - "3001:3000"
