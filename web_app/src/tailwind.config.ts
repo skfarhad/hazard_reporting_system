@@ -53,13 +53,13 @@ const config = {
         'disable-bg': 'hsla(var(--color-disable-bg))',
         'status-success': 'hsla(var(--color-success))',
         purple: 'hsla(var(--color-purple))',
+        'auth-btn': 'hsla(var(--color-auth-btn))',
+        'gray-500': 'rgb(107 114 128)',
       },
       fontFamily: {
         poppins: ['var(--font-poppins)'],
+        manrope: ['var(--font-manrope)'],
       },
-	  fontFamily: {
-                manrope: ['Manrope', 'sans-serif'],
-            }
     },
   },
   plugins: [require('tailwindcss-animate')],
