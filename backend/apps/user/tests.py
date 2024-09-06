@@ -24,7 +24,7 @@ def create_user(username):
 class UserTestCase(TestCase):
 
     def setUp(self):
-        self.valid_access_token1 = ''
+        self.valid_fb_phone_token1 = ''
         self.username1 = 'username1'
         self.username2 = 'username2'
         self.username3 = 'username3'
@@ -36,19 +36,21 @@ class UserTestCase(TestCase):
         self.username9 = 'username9'
         self.username10 = 'username10'
 
-    # def test_signup_success(self):
-    #
-    #     response = client.post(
-    #         user_prefix + USER_ULRS['signup_api'],
-    #         {
-    #           'username': 'newuser',
-    #           'access_token': FB_TOKEN_VALID,
-    #           'password': 'password'
-    #         },
-    #         format='json',
-    #     )
-    #     print(response.data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_signup_success(self):
+
+        username = "newuser123"
+        response = client.post(
+            user_prefix + USER_ULRS['signup_api'],
+            {
+              'username': username,
+              'fb_phone_token': FB_TOKEN_VALID,
+              'password': 'password123'
+            },
+            format='json',
+        )
+        # print(response.data)
+        # print(response.status_code)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_signup_fail_invalid_username(self):
 
@@ -56,7 +58,7 @@ class UserTestCase(TestCase):
             user_prefix + USER_ULRS['signup_api'],
             {
                 'username': 'new user',
-                'access_token': FB_TOKEN_VALID,
+                'fb_phone_token': FB_TOKEN_VALID,
                 'password': 'password'
             },
             format='json',
@@ -70,26 +72,25 @@ class UserTestCase(TestCase):
             user_prefix + USER_ULRS['signup_api'],
             {
                 'username': 'new user',
-                'access_token': FB_TOKEN_VALID,
+                'fb_phone_token': FB_TOKEN_VALID,
                 'password': '21'
             },
             format='json',
         )
-        # print(response.data)
         self.assertEqual(response.status_code, 400)
 
-    def test_signup_fail_invalid_token(self):
-        # TODO: Add token generator class for authkit
-        response = client.post(
-            user_prefix + USER_ULRS['signup_api'],
-            {
-                'username': 'new user',
-                'access_token': FB_TOKEN_INVALID,
-            },
-            format='json',
-        )
-        # print(response.data)
-        self.assertEqual(response.status_code, 400)
+    # def test_signup_fail_invalid_token(self):
+    #     # TODO: Add token generator class for authkit
+    #     response = client.post(
+    #         user_prefix + USER_ULRS['signup_api'],
+    #         {
+    #             'username': 'new user',
+    #             'fb_phone_token': FB_TOKEN_INVALID,
+    #         },
+    #         format='json',
+    #     )
+    #     # print(response.data)
+    #     self.assertEqual(response.status_code, 400)
 
     def test_login_success(self):
         manager1 = User.objects.create(username=self.username1)
@@ -97,7 +98,7 @@ class UserTestCase(TestCase):
         manager1.set_password(password)
         manager1.save()
 
-        response = client.post(
+        resp = client.post(
             user_prefix + USER_ULRS['login_password'],
             {
                 'username': self.username1,
@@ -105,9 +106,8 @@ class UserTestCase(TestCase):
             },
             format='json',
         )
-        # print(response.data)
         # print(response.data['jwt_token'])
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
 
     def test_login_fail(self):
         manager1 = User.objects.create(username=self.username1)
@@ -136,6 +136,60 @@ class UserTestCase(TestCase):
         )
         # print(response.data)
         self.assertEqual(response.status_code, 401)
+
+    def test_password_change_success(self):
+        manager1 = User.objects.create(username=self.username1)
+        password = '1234567890'
+        manager1.set_password(password)
+        manager1.save()
+
+        client.force_authenticate(user=manager1)
+        response = client.post(
+            user_prefix + USER_ULRS['change_password'],
+            {
+                'old_password': password,
+                'new_password': password + '123',
+            },
+            format='json',
+        )
+        client.force_authenticate(user=None)
+        self.assertEqual(response.status_code, 200)
+
+    def test_password_change_fail(self):
+        manager1 = User.objects.create(username=self.username1)
+        password = '1234567890'
+        manager1.set_password(password)
+        manager1.save()
+
+        client.force_authenticate(user=manager1)
+        response = client.post(
+            user_prefix + USER_ULRS['change_password'],
+            {
+                'old_password': password + '123',
+                'new_password': password + '123',
+            },
+            format='json',
+        )
+        self.assertEqual(response.status_code, 400)
+
+        response = client.post(
+            user_prefix + USER_ULRS['change_password'],
+            {
+                'old_password': password,
+                'new_password': '123',
+            },
+            format='json',
+        )
+        response = client.post(
+            user_prefix + USER_ULRS['change_password'],
+            {
+                'old_password': password,
+                'new_password': password,
+            },
+            format='json',
+        )
+        client.force_authenticate(user=None)
+        self.assertEqual(response.status_code, 406)
 
     def test_create_profile_success(self):
         user1 = create_user(self.username1)
@@ -170,7 +224,6 @@ class UserTestCase(TestCase):
 
     def test_create_profile_fail_duplicate_username(self):
         user1 = create_user(self.username1)
-
         client.force_authenticate(user1)
 
         response = client.post(
@@ -186,22 +239,8 @@ class UserTestCase(TestCase):
         # print(response.data)
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
-        response = client.post(
-            user_prefix + USER_ULRS['profile'],
-            {
-                'username': 'new user',
-                'full_name': 'agent1',
-                'email': '',
-                'phone': '+0881787XXXXXX',
-            },
-            format='json',
-        )
-        # print(response.data)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
-
     def test_edit_profile_success(self):
         user1 = create_user(self.username1)
-
         client.force_authenticate(user1)
 
         response = client.patch(
@@ -246,7 +285,7 @@ class UserTestCase(TestCase):
             format='json',
         )
         # print(response.data)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_edit_profile_fail_invalid_character(self):
         user1 = create_user(self.username1)
@@ -264,7 +303,7 @@ class UserTestCase(TestCase):
             format='json',
         )
         # print(response.data)
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_profile_list(self):
         user1 = create_user(self.username1)

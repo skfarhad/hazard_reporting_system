@@ -10,71 +10,7 @@ Generic ViewSet Template
 
 
 class CustomViewSet(viewsets.ViewSet):
-    """
-    retrieve:
-        Return single object
 
-        Sample Response:
-        ---
-            {
-            }
-
-    list:
-        Return object list
-
-        Query parameters:
-        ---
-            token:
-                type: str
-                required: No
-
-        Sample Response:
-        ---
-            [
-                {
-                },.....
-            ]
-
-    create:
-        Create object
-
-        Sample Submit:
-        ---
-            {
-            }
-
-    partial_update:
-        Update single object
-
-        Sample Submit:
-        ---
-            {
-            }
-
-
-    paginated:
-        Return paginated object list
-
-        Query parameters:
-        ---
-            //same as list
-        Sample Response:
-        ---
-
-            {
-                'limit': 10,
-                'offset': 20,
-                'count': 101,
-                'next': 'limit=5&offset=30',
-                'prev': 'limit=5&offset=10',
-                'results': [
-                    {
-                        //object details fields
-                    },...
-                ]
-            }
-
-    """
     ObjModel = None
     ObjSerializer = None
 

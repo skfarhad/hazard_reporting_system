@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -xe
 celery -A $TASK_MODULE worker \
