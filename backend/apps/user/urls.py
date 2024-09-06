@@ -2,7 +2,7 @@ from rest_framework_simplejwt import views as jwt_view
 from rest_framework import routers
 from django.urls import path
 
-from .apis_auth import PasswordLogin, Signup, PasswordChangeOtp
+from .apis_auth import PasswordLogin, Signup, PasswordChangeOtp, PasswordChange
 from .apis import ProfileViewSet
 
 # from apps.user.views import *
@@ -32,6 +32,7 @@ urlpatterns = [
 
     path(USER_ULRS['login_password'], PasswordLogin.as_view()),
     path(USER_ULRS['change_password_otp'], PasswordChangeOtp.as_view()),
+    path(USER_ULRS['change_password'], PasswordChange.as_view()),
     path(USER_ULRS['signup_api'], Signup.as_view()),
 
 ]

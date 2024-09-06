@@ -46,6 +46,24 @@ class GDPointField(serializers.Field):
         return None
 
 
+def get_paginated_serializer(ItemSerializer):
+    attributes = {
+        'limit': serializers.IntegerField(default=0),
+        'offset': serializers.IntegerField(default=0),
+        'count': serializers.IntegerField(default=0),
+        'next': serializers.CharField(default="", max_length=120),
+        'prev': serializers.CharField(default="", max_length=120),
+        'results': ItemSerializer(many=True)
+    }
+    # Dynamically create the serializer class
+    PaginationSerializer = type(
+        'PaginationSerializer',  # Name of the serializer class
+        (serializers.Serializer,),  # Base class (inherits from `Serializer`)
+        attributes  # Fields of the serializer
+    )
+    return PaginationSerializer
+
+
 class CustomSerializer(serializers.ModelSerializer):
 
     class Meta:

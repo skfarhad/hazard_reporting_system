@@ -10,11 +10,10 @@ from apps.user.models import User
 # alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
 
 
-
 def validate_username(username):
-    if len(username) < 5 or not username.isalnum():
-        msg = 'Username should be alphanumeric and contain at least 5 characters!'
-        raise NotAcceptable(detail=msg)
+    if (len(username) < 5) or (not username.isalnum()):
+        msg = f'Username should be alphanumeric and contain at least 5 characters!'
+        raise ValidationError(detail=msg)
 
 
 def validate_password(password):
@@ -25,23 +24,24 @@ def validate_password(password):
 
 class SignupSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=32, required=True)
-    access_token = serializers.CharField(max_length=255, required=True)
-    full_name = serializers.CharField(max_length=255, required=False)
-    email = serializers.EmailField(required=False)
     password = serializers.CharField(max_length=255, required=True)
+    fb_phone_token = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    full_name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    email = serializers.EmailField(required=False, allow_blank=True)
 
     def signup_user(self, validated_data):
         username = validated_data['username']
-        access_token = validated_data['access_token']
-        phone = get_validated_phone(access_token)
+        fb_phone_token = validated_data.get('fb_phone_token', "")
+        phone = get_validated_phone(fb_phone_token)
         full_name = validated_data.get('full_name', '')
         email = validated_data.get('email', '')
         password = validated_data['password']
         if not phone:
-            raise ValidationError(detail='Invalid token!')
-
+            phone = ""
+            # creating accounts without phone validation
+            # raise ValidationError(detail='Invalid token!')
         if User.objects.filter(username__exact=username).exists():
-            raise ValidationError(detail='Username exists!')
+            raise NotAcceptable(detail='Username exists!')
 
         validate_username(username)
         validate_password(password)
@@ -82,13 +82,13 @@ class PasswordLoginSerializer(serializers.Serializer):
 
 class PasswordChangeOTPSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=32, required=True)
-    access_token = serializers.CharField(max_length=255, required=True)
+    fb_phone_token = serializers.CharField(max_length=255, required=True)
     new_password = serializers.CharField(max_length=64, required=True)
 
     def authenticate(self, validated_data):
         username = validated_data['username']
-        access_token = validated_data['access_token']
-        phone = get_validated_phone(access_token)
+        fb_phone_token = validated_data['fb_phone_token']
+        phone = get_validated_phone(fb_phone_token)
         new_password = validated_data['new_password']
         user_qs = User.objects.filter(username__exact=username)
 
@@ -131,7 +131,7 @@ class ProfileSerializer(ModelSerializer):
         try:
             user = self.create(validated_data)
         except Exception as e:
-            print(str(e))
+            # print(str(e))
             raise NotAcceptable(detail='Something went wrong!')
         return user
 
@@ -147,6 +147,40 @@ class ProfileSerializer(ModelSerializer):
         try:
             user = self.update(user, validated_data)
         except Exception as e:
-            print(str(e))
+            # print(str(e))
             raise NotAcceptable(detail='Something went wrong!')
         return user
+
+
+class SignupRespSerializer(serializers.Serializer):
+    user_details = ProfileSerializer()
+    jwt_token = serializers.CharField(max_length=255, required=True)
+
+
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(max_length=255, required=True)
+    new_password = serializers.CharField(max_length=255, required=True)
+
+    def authenticate(self, user, validated_date):
+        min_len = 8
+        old_password = validated_date.get('old_password', False)
+        new_password = validated_date.get('new_password', False)
+        if not (old_password or new_password):
+            raise ValidationError(detail='Provide old and new password!')
+
+        if len(new_password) < min_len:
+            raise ValidationError(detail=f'Password is too short! Should have more than {str(min_len)} characters!')
+
+        if not user.check_password(old_password):
+            raise ValidationError(detail='Old password is wrong!')
+
+        if old_password == new_password:
+            raise NotAcceptable(detail='New password should be different!')
+
+        user.set_password(new_password)
+        user.save()
+        return user
+
+
+class MessageSerializer(serializers.Serializer):
+    details = serializers.CharField(max_length=255, required=True)

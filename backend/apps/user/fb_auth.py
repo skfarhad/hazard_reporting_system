@@ -8,5 +8,5 @@ def get_validated_phone(access_token):
         # uid = decoded_token['uid']
         return phone
     except Exception as e:
-        print(str(e))
+        # print(str(e))
         return None

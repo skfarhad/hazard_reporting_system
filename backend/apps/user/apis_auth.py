@@ -1,9 +1,14 @@
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
-from apps.user.serializers import PasswordLoginSerializer, SignupSerializer, \
-    PasswordChangeOTPSerializer
+from apps.user.serializers import (
+    PasswordLoginSerializer, SignupSerializer,
+    PasswordChangeOTPSerializer, SignupRespSerializer,
+    MessageSerializer, PasswordChangeSerializer
+)
 from apps.user.serializers import ProfileSerializer
 
 
@@ -14,26 +19,17 @@ def get_profile_details(user):
 class Signup(APIView):
     permission_classes = (AllowAny,)
 
+    @swagger_auto_schema(
+        operation_description="Signup for a User",
+        request_body=SignupSerializer,
+        responses={
+            200: openapi.Response(
+                description="", schema=SignupRespSerializer
+            ),
+            400: "Bad Request - Invalid data",
+        },
+    )
     def post(self, request, format=None):
-        """
-        Sample Submit:
-        ---
-            {
-                'username': 'username',
-                'access_token': 'asdfasdfasdf2',
-                'full_name': 'Full Name',
-                'email': 'test@mail.com',
-                'password': 'pass123'
-            }
-
-        Sample Response:
-        ---
-            {
-                'user_details': { profile fields },
-                'jwt_token': jwt_token,
-            }
-
-        """
         serializer = SignupSerializer(data=request.data)
         if serializer.is_valid():
             user, jwt_token = serializer.signup_user(serializer.validated_data)
@@ -48,23 +44,17 @@ class Signup(APIView):
 class PasswordLogin(APIView):
     permission_classes = (AllowAny,)
 
+    @swagger_auto_schema(
+        operation_description="Login for a User",
+        request_body=PasswordLoginSerializer,
+        responses={
+            200: openapi.Response(
+                description="", schema=SignupRespSerializer
+            ),
+            400: "Bad Request - Invalid data",
+        },
+    )
     def post(self, request, format=None):
-        """
-        Sample Submit:
-        ---
-            {
-                'username': 'username',
-                'password': 'asdfasdfasdf2',
-            }
-
-        Sample Response:
-        ---
-            {
-                'user_details': { profile fields },
-                'jwt_token': jwt_token,
-            }
-
-        """
         serializer = PasswordLoginSerializer(data=request.data)
         if serializer.is_valid():
             user, jwt_token = serializer.authenticate(serializer.validated_data)
@@ -79,51 +69,49 @@ class PasswordLogin(APIView):
 class PasswordChange(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @swagger_auto_schema(
+        operation_description="Login for a User",
+        request_body=PasswordChangeSerializer,
+        responses={
+            200: openapi.Response(
+                description="", schema=MessageSerializer
+            ),
+            400: "Bad Request - Invalid data",
+        },
+    )
     def post(self, request, format=None):
-        """
-        Sample Submit:
-        ---
-            {
-                'old_password': 'asdfasdfasdf1',
-                'new_password': 'asdfasdfasdf2',
-            }
-        """
         # print("Request", serializer.data)
-        old_password = request.data.get('old_password', False)
-        new_password = request.data.get('new_password', False)
-        if not (old_password or new_password):
-            return Response({'detail': 'Provide old and new password!'}, status=400)
-
-        if len(new_password) < 8:
-            return Response({'detail': 'Provide a valid password!'}, status=400)
-
-        user = request.user
-        if user.check_password(old_password):
-            user.set_password(new_password)
-            user.save()
-            return Response({'msg': 'OK'}, status=200)
-        msg = 'Password do not match'
-        return Response({'detail': msg}, status=400)
+        serializer = PasswordChangeSerializer(
+            data=request.data
+        )
+        if serializer.is_valid():
+            user = serializer.authenticate(request.user, serializer.validated_data)
+            data = {
+                'detail': 'OK',
+            }
+            return Response(data, status=200)
+        return Response({'detail': str(serializer.errors)}, status=400)
 
 
 class PasswordChangeOtp(APIView):
     permission_classes = (AllowAny,)
 
+    @swagger_auto_schema(
+        operation_description="Login for a User",
+        request_body=PasswordChangeOTPSerializer,
+        responses={
+            200: openapi.Response(
+                description="", schema=MessageSerializer
+            ),
+            400: "Bad Request - Invalid data",
+        },
+    )
     def post(self, request, format=None):
-        """
-        Sample Submit:
-        ---
-            {
-                'username': 'username',
-                'access_token': 'sfasdfasdfX',
-                'new_password': 'asdfasdfasdf2',
-            }
-        """
         serializer = PasswordChangeOTPSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.authenticate(serializer.validated_data)
             data = {
-                'msg': 'OK',
+                'detail': 'OK',
             }
             return Response(data, status=200)
         return Response({'detail': str(serializer.errors)}, status=400)
