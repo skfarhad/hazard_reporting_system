@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic';
 import DataTable, { TDataTableColumn } from '@/components/DataTable';
 import Container from '@/components/layouts/Container';
 import { Badge } from '@/components/ui/badge';
@@ -29,7 +30,13 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import AddVolunteer from '@/components/modals/volunteers/AddVolunteer';
+
+const AddVolunteer = dynamic(
+  () => import('@/components/modals/volunteers/AddVolunteer'),
+  {
+    ssr: false,
+  }
+);
 
 export default function Dashboard() {
   const [searchInput, setSearchInput] = useState('');
