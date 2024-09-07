@@ -3,6 +3,7 @@ import React, {
   ReactNode,
   SetStateAction,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -179,7 +180,7 @@ export default function AddVolunteer({
   const [formInfo, setFormInfo] = useState({ ...initialFormInfo });
   const [isFormLoading, setIsFormLoading] = useState(false);
   const zoom = 6;
-  const center = { lat: 23.4667, lng: 90.4354546 };
+  const center = useMemo(() => ({ lat: 23.4667, lng: 90.4354546 }), []);
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const [map, setMap] = useState<mapboxgl.Map | undefined>(undefined);
 
@@ -201,7 +202,7 @@ export default function AddVolunteer({
         setMap(mapInstance);
       }, 200);
     }
-  }, [open, isClient]);
+  }, [open, isClient, center, map]);
 
   useEffect(() => {
     if (!open && map) {
