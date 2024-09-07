@@ -38,8 +38,10 @@ services:
       retries: 5
 
   celery_worker:
-    build: .
-    command: sh -c "sleep 10 && poetry run celery -A config worker --loglevel=info"
+    build:
+      context: ./
+      dockerfile: worker.Dockerfile
+    command: sh -c "sleep 10 && celery -A config worker --loglevel=info"
     volumes:
       - .:/code
     env_file:
@@ -51,6 +53,7 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+    entrypoint: "./entrypoint_worker.sh"
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}
@@ -58,25 +61,23 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_PORT: 5432
+      TASK_MODULE: config
+      LOG_LEVEL: info
     healthcheck:
-      test: ["CMD-SHELL", "poetry run celery -A config inspect ping -d celery@$$HOSTNAME || exit 1"]
+      test: ["CMD-SHELL", "celery -A config inspect ping -d celery@$$HOSTNAME || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
   be:
-    build: .
-    command: >
-      sh -c "if [ "$DEBUG" = "True" ]; then
-               poetry run python manage.py runserver 0.0.0.0:8000;
-             else
-               poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000;
-             fi"
+    build: &be_build
+      context: ./
+      dockerfile: web.Dockerfile
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - "8001:8000"
     env_file:
       - .env
     depends_on:
@@ -88,7 +89,8 @@ services:
         condition: service_healthy
       celery_worker:
         condition: service_healthy
-    environment:
+    entrypoint: "./entrypoint_web.sh"
+    environment: &be_environment
       POSTGRES_HOST: postgres
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -100,6 +102,28 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  unit_tests:
+    build:
+      <<: *be_build
+      args:
+        VERSION: dev
+        DEPENDENCIES: 'test'
+#    command: sh -c "python manage.py migrate; python manage.py test;"
+    environment: *be_environment
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    entrypoint: "./run_tests.sh"
+    volumes:
+      - .:/code
+#    entrypoint: ./run_test.sh
 
 volumes:
   postgres_data:

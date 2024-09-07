@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 import os
+import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -22,13 +23,21 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "incident_manager",
-    "volunteer_hub",
+    "django.contrib.gis",
     "rest_framework",
     "rest_framework_api_key",
     "leaflet",
     "rest_framework.authtoken",
     "drf_yasg",
+    "django_filters",
+    # "background_task",
+    "corsheaders",
+    "rest_framework_swagger",
+
+    "apps.user",
+    "apps.incident_manager",
+    "apps.volunteer_hub",
+
 ]
 
 MIDDLEWARE = [
@@ -42,6 +51,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
+AUTH_USER_MODEL = 'user.User'
 
 TEMPLATES = [
     {
@@ -60,19 +70,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework_api_key.permissions.HasAPIKey",
-    ],
-    "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.UserRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {
-        "user": os.getenv("THROTTLE_RATE", "100/hour"),
-    },
-}
-
 
 # Database settings
 DATABASES = {
@@ -95,6 +92,41 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        "rest_framework_api_key.permissions.HasAPIKey",
+    ),
+
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "user": os.getenv("THROTTLE_RATE", "100/hour"),
+    },
+}
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=20),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
+}
 
 # Internationalization
 LANGUAGE_CODE = "en-us"

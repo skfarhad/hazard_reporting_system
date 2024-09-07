@@ -3,9 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-bg-secondary: 293, 100%, 98%; /* Background of the top bar */
+  --color-bg-primary: 0, 0%, 100%; /* Background of the content area */
+  --color-primary-button: 173, 75%, 41%; /* "Add button */
+  --color-secondary: 257, 19.8%, 54.5%;
+  --color-destructive: 335, 79%, 52%; /* Delete button */
+  --color-status-active: 226.6, 100%, 63.9%; /* "Active" status label */
+  --color-text-primary: #252525; /* General text color */
+  --color-gray: 275, 24%, 90%; /* active nav item bg */
+  --color-table-header-bg: 220, 60%, 98%;
+  --color-disable-bg: 204, 26.3%, 96.3%;
+  --color-disable-border: 210, 36.8%, 85.1%;
+  --color-success: 90, 100%, 21.6%;
+  --color-purple: 258.8, 63.3%, 59.4%;
+  --color-auth-btn: 241, 28.9%, 41.4%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,23 +26,107 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: black;
+  background-color: hsla(var(--color-bg-primary));
+  height: 100%;
 }
 
 @layer utilities {
   .text-balance {
-    text-wrap: balance;
+    text-align: justify; /* `text-wrap` is not a standard property */
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto w-full px-4;
+  }
+
+  select {
+    @apply w-full px-4 py-2 rounded-md border border-black/20 bg-transparent;
+  }
+
+  input[type='date'] {
+    @apply w-full px-4 py-2 rounded-md border border-black/20 bg-transparent;
+  }
+
+  .search-btn {
+    @apply bg-auth-btn px-8 py-3 rounded-md block mx-auto text-white font-bold -translate-y-1/2 shadow-lg hover:shadow-primary/50 active:scale-95 transition-all;
+  }
+
+  .btn-primary {
+    @apply bg-auth-btn px-8 py-2 rounded-md block text-white font-bold shadow-lg hover:shadow-auth-btn/50 active:scale-95 transition-all;
+  }
+
+  .btn-disabled {
+    @apply bg-gray-500 px-8 py-2 rounded-md block text-white font-bold shadow-lg cursor-default;
+  }
+
+  #searchParams {
+    @apply bg-white w-full h-full py-10 lg:py-12 px-6 lg:px-8 rounded-xl border border-black/10 shadow-lg lg:flex items-center [&>*]:flex-1 [&>*]:px-4 [&>div>span]:mb-3 space-y-5 lg:space-y-0;
+  }
+
+  #searchParams span {
+    @apply font-bold;
+  }
+
+  .imageshowCase {
+    @apply h-[400px];
+  }
+
+  .imageshowCase img {
+    @apply h-full min-h-full w-full min-w-full object-cover;
+  }
+
+  .login-form {
+    @apply flex flex-col my-3;
+  }
+
+  .login-form div {
+    @apply flex flex-col gap-2 mb-5 w-[415px];
+  }
+
+  .login-form input[type='text'],
+  .login-form input[type='password'],
+  .login-form input[type='email'] {
+    @apply w-[415px] h-[52px];
+  }
+
+  .login-form input {
+    @apply border border-[#666367]   rounded-md px-4 py-2;
+  }
+
+  input[type='checkbox'] {
+    @apply mx-1;
+  }
+
+  button:disabled {
+    @apply bg-gray-500 cursor-default;
   }
 }
 
 .mapboxgl-popup-content {
   background: transparent !important;
+}
+.mbx0b7a4510--SearchIcon {
+  right: 0;
+}
+
+.volunteer-form-map input {
+  background-color: hsla(var(--color-bg-secondary));
+  color: #49454f;
+  padding: 10px 30px;
+  font-weight: semibold;
+  border-radius: 20px;
 }

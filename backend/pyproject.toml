@@ -2,7 +2,7 @@
 name = "hazard-reporting-system-be"
 version = "0.1.0"
 description = "A Hazard Reporting System"
-authors = ["tasfiqulghani"]
+authors = ["tasfiqulghani", "skfarhad <sk.farhad.eee@gmail.com>"]
 license = "NA"
 readme = "README.md"
 
@@ -18,6 +18,13 @@ django-leaflet = "^0.30.1"
 djangorestframework-api-key = "^3.0.0"
 drf-yasg = "^1.21.7"
 django = ">=4.2.0,<4.3.0"
+gevent = "^24.2.1"
+django-filter = "^24.3"
+firebase-admin = "^6.5.0"
+django-cors-headers = "^4.4.0"
+django-background-tasks = "^1.2.8"
+django-rest-swagger = "^2.2.0"
+djangorestframework-simplejwt = "^5.3.1"
 
 
 [build-system]
