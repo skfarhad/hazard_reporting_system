@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import DropdownButton from '../components/Dropdown';
 import RegistrationForm from '../components/RegistrationForm';
 import SocialLogins from '../components/SocialLogin';
 
