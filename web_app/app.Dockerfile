@@ -1,21 +1,18 @@
-FROM node:alpine
+FROM node:latest
 
 # Set working directory
 WORKDIR /app
 
-# Install PM2 globally
-RUN npm install --global pm2
-
 # Copy "package.json" and "package-lock.json" before other files
 # Utilise Docker cache to save re-installing dependencies if unchanged
-COPY ./src/package*.json /app
+COPY hrs_map/package*.json /app
 
 # Install dependencies
 RUN npm install --production
+RUN npm install --global pm2
 
 # Copy all files
-COPY ./src /app
-WORKDIR ./src
+COPY hrs_map /app
 
 # Build app
 RUN npm run build
