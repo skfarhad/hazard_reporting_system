@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   nextjs:
     build:
@@ -7,4 +6,4 @@ services:
     ports:
       - '3001:3000'
     env_file:
-      - hazard-reporting-map/.env
+      - .env

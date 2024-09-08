@@ -5,13 +5,14 @@ WORKDIR /app
 
 # Copy "package.json" and "package-lock.json" before other files
 # Utilise Docker cache to save re-installing dependencies if unchanged
-COPY ./hazard-reporting-map/package*.json /app
+COPY hrs_map/package*.json /app
 
 # Install dependencies
 RUN npm install --production
+RUN npm install --global pm2
 
 # Copy all files
-COPY ./hazard-reporting-map /app
+COPY hrs_map /app
 
 # Build app
 RUN npm run build
@@ -24,4 +25,4 @@ EXPOSE 3001
 USER node
 
 # Launch app with PM2
-CMD [ "npm", "run", "start" ]
+CMD [ "pm2-runtime", "start", "npm", "--", "start" ]
