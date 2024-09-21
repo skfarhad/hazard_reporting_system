@@ -6,4 +6,4 @@ services:
     ports:
       - '3001:3000'
     env_file:
-      - .env
+      - hrs_map/.env

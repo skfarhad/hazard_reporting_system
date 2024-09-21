@@ -18,7 +18,7 @@ Bangladesh to facilitate rapid incident reporting, accurate location tracking, a
 rescue efforts. Such a system would need to integrate seamlessly with the existing infrastructure 
 provided by leading telecommunications companies and ensure that distressed individuals and volunteers 
 can communicate and act swiftly during emergencies.<br><br>
-Key Issues:
+#### Key Issues:
 - <b>Lack of Reliable Communication Channels:</b> Distressed individuals often have no efficient means 
 to report emergencies, especially in areas with poor infrastructure.
 - <b>Inefficient Location Tracking:</b> Current systems lack the capability to determine the location of both the distressed 
