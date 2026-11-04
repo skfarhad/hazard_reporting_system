@@ -47,20 +47,20 @@
 #### Subtasks:
 
 **2.1 Official spellings**
-- [ ] Failing test: old spellings become official ones as whole words (Comilla Sadar Dakshin → Cumilla Sadar Dakshin), others unchanged
-- [ ] Implement `OFFICIAL_NAMES`, `official_name()`
+- [x] Failing test: old spellings become official ones as whole words (Comilla Sadar Dakshin → Cumilla Sadar Dakshin), others unchanged
+- [x] Implement `OFFICIAL_NAMES`, `official_name()`
 
 **2.2 Build the hierarchy from codes**
-- [ ] Failing tests: builds all four levels from tiny temp GeoJSON files; polygons stored as multipolygons; centre inside each area
-- [ ] Implement reading with GDAL `DataSource`, rename, simplify (0.0001°, topology preserved), make valid, `point_on_surface`, upsert by code, parents first
+- [x] Failing tests: builds all four levels from tiny temp GeoJSON files; polygons stored as multipolygons; centre inside each area
+- [x] Implement reading with GDAL `DataSource`, rename, simplify (0.0001°, topology preserved), make valid, `point_on_surface`, upsert by code, parents first
 
 **2.3 Idempotent and adopting**
-- [ ] Failing tests: second run creates no duplicates and updates shapes; hand-added Chattogram/Feni/Parshuram are adopted (ids, incidents kept, codes set)
-- [ ] Implement code-then-(parent, name) matching; batch saves for unions
+- [x] Failing tests: second run creates no duplicates and updates shapes; hand-added Chattogram/Feni/Parshuram are adopted (ids, incidents kept, codes set)
+- [x] Implement code-then-(parent, name) matching; batch saves for unions
 
 **2.4 Safety and reporting**
-- [ ] Failing tests: missing level file → error naming it; unknown parent code → nothing saved; small island kept after simplifying; command prints created/updated per level
-- [ ] Implement one transaction, `CommandError`s, summary output
+- [x] Failing tests: missing level file → error naming it; unknown parent code → nothing saved; small island kept after simplifying; command prints created/updated per level
+- [x] Implement one transaction, `CommandError`s, summary output
 
 **Acceptance Criteria**:
 - `python manage.py import_bd_boundaries <folder>` works on the test files; no network access
