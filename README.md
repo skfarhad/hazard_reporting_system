@@ -29,7 +29,8 @@ distressed individuals based on proximity, resulting in uncoordinated and delaye
 particularly in situations where the individual is unable to speak or 
 when lines are congested during large-scale emergencies.
 
-<br>This project aims to address these issues by developing a Hazard Reporting System that uses SMS and text 
+<br>This project aims to address these issues by developing a Hazard Reporting System that uses SMS and text. We'll also 
+include a Geo-Location enabled mobile app for generic incident reporting.
 - parsed geo-location information to connect distressed individuals with the nearest volunteers, 
 - enabling faster and more effective emergency responses across Bangladesh.<br>
 
