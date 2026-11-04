@@ -134,6 +134,8 @@ SIMPLE_JWT = {
 # Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
+# The dashboard's "Today" starts at midnight Bangladesh time (UTC+6, no daylight saving).
+DASHBOARD_UTC_OFFSET_HOURS = 6
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

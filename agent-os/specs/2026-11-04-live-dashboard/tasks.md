@@ -63,30 +63,30 @@ Notes: added `validate_photo_content` (the model ImageField does not check conte
 #### Subtasks (test-first, RED before GREEN):
 
 **2.1 Period filter**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_today_starts_at_midnight_bangladesh_time_not_utc`;
   - `test_last_24_hours_and_last_7_days_include_only_incidents_created_in_that_window`;
   - `test_active_event_period_lists_only_incidents_attached_to_an_active_event`;
   - `test_an_unknown_period_is_rejected_with_400`.
-- [ ] Implement `period_start` and the `period` filter.
+- [x] Implement `period_start` and the `period` filter.
 
 **2.2 Area and task-status filters, and the volunteer count**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_district_and_thana_filters_narrow_the_list_by_id`;
   - `test_task_status_closed_lists_only_resolved_incidents`;
   - `test_each_listed_incident_has_its_volunteer_count_without_extra_queries`.
-- [ ] Implement the filters, the annotation, and the `task_status`/`volunteer_count` fields.
+- [x] Implement the filters, the annotation, and the `task_status`/`volunteer_count` fields.
 
 **2.3 Summary endpoint**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_summary_counts_pending_resolved_and_total_for_the_period_and_area`;
   - `test_summary_matches_the_list_count_for_the_same_filters`;
   - `test_summary_is_one_query`;
   - `test_non_operators_cannot_read_the_summary`.
-- [ ] Implement `IncidentSummaryView` (reuses `IncidentFilter` without the status filters).
+- [x] Implement `IncidentSummaryView` (reuses `IncidentFilter` without the status filters).
 
 **2.4 Assignment**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_an_operator_can_assign_a_volunteer_and_assigning_again_changes_nothing`;
   - `test_unassigning_removes_only_that_volunteer`;
   - `test_unassigning_someone_not_assigned_is_404`;
@@ -94,7 +94,9 @@ Notes: added `validate_photo_content` (the model ImageField does not check conte
   - `test_unknown_volunteer_ids_are_rejected`;
   - `test_details_list_the_assigned_volunteers_with_photos`;
   - `test_non_operators_cannot_assign`.
-- [ ] Implement the POST/DELETE assignment views, `volunteers` on the operator update serializer, and `volunteers` in the detail.
+- [x] Implement the POST/DELETE assignment views, `volunteers` on the operator update serializer, and `volunteers` in the detail.
+
+Notes: the list and details now include `district`/`thana` names and `volunteer_count`. Details replace `volunteer` with `volunteers` [{id, full_name, contact_number, photo}] ordered by name; PATCH responds with the details shape (re-read, annotated).
 
 **Acceptance Criteria**:
 - List and summary agree for every filter; bounded query counts.
