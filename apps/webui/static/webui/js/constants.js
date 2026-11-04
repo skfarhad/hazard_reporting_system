@@ -4,6 +4,8 @@ export const API = {
     signup: '/api/user/signup/',
     incidents: '/api/incidents/list/',
     needTypes: '/api/incidents/need-types/',
+    incident: (id) => `/api/incidents/${Number(id)}/`,
+    events: '/api/events/',
     volunteers: '/api/volunteers/volunteers/',
 };
 
@@ -28,3 +30,9 @@ export const GENERIC_NEED = { code: '', label_en: 'Unclassified', icon: 'questio
 // The map legend remembers whether the operator left it open; by default it is open on wide screens.
 export const LEGEND_STORAGE_KEY = 'hrs.mapLegend.open';
 export const LEGEND_WIDE_QUERY = '(min-width: 768px)';
+
+// Incidents page: 25 per page (the API default); the dashboard map asks for the API maximum.
+export const INCIDENT_PAGE_SIZE = 25;
+export const DASHBOARD_MAP_PAGE_SIZE = 500;
+export const INCIDENT_STATUSES = ['pending', 'validated', 'rejected'];
+export const TASK_STATUSES = ['open', 'closed', 'postponed'];

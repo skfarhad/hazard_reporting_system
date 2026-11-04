@@ -123,7 +123,7 @@ class IncidentOperatorUpdateTests(APITestCase):
         response = self.client.patch(self.url, {"event": flood.id}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["event"], {"id": flood.id, "name": "Dhaka waterlogging"})
+        self.assertEqual((response.data["event"]["id"], response.data["event"]["name"]), (flood.id, "Dhaka waterlogging"))
         self.incident.refresh_from_db()
         self.assertEqual(self.incident.event, flood)
 

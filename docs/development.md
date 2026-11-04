@@ -53,8 +53,9 @@ without it see "Your account isn't an operator yet" on the dashboard.
 | Method | Path | Who | What |
 |---|---|---|---|
 | POST | `/api/incidents/` | Provider (`Authorization: Api-Key <key>`; create a Provider in the admin to get one) | Submit an incident. Optional `needs` (codes), `life_threatening`, `people_count`; without `needs` they are read from the SMS keywords in `description` |
-| GET | `/api/incidents/list/` | Operators | Newest 500 incidents with needs, triage fields and event |
-| PATCH | `/api/incidents/<id>/` | Operators | Any of `validation_status`, `task_status`, `needs`, `life_threatening`, `people_count`, `event`. Validating queues the SMS task |
+| GET | `/api/incidents/list/` | Operators | Incidents, newest first, paginated: `{count, next, previous, results}`, 25 per page, `page`, `page_size` (max 500). Filters: `needs=rescue,medical` (any of them), `status`, `event=<id>` or `event=none`, `hazard=<code>`, `life_threatening=true\|false`, `q` (searches description, address, contact, district, thana and event name). Each result has needs, triage fields and `event` with its `hazard`. Bad filter values give 400 |
+| GET | `/api/incidents/<id>/` | Operators | One incident: the list fields plus `district`, `thana`, `provider`, `volunteer` and `updated_at` |
+| PATCH | `/api/incidents/<id>/` | Operators | Any of `validation_status`, `task_status`, `needs`, `life_threatening`, `people_count`, `event`; responds with the detail shape. Validating queues the SMS task (still a placeholder: no SMS is sent yet) |
 | GET | `/api/incidents/need-types/` | Operators | Active need types (English and Bangla labels, icon, colour) |
 | GET | `/api/events/?active=true` | Operators | Events with their hazard and districts; `active=true` keeps ongoing ones |
 | GET | `/api/volunteers/volunteers/` | Anyone | Active volunteers with their skills |
@@ -97,3 +98,10 @@ The pages in `apps/webui` are static shells; each loads one ES module (`dashboar
 `api.js`. The JWT is kept in `localStorage`. Bootstrap, Bootstrap Icons and Leaflet load from
 jsDelivr; there is no build step. Keep DOM-free logic in modules like `tables.js` and `map.js` so
 it can be tested with Vitest.
+
+The Incidents page (`incidents.js`) filters, searches and pages on the server. Its state lives in
+the page URL (`/app/incidents/?needs=rescue&status=pending&page=2`), so refresh, Back and shared
+links keep the view; `#incident-12` opens that incident's details pop-up. The pure parts are in
+`incident-query.js` (URL ↔ filters ↔ API params, pager), `incident-views.js` (rows, cards, chips,
+details and the edit form) and `incident-detail.js` (prev/next, deep link, the modal). The
+dashboard map asks the list API for one page of up to 500 incidents.

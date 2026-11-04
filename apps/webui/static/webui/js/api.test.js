@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { apiGet, apiPost } from './api.js';
+import { apiGet, apiPost, apiPatch } from './api.js';
 import { nav, setSession, getAccessToken } from './utils.js';
 
 function mockFetch(status, body) {
@@ -31,6 +31,21 @@ describe('api', () => {
 
         expect(res).toEqual({ ok: true, status: 200, data: [{ id: 1 }] });
         expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe('Bearer tok123');
+    });
+
+    it('sends PATCH with a JSON body and the token', async () => {
+        setSession('tok123', {});
+        const fetchMock = mockFetch(200, { id: 7 });
+
+        const res = await apiPatch('/api/incidents/7/', { validation_status: 'validated' });
+
+        const [url, init] = fetchMock.mock.calls[0];
+        expect(res.data).toEqual({ id: 7 });
+        expect(url).toBe('/api/incidents/7/');
+        expect(init.method).toBe('PATCH');
+        expect(JSON.parse(init.body)).toEqual({ validation_status: 'validated' });
+        expect(init.headers['Content-Type']).toBe('application/json');
+        expect(init.headers.Authorization).toBe('Bearer tok123');
     });
 
     it('goes to the login page without calling the API when signed out', async () => {

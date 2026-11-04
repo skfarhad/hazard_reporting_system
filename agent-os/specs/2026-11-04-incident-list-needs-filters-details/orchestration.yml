@@ -1,0 +1,16 @@
+# Task groups run in order; each ends with a green commit (see tasks.md).
+task_groups:
+  - name: List API filters, search, pagination and hazard
+    claude_code_subagent: general-purpose
+  - name: Detail API
+    claude_code_subagent: general-purpose
+  - name: Query state and dashboard map
+    claude_code_subagent: general-purpose
+  - name: List views, filter bar and page
+    claude_code_subagent: general-purpose
+  - name: Details pop-up, map and prev/next
+    claude_code_subagent: general-purpose
+  - name: Quick actions
+    claude_code_subagent: general-purpose
+  - name: Verification and docs
+    claude_code_subagent: general-purpose

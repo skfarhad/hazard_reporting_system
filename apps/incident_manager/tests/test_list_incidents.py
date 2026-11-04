@@ -47,8 +47,8 @@ class IncidentListViewTestCase(APITestCase):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual([i["id"] for i in response.data], [self.newer.id, self.older.id])
-        first = response.data[0]
+        self.assertEqual([i["id"] for i in response.data["results"]], [self.newer.id, self.older.id])
+        first = response.data["results"][0]
         self.assertEqual(first["validation_status"], IncidentStatus.VALIDATED.value)
         self.assertAlmostEqual(first["latitude"], 24.8949)
         self.assertAlmostEqual(first["longitude"], 91.8687)
@@ -62,8 +62,8 @@ class IncidentListViewTestCase(APITestCase):
 
         response = self.client.get(self.url)
 
-        self.assertIsNone(response.data[0]["latitude"])
-        self.assertIsNone(response.data[0]["longitude"])
+        self.assertIsNone(response.data["results"][0]["latitude"])
+        self.assertIsNone(response.data["results"][0]["longitude"])
 
     def test_operators_see_each_incidents_needs_and_triage_fields(self):
         self.newer.needs.set(NeedType.objects.filter(code__in=["rescue", "medical"]))
@@ -72,7 +72,7 @@ class IncidentListViewTestCase(APITestCase):
         self.newer.save()
         self.client.force_authenticate(self.operator)
 
-        first = self.client.get(self.url).data[0]
+        first = self.client.get(self.url).data["results"][0]
 
         self.assertEqual(sorted(first["needs"]), ["medical", "rescue"])
         self.assertTrue(first["life_threatening"])
@@ -99,9 +99,9 @@ class IncidentListViewTestCase(APITestCase):
         self.newer.save()
         self.client.force_authenticate(self.operator)
 
-        data = self.client.get(self.url).data
+        data = self.client.get(self.url).data["results"]
 
-        self.assertEqual(data[0]["event"], {"id": flood.id, "name": "Sylhet Flood"})
+        self.assertEqual((data[0]["event"]["id"], data[0]["event"]["name"]), (flood.id, "Sylhet Flood"))
         self.assertIsNone(data[1]["event"])
 
     def test_listing_incidents_with_events_uses_the_same_number_of_queries_for_one_or_twenty(self):
