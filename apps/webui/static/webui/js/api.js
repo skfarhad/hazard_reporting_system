@@ -43,3 +43,4 @@ async function request(method, endpoint, { body, auth = true } = {}) {
 
 export const apiGet = (endpoint, options) => request('GET', endpoint, options);
 export const apiPost = (endpoint, body, options) => request('POST', endpoint, { ...options, body });
+export const apiPatch = (endpoint, body, options) => request('PATCH', endpoint, { ...options, body });

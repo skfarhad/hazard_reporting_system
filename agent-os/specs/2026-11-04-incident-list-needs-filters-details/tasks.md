@@ -70,19 +70,19 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `static/webui/js/incident-query.js` (+ test, new), `constants.js`, `api.js` (+ test), `dashboard.js`
 
 **3.1 URL ↔ filters ↔ API params**
-- [ ] Write failing tests (incident-query.test.js): reads filters from the page URL; ignores unknown keys / invalid page; writes only non-default filters; API params with page and page size; event/hazard choice mapping incl. no event; filter change resets page, page change keeps filters
-- [ ] Verify they fail
-- [ ] Implement `readFilters`, `filtersToSearch`, `filtersToApiParams`, `withFilter`
+- [x] Write failing tests (incident-query.test.js): reads filters from the page URL; ignores unknown keys / invalid page; writes only non-default filters; API params with page and page size; event/hazard choice mapping incl. no event; filter change resets page, page change keeps filters
+- [x] Verify they fail
+- [x] Implement `readFilters`, `filtersToSearch`, `filtersToApiParams`, `withFilter`
 
 **3.2 Pager and showing text**
-- [ ] Write failing tests: page numbers with ellipses; showing x–y of n
-- [ ] Verify they fail
-- [ ] Implement `pageRange`, `showingText`
+- [x] Write failing tests: page numbers with ellipses; showing x–y of n
+- [x] Verify they fail
+- [x] Implement `pageRange`, `showingText`
 
 **3.3 apiPatch and dashboard**
-- [ ] Write failing test (api.test.js): sends PATCH with a JSON body and the token
-- [ ] Verify it fails; implement `apiPatch`
-- [ ] `dashboard.js` requests `?page_size=500` and uses `results` (browser-checked in Group 7)
+- [x] Write failing test (api.test.js): sends PATCH with a JSON body and the token
+- [x] Verify it fails; implement `apiPatch`
+- [x] `dashboard.js` requests `?page_size=500` and uses `results` (browser-checked in Group 7)
 
 **Acceptance Criteria**: FR5, FR8 state, FR11 helpers; tests first, now passing
 
