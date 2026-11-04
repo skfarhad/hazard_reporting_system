@@ -1,6 +1,6 @@
 // Leaflet map of incidents and volunteers. Leaflet is loaded from the CDN as the global `L`.
 import { escapeHtml, formatDateTime } from './utils.js';
-import { BANGLADESH_CENTER, BANGLADESH_ZOOM, STATUS_COLORS, VOLUNTEER_COLOR } from './constants.js';
+import { BANGLADESH_CENTER, BANGLADESH_ZOOM, GENERIC_NEED, STATUS_COLORS, VOLUNTEER_COLOR } from './constants.js';
 import { cssVar } from './theme.js';
 
 export function hasCoordinates(item) {
@@ -11,6 +11,50 @@ export function hasCoordinates(item) {
 export function incidentMarkerColor(status) {
     const known = status in STATUS_COLORS ? status : 'pending';
     return cssVar(`--hrs-status-${known}`, STATUS_COLORS[known]);
+}
+
+// Need-type icons and colours are admin-editable and end up in HTML/CSS, so only plain values pass.
+export function safeIcon(name) {
+    return /^[a-z0-9-]+$/.test(name || '') ? name : GENERIC_NEED.icon;
+}
+
+export function safeColour(value) {
+    return /^#[0-9a-fA-F]{6}$/.test(value || '') ? value : GENERIC_NEED.colour;
+}
+
+// The incident's need types in need-type order (the API sends them by sort_order); unknown codes are dropped.
+export function incidentNeeds(incident, needTypes) {
+    const codes = incident?.needs || [];
+    return needTypes.filter((t) => codes.includes(t.code));
+}
+
+// The need that decides the pin's icon and colour.
+export function primaryNeed(incident, needTypes) {
+    return incidentNeeds(incident, needTypes)[0] || needTypes.find((t) => t.is_fallback) || GENERIC_NEED;
+}
+
+// Teardrop outline in a 32×42 box; the tip is at (16, 41).
+const PIN_PATH = 'M16 1.5C7.99 1.5 1.5 7.85 1.5 15.75c0 10.2 12.7 23.3 13.8 24.4a1 1 0 0 0 1.4 0C17.8 39.05 30.5 25.95 30.5 15.75 30.5 7.85 24.01 1.5 16 1.5z';
+
+// A teardrop pin: main-need icon on its colour, outline for validation status,
+// "+N" for further needs and "!" when life-threatening.
+export function incidentPinHtml(incident, needTypes) {
+    const need = primaryNeed(incident, needTypes);
+    const needs = incidentNeeds(incident, needTypes);
+    const status = incident?.validation_status in STATUS_COLORS ? incident.validation_status : 'pending';
+    const urgent = Boolean(incident?.life_threatening);
+
+    const label = (needs.length ? needs : [need]).map((t) => t.label_en);
+    if (urgent) label.push('life-threatening');
+    label.push(status);
+
+    const count = needs.length > 1 ? `<span class="hrs-pin-count">+${needs.length - 1}</span>` : '';
+    const alert = urgent ? '<span class="hrs-pin-alert" aria-hidden="true">!</span>' : '';
+
+    return `<span class="hrs-pin hrs-pin--${status}${urgent ? ' hrs-pin--urgent' : ''}" `
+        + `style="--hrs-pin-fill:${safeColour(need.colour)}" role="img" aria-label="${escapeHtml(label.join(', '))}">`
+        + `<svg class="hrs-pin-shape" viewBox="0 0 32 42" aria-hidden="true"><path d="${PIN_PATH}"/></svg>`
+        + `<i class="bi bi-${safeIcon(need.icon)} hrs-pin-icon" aria-hidden="true"></i>${count}${alert}</span>`;
 }
 
 export function volunteerMarkerColor() {

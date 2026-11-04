@@ -18,22 +18,22 @@ Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test
 #### Subtasks (test-first — RED before GREEN):
 
 **1.1 Main need and fallback**
-- [ ] Write failing tests: uses the highest-priority need in need-type order, whatever order the incident lists them; falls back to the fallback need type when the incident has no known need; uses a generic question-mark need when need types could not be loaded
-- [ ] Verify they fail for the expected reason (functions missing)
-- [ ] Implement `incidentNeeds`, `primaryNeed`, `GENERIC_NEED`
-- [ ] Refactor while green
+- [x] Write failing tests: uses the highest-priority need in need-type order, whatever order the incident lists them; falls back to the fallback need type when the incident has no known need; uses a generic question-mark need when need types could not be loaded
+- [x] Verify they fail for the expected reason (functions missing)
+- [x] Implement `incidentNeeds`, `primaryNeed`, `GENERIC_NEED`
+- [x] Refactor while green
 
 **1.2 Safe icon and colour**
-- [ ] Write failing test: never puts an unsafe icon name or colour from the database into the markup, and escapes labels
-- [ ] Verify it fails
-- [ ] Implement `safeIcon`, `safeColour`
-- [ ] Refactor while green
+- [x] Write failing test: never puts an unsafe icon name or colour from the database into the markup, and escapes labels
+- [x] Verify it fails
+- [x] Implement `safeIcon`, `safeColour`
+- [x] Refactor while green
 
 **1.3 Pin markup**
-- [ ] Write failing tests: fills the pin with the main need's colour and shows its icon; marks the pin with its validation status, treating an unknown status as pending; shows how many further needs the incident has; flags life-threatening incidents with an alert badge; names every need, life-threatening and the status in the pin's aria-label
-- [ ] Verify they fail
-- [ ] Implement `incidentPinHtml` (inline SVG teardrop + icon + badges)
-- [ ] Refactor while green
+- [x] Write failing tests: fills the pin with the main need's colour and shows its icon; marks the pin with its validation status, treating an unknown status as pending; shows how many further needs the incident has; flags life-threatening incidents with an alert badge; names every need, life-threatening and the status in the pin's aria-label
+- [x] Verify they fail
+- [x] Implement `incidentPinHtml` (inline SVG teardrop + icon + badges)
+- [x] Refactor while green
 
 **Acceptance Criteria**:
 - FR1–FR5 markup behaviour and the security rule covered

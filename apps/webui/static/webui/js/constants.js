@@ -3,6 +3,7 @@ export const API = {
     login: '/api/user/login/password/',
     signup: '/api/user/signup/',
     incidents: '/api/incidents/list/',
+    needTypes: '/api/incidents/need-types/',
     volunteers: '/api/volunteers/volunteers/',
 };
 
@@ -20,3 +21,6 @@ export const STATUS_COLORS = {
     rejected: '#64748B',
 };
 export const VOLUNTEER_COLOR = '#16A34A';
+
+// Shown for an incident's need when need types could not be loaded or the fallback type is gone.
+export const GENERIC_NEED = { code: '', label_en: 'Unclassified', icon: 'question-circle', colour: '#64748B', is_fallback: true };
