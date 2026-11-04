@@ -1,0 +1,36 @@
+{% extends "webui/base.html" %}
+{% load static %}
+{% block title %}Dashboard · Hazard Reporting System{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3" id="summaryCards">
+  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
+    <div class="text-secondary small">Total incidents</div><div class="fs-3 fw-semibold" data-summary="total">–</div>
+  </div></div></div>
+  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
+    <div class="text-secondary small">Pending validation</div><div class="fs-3 fw-semibold text-warning" data-summary="pending">–</div>
+  </div></div></div>
+  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
+    <div class="text-secondary small">Validated</div><div class="fs-3 fw-semibold text-danger" data-summary="validated">–</div>
+  </div></div></div>
+  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
+    <div class="text-secondary small">Active volunteers</div><div class="fs-3 fw-semibold text-success" data-summary="volunteers">–</div>
+  </div></div></div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div id="map" class="dashboard-map" aria-label="Map of incidents and volunteers"></div>
+  </div>
+  <div class="card-footer small text-secondary d-flex flex-wrap gap-3">
+    <span><span class="legend-dot status-pending"></span>Pending</span>
+    <span><span class="legend-dot status-validated"></span>Validated</span>
+    <span><span class="legend-dot status-rejected"></span>Rejected</span>
+    <span><span class="legend-dot volunteer"></span>Volunteer</span>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'webui/js/dashboard.js' %}"></script>{% endblock %}

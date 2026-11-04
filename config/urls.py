@@ -4,7 +4,8 @@ from config import settings
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.generic import RedirectView
 
 # Change the Django admin header and title
 admin.site.site_header = "Hazard Reporting System Admin"
@@ -26,6 +27,8 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path("", RedirectView.as_view(url="/app/", permanent=False)),
+    path("app/", include("apps.webui.urls")),
     path("admin/", admin.site.urls),
     path("api/incidents/", include("apps.incident_manager.urls")),
     path("api/volunteers/", include("apps.volunteer_hub.urls")),
@@ -41,5 +44,7 @@ urlpatterns = [
     path("swagger.yaml", schema_view.without_ui(cache_timeout=0), name="schema-yaml"),
 ]
 
+# Gunicorn doesn't serve static files: in DEBUG, serve them from the app folders
+# (no collectstatic needed while editing JS/CSS).
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += staticfiles_urlpatterns()

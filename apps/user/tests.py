@@ -1,6 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework_simplejwt.tokens import AccessToken
 
 from apps.user.models import User
 from apps.user.urls import USER_ULRS
@@ -108,6 +109,23 @@ class UserTestCase(TestCase):
         )
         # print(response.data['jwt_token'])
         self.assertEqual(resp.status_code, 200)
+
+    def test_login_token_stays_valid_for_a_working_day(self):
+        # The web dashboard keeps the access token for the session, so a
+        # 5-minute simplejwt default would log operators out mid-shift.
+        user = User.objects.create(username=self.username2)
+        user.set_password('1234567890')
+        user.save()
+
+        resp = client.post(
+            user_prefix + USER_ULRS['login_password'],
+            {'username': self.username2, 'password': '1234567890'},
+            format='json',
+        )
+
+        token = AccessToken(resp.data['jwt_token'])
+        lifetime = token['exp'] - token['iat']
+        self.assertGreaterEqual(lifetime, 24 * 60 * 60)
 
     def test_login_fail(self):
         manager1 = User.objects.create(username=self.username1)

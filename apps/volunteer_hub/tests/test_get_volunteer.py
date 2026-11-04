@@ -92,3 +92,21 @@ class VolunteerListViewTestCase(APITestCase):
         self.assertIn("longitude", first_volunteer)
         self.assertIn("assistance_type", first_volunteer)
         self.assertIn("address", first_volunteer)
+
+    def test_volunteer_without_location_is_listed_with_null_coordinates(self):
+        """A volunteer registered without a location must not break the list."""
+        Volunteer.objects.create(
+            full_name="No Location",
+            contact_number="01800000000",
+            address="Unknown",
+            is_active=True,
+            notes="",
+            assistance_type="boat",
+        )
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        no_location = next(v for v in response.data if v["full_name"] == "No Location")
+        self.assertIsNone(no_location["latitude"])
+        self.assertIsNone(no_location["longitude"])

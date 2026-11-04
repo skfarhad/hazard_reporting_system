@@ -41,3 +41,31 @@ class IncidentSerializer(serializers.ModelSerializer):
 
     def get_location_longitude(self, obj):
         return obj.location.x
+
+
+class IncidentListSerializer(serializers.ModelSerializer):
+    """Read-only view of an incident for the dashboard map and tables."""
+
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Incident
+        fields = [
+            "id",
+            "contact_number",
+            "description",
+            "address",
+            "validation_status",
+            "task_status",
+            "latitude",
+            "longitude",
+            "created_at",
+        ]
+        read_only_fields = fields
+
+    def get_latitude(self, obj):
+        return obj.location.y if obj.location else None
+
+    def get_longitude(self, obj):
+        return obj.location.x if obj.location else None

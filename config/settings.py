@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "apps.user",
     "apps.incident_manager",
     "apps.volunteer_hub",
+    "apps.webui",
 
 ]
 
@@ -122,10 +123,9 @@ REST_FRAMEWORK = {
     },
 }
 
-JWT_AUTH = {
-    'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=20),
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=2),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=30),
 }
 
 # Internationalization

@@ -1,0 +1,58 @@
+{% extends "webui/base.html" %}
+{% load static %}
+{% block title %}Sign in · Hazard Reporting System{% endblock %}
+{% block navbar %}{% endblock %}
+{% block main_class %}container py-5{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+    <div class="text-center mb-4">
+      <i class="bi bi-life-preserver text-danger fs-1"></i>
+      <h1 class="h4 mt-2">Hazard Reporting System</h1>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#loginForm" type="button" role="tab">Sign in</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#registerForm" type="button" role="tab">Register</button></li>
+        </ul>
+      </div>
+      <div class="card-body tab-content">
+        <form id="loginForm" class="tab-pane fade show active" novalidate>
+          <div class="mb-3">
+            <label for="loginUsername" class="form-label">Username</label>
+            <input id="loginUsername" name="username" class="form-control" autocomplete="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="loginPassword" class="form-label">Password</label>
+            <input id="loginPassword" name="password" type="password" class="form-control" autocomplete="current-password" required>
+          </div>
+          <div class="text-danger small mb-2" data-error></div>
+          <button class="btn btn-primary w-100" type="submit">Sign in</button>
+        </form>
+        <form id="registerForm" class="tab-pane fade" novalidate>
+          <div class="mb-3">
+            <label for="regFullName" class="form-label">Full name</label>
+            <input id="regFullName" name="full_name" class="form-control" autocomplete="name">
+          </div>
+          <div class="mb-3">
+            <label for="regUsername" class="form-label">Username</label>
+            <input id="regUsername" name="username" class="form-control" autocomplete="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="regEmail" class="form-label">Email</label>
+            <input id="regEmail" name="email" type="email" class="form-control" autocomplete="email">
+          </div>
+          <div class="mb-3">
+            <label for="regPassword" class="form-label">Password</label>
+            <input id="regPassword" name="password" type="password" class="form-control" autocomplete="new-password" required>
+          </div>
+          <div class="text-danger small mb-2" data-error></div>
+          <button class="btn btn-primary w-100" type="submit">Create account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'webui/js/login.js' %}"></script>{% endblock %}

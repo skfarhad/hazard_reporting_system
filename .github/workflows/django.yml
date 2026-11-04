@@ -1,4 +1,4 @@
-name: Run Django Tests
+name: Tests
 
 on:
   push:
@@ -30,3 +30,20 @@ jobs:
     # `run` exits with the test command's status; `up` would always exit 0.
     - name: Run Django Tests
       run: docker compose run --rm unit_tests
+
+  webui:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the code
+      uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: npm
+
+    - name: Run web app JS tests
+      run: |
+        npm ci
+        npm test

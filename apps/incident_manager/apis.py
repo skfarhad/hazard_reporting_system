@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Incident, Provider
-from .serializers import IncidentSerializer
+from .serializers import IncidentSerializer, IncidentListSerializer
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -83,3 +84,18 @@ class IncidentCreateView(APIView):
         if auth_header.startswith("Api-Key "):
             return auth_header.split("Api-Key ")[1]
         return None
+
+
+class IncidentListView(APIView):
+    """Incidents for signed-in operators (dashboard map and tables), newest first."""
+
+    permission_classes = [IsAuthenticated]
+    MAX_RESULTS = 500
+
+    @swagger_auto_schema(
+        operation_description="List the most recent incidents (max 500), newest first",
+        responses={200: IncidentListSerializer(many=True), 401: "Not signed in"},
+    )
+    def get(self, request, *args, **kwargs):
+        incidents = Incident.objects.order_by("-created_at", "-id")[: self.MAX_RESULTS]
+        return Response(IncidentListSerializer(incidents, many=True).data)

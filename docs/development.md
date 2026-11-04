@@ -1,80 +1,57 @@
+# Development
 
-# Hazard Reporting System
-
-## Prerequisites
-- Docker and Docker Compose installed on your machine
-- Poetry for Python dependency management
+Everything runs in Docker Compose from the repo root. Python code and templates are mounted into
+the containers, and Gunicorn reloads on changes while `DEBUG=True`.
 
 ## Setup
- 
-1. **Build and Start Containers**
-   ```bashs
-   docker-compose up --build
-   ```
 
-2. **Open the Poetry Shell**
-   Start a shell inside the Docker container to run management commands:
-   ```bash
-   docker-compose exec be poetry shell
-   ```
-
-3. **Create Database Tables**
-   Within the Poetry shell, run:
-   ```bash
-   python manage.py migrate
-   ```
-
-4. **Create a Superuser**
-   Create an admin user to access the Django admin interface:
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-5. **Access the Application**
-   The application will be available at [http://localhost:8000](http://localhost:8000).
-
-6. **Access the Django Admin Interface**
-   The Django admin interface will be available at [http://localhost:8000/admin](http://localhost:8000/admin).
-
-## Running Tests
-
-
-1. **Run Tests**
-   To run tests, open the Poetry shell as described above and then run:
-   ```bash
-   python manage.py test
-   ```
-
-## Backend Design
-
-### Model Structure
-
-- **Incident**: Represents an incident report with fields for contact number, provider, location, description, additional info, status, and address.
-- **Provider**: Represents a provider with fields for name, description, API key, website link, and logo URL.
-- **Volunteer**: Represents a volunteer with fields for full name, contact number, location, address, activity status, notes, and assistance type.
-
-### API Structure
-
-- **Incident API**: Allows providers to create incidents. Requires API key for authentication.
-- **Volunteer API**: Provides a list of active volunteers. No authentication required.
-
-## How to Use the APIs
-
-- **Incident API**: To create an incident, make a POST request to `/api/incidents/` with the required fields and include the API key in the `Authorization` header in the format `Api-Key <your_api_key>`.
-  
-- **Volunteer API**: To retrieve the list of active volunteers, make a GET request to `/api/volunteers/`. No authentication is required.
-
-## Signals and Background Tasks
-
-- **Signals**: Used to perform actions when certain events occur, such as saving or deleting instances of models.
-- **Background Tasks**: Managed using Celery for asynchronous processing of tasks. Ensure the Celery worker is running to handle background tasks.
-
-## Troubleshooting
-
-- Ensure that Docker and Docker Compose are correctly installed.
-- Check the `.env` file for any missing or incorrect values.
-- Review the logs for Docker services to diagnose any issues.
+```bash
+cp example.env .env                      # then set real values
+docker compose up -d --build             # be, celery_worker, postgres, rabbitmq, redis
+docker compose exec be python manage.py migrate
+docker compose exec be python manage.py createsuperuser
 ```
 
-This version includes updated instructions for using Poetry and running Django management commands within the Docker container.
+- Web dashboard: http://localhost:8001/app/ (sign in or register on the login page)
+- Django admin: http://localhost:8001/admin/
+- API docs: http://localhost:8001/swagger/
 
+`migrate` does not run on container start; run it after pulling new migrations.
+
+## Tests
+
+```bash
+docker compose run --rm unit_tests       # Django tests (migrate + `manage.py test apps`), as CI runs them
+docker compose exec be python manage.py test apps.incident_manager   # one app, against the running stack
+npm install && npm test                  # web app JS tests (Vitest + jsdom), on the host
+```
+
+`smsparser/` holds standalone scripts with their own tests; they are not part of the Django suite.
+
+## Layout
+
+| Path | What |
+|------|------|
+| `apps/incident_manager` | Incidents, providers (API-key intake), Division/District/Thana boundaries, the SMS Celery task |
+| `apps/volunteer_hub` | Volunteers and volunteer teams |
+| `apps/user` | Custom user model, signup/login (JWT) |
+| `apps/common` | Shared helpers and base models |
+| `apps/webui` | Web dashboard: templates in `templates/webui/`, JS modules and CSS in `static/webui/` |
+| `config/` | Settings, URLs, Celery and Gunicorn config |
+| `smsparser/` | District/thana spell-correction for SMS text (not yet wired into Django) |
+
+## APIs
+
+- `POST /api/incidents/` — providers submit incidents, header `Authorization: Api-Key <key>`
+  (create a Provider in the admin to get a key).
+- `GET /api/incidents/list/` — newest 500 incidents, for signed-in users (JWT).
+- `GET /api/volunteers/volunteers/` — active volunteers.
+- `/api/user/` — `signup/`, `login/password/`, `token/refresh/`, `profile/`, password change.
+
+## Web dashboard
+
+The pages in `apps/webui` are static shells; each loads one ES module (`dashboard.js`,
+`incidents.js`, `volunteers.js`, `login.js`) that checks the login and calls the API through
+`api.js`. The JWT is kept in `localStorage`. Bootstrap, Bootstrap Icons and Leaflet load from
+jsDelivr; there is no build step. Keep DOM-free logic in modules like `tables.js` and `map.js` so
+it can be tested with Vitest.

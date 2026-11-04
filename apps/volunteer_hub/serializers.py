@@ -17,7 +17,7 @@ class VolunteerSerializer(serializers.ModelSerializer):
         ]
 
     def get_latitude(self, obj):
-        return obj.location.y
+        return obj.location.y if obj.location else None
 
     def get_longitude(self, obj):
-        return obj.location.x
+        return obj.location.x if obj.location else None
