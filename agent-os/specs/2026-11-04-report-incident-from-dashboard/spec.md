@@ -4,7 +4,7 @@
 
 ## Executive Summary
 
-Add a "Report incident" option to the dashboard and the Incidents page. Signed-in users submit a
+Add a "Report incident" option to the dashboard and the Incidents page. Anyone with an account submits a
 new incident through a form; it is always created as pending and recorded with its reporter and
 web source, so staff review it with the existing validate/reject actions.
 

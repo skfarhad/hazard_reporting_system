@@ -13,7 +13,7 @@ quick actions.
 
 - As an **operator** taking a phone call, I want to enter an incident from the dashboard or the
   Incidents page, so that it joins the same review and response flow as SMS reports.
-- As a **signed-in user** (to confirm in `/plan`), I want to report an incident from the web app,
+- As **anyone with an account** (operator or not), I want to report an incident from the web app,
   so that staff can review it and send help.
 - As an **operator**, I want web reports to start as pending and show who reported them and that
   they came from the web, so that I review them before acting.
@@ -25,15 +25,18 @@ quick actions.
 2. The form collects (to confirm in `/plan`): message, needs (chips, at least one; or "not sure"
    → Other), life-threatening, people affected, contact number, address, district and thana,
    and the location (map pick and/or "use my location").
-3. A new **API endpoint** for signed-in users creates the incident (JWT auth, not the provider API
+3. **Who can report: anyone with an account** (decided 2026-11-04). Non-operators, who today only
+   see the "operator access" notice on the dashboard and Incidents page, must still get the
+   "Report incident" button and form there (but not the incident data).
+4. A new **API endpoint** for signed-in users creates the incident (JWT auth, not the provider API
    key). The server always sets `validation_status = pending`; clients cannot set it.
-4. The incident records **who reported it** and that it came from the web app (data model to
+5. The incident records **who reported it** and that it came from the web app (data model to
    decide in `/plan`), and operators see this in the incident details.
-5. The new incident goes through the same processing as provider reports: needs (explicit or from
+6. The new incident goes through the same processing as provider reports: needs (explicit or from
    SMS keywords), district/thana, auto-attach to an active event.
-6. After submitting, the reporter sees a confirmation; operators see the new incident at the top of
+7. After submitting, the reporter sees a confirmation; operators see the new incident at the top of
    the list as pending.
-7. Basic abuse protection for the public path (rate limit; to confirm in `/plan`).
+8. Basic abuse protection, since any account can report (rate limit; to confirm in `/plan`).
 
 ## Non-Functional Requirements
 
@@ -46,7 +49,7 @@ quick actions.
 
 ## Acceptance Criteria
 
-- [ ] "Report incident" is available on the dashboard and the Incidents page.
+- [ ] "Report incident" is available on the dashboard and the Incidents page, to operators and non-operators.
 - [ ] Submitting a valid form creates a pending incident with needs, triage fields, place and
       location, and attaches it to an active event when it applies.
 - [ ] The server ignores any attempt to set the status; the reporter and source are recorded.
