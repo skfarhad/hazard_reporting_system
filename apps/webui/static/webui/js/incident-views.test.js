@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
     needIcons, hazardLabel, urgencyBadge, locationText, incidentTableRow, incidentCard,
-    needChips, eventHazardOptions, pagerHtml,
+    needChips, eventHazardOptions, pagerHtml, incidentDetailsHtml,
 } from './incident-views.js';
 
 export const NEED_TYPES = [
@@ -154,5 +154,50 @@ describe('filter bar and pager', () => {
         expect(first.querySelector('[aria-current="page"]').textContent.trim()).toBe('1');
         expect(last.querySelector('[data-page="next"]').disabled).toBe(true);
         expect(pagerHtml(1, 1)).toBe('');
+    });
+});
+
+describe('details', () => {
+    const DETAIL = {
+        ...INCIDENT,
+        district: 'Feni',
+        thana: 'Parshuram',
+        provider: 'Smoke Test Gateway',
+        volunteer: { id: 4, full_name: 'Rahim Uddin' },
+        updated_at: '2026-11-04T12:00:00Z',
+    };
+
+    it('the details show every field and a Google Maps link only when there are coordinates', () => {
+        const box = el(`<div>${incidentDetailsHtml(DETAIL, NEED_TYPES)}</div>`);
+        const text = box.textContent;
+
+        ['5 people on roof, one injured', 'Rescue', 'Medical', 'Life-threatening', '5 people', 'Feni Flood', 'Flood',
+            'Govt. Primary School', 'Parshuram', 'Feni', '23.21000, 91.43000', '01712345678', 'validated', 'open',
+            'Rahim Uddin', 'Smoke Test Gateway'].forEach((value) => expect(text).toContain(value));
+        expect(box.querySelector('a[href="tel:01712345678"]')).not.toBeNull();
+        expect(box.querySelector('a[href="https://www.google.com/maps?q=23.21,91.43"]').target).toBe('_blank');
+        expect(box.querySelectorAll('time')).toHaveLength(2);
+
+        const noPlace = el(`<div>${incidentDetailsHtml({ ...DETAIL, latitude: null, longitude: null, volunteer: null }, NEED_TYPES)}</div>`);
+        expect(noPlace.querySelector('a[href*="google.com/maps"]')).toBeNull();
+        expect(noPlace.textContent).toContain('No location');
+        expect(noPlace.textContent).toContain('Not assigned');
+    });
+
+    it('does not repeat a thana or district that the address already names', () => {
+        const box = el(`<div>${incidentDetailsHtml({ ...DETAIL, address: 'Govt. Primary School, Parshuram' }, NEED_TYPES)}</div>`);
+
+        expect(box.textContent).toContain('Govt. Primary School, Parshuram, Feni');
+        expect(box.textContent).not.toContain('Parshuram, Parshuram');
+    });
+
+    it('escapes every text field in the details', () => {
+        const html = incidentDetailsHtml({ ...DETAIL, description: '<script>x</script>', provider: '<b>p</b>',
+            volunteer: { id: 1, full_name: '<i>v</i>' }, contact_number: '"><img>' }, NEED_TYPES);
+
+        expect(html).not.toContain('<script>');
+        expect(html).not.toContain('<b>p');
+        expect(html).not.toContain('<i>v');
+        expect(html).not.toContain('"><img>');
     });
 });

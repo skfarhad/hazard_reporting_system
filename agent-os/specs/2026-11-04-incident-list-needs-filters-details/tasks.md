@@ -119,15 +119,15 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `static/webui/js/incident-detail.js` (+ test, new), `incident-views.js` (+ test), `incidents.html`, CSS
 
 **5.1 Details content**
-- [ ] Write failing test: details show every field and a Google Maps link only with coordinates
-- [ ] Verify it fails; implement `incidentDetailsHtml`
+- [x] Write failing test: details show every field and a Google Maps link only with coordinates
+- [x] Verify it fails; implement `incidentDetailsHtml`
 
 **5.2 Prev/Next and deep link**
-- [ ] Write failing tests: next/previous within the page and adjacent-page requests at the edges; none before first/after last; reads and writes `#incident-<id>`
-- [ ] Verify they fail; implement `adjacentIncident`, hash helpers
+- [x] Write failing tests: next/previous within the page and adjacent-page requests at the edges; none before first/after last; reads and writes `#incident-<id>`
+- [x] Verify they fail; implement `adjacentIncident`, hash helpers
 
 **5.3 Modal controller**
-- [ ] Modal markup; open from row/card/hash; GET detail; Leaflet map preview with `incidentIcon` (reuse one map, `invalidateSize`); Prev/Next buttons and ←/→; focus back to the row on close
+- [x] Modal markup; open from row/card/hash; GET detail; Leaflet map preview with `incidentIcon` (reuse one map, `invalidateSize`); Prev/Next buttons and ←/→; focus back to the row on close
 
 **Acceptance Criteria**: FR12 (read-only, map, Prev/Next, deep link); tests first, now passing
 

@@ -98,3 +98,43 @@ export function pagerHtml(page, pages) {
         <li class="page-item${page >= pages ? ' disabled' : ''}"><button type="button" class="page-link" data-page="next"${page >= pages ? ' disabled' : ''}>Next ›</button></li>
     </ul></nav>`;
 }
+
+function field(label, valueHtml) {
+    return `<div class="hrs-field"><dt>${escapeHtml(label)}</dt><dd>${valueHtml}</dd></div>`;
+}
+
+function timeHtml(iso) {
+    return iso ? `<time datetime="${escapeHtml(iso)}">${escapeHtml(formatDateTime(iso))}</time>` : '–';
+}
+
+// Read-only details for the pop-up. The incident is the detail API shape.
+export function incidentDetailsHtml(incident, needTypes) {
+    const hasPlace = Number.isFinite(incident.latitude) && Number.isFinite(incident.longitude);
+    const coordinates = hasPlace
+        ? `${incident.latitude.toFixed(5)}, ${incident.longitude.toFixed(5)} · `
+          + `<a href="https://www.google.com/maps?q=${incident.latitude},${incident.longitude}" target="_blank" rel="noopener">Open in Google Maps</a>`
+        : '<span class="text-secondary">No location</span>';
+    const needs = incidentNeeds(incident, needTypes);
+    const needList = (needs.length ? needs : [primaryNeed(incident, needTypes)])
+        .map((t) => `<span class="d-inline-flex align-items-center gap-1 me-2">${needIcon(t)}${escapeHtml(t.label_en)}</span>`).join('');
+    // Reported addresses often already end with the thana or district; don't say it twice.
+    const address = incident.address || '';
+    const extra = [incident.thana, incident.district].filter((name) => name && !address.toLowerCase().includes(name.toLowerCase()));
+    const place = [address, ...extra].filter(Boolean).map(escapeHtml).join(', ');
+    const contact = escapeHtml(incident.contact_number);
+
+    return `<p class="hrs-detail-message">${escapeHtml(incident.description)}</p>
+    <dl class="hrs-detail-fields">
+        ${field('Needs', needList)}
+        ${field('Urgency', urgencyBadge(incident) || '<span class="text-secondary">Not marked</span>')}
+        ${field('Event', hazardLabel(incident.event))}
+        ${field('Place', place || '–')}
+        ${field('Coordinates', coordinates)}
+        ${field('Contact', `<a href="tel:${contact}">${contact}</a>`)}
+        ${field('Status', `${statusBadge(incident.validation_status)} <span class="small text-secondary ms-1">Task: ${escapeHtml(incident.task_status)}</span>`)}
+        ${field('Volunteer', incident.volunteer ? escapeHtml(incident.volunteer.full_name) : '<span class="text-secondary">Not assigned</span>')}
+        ${field('Source', incident.provider ? escapeHtml(incident.provider) : '–')}
+        ${field('Reported', timeHtml(incident.created_at))}
+        ${field('Updated', timeHtml(incident.updated_at))}
+    </dl>`;
+}

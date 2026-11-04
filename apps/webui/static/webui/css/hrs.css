@@ -539,6 +539,12 @@ button.hrs-chip[aria-pressed=true] {
 .hrs-incident-card-top, .hrs-incident-card-bottom { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; }
 .hrs-incident-card-message { font-weight: 500; }
 
+.hrs-detail-map { height: 220px; border-radius: var(--hrs-radius-md); border: 1px solid var(--hrs-border); }
+.hrs-detail-message { font-size: 1.05rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.hrs-detail-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .75rem 1.25rem; margin: 0; }
+.hrs-detail-fields dt { font-size: .75rem; font-weight: 600; color: var(--hrs-text-muted); text-transform: uppercase; letter-spacing: .04em; }
+.hrs-detail-fields dd { margin: 0; overflow-wrap: anywhere; }
+
 /* ---- Map pins (incident markers) ----
  * Teardrop pin filled with the main need's colour (--hrs-pin-fill, set inline),
  * outline in the status colour, white need icon, "+N" and "!" badges.

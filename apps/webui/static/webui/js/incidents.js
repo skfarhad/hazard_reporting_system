@@ -8,12 +8,17 @@ import {
     DEFAULT_FILTERS, readFilters, filtersToSearch, filtersToApiParams, withFilter, withScope, scopeValue,
     showingText, totalPages,
 } from './incident-query.js';
-import { incidentTableRow, incidentCard, needChips, eventHazardOptions, pagerHtml } from './incident-views.js';
+import {
+    incidentTableRow, incidentCard, needChips, eventHazardOptions, pagerHtml, incidentDetailsHtml,
+} from './incident-views.js';
+import { createIncidentDetail, incidentIdFromHash } from './incident-detail.js';
+import { incidentIcon } from './map.js';
 
 const SEARCH_DELAY_MS = 300;
 
 const els = {};
 const state = { filters: { ...DEFAULT_FILTERS }, needTypes: [], events: [], page: { count: 0, results: [] }, request: 0 };
+let detail = null;
 
 function isFiltered(filters) {
     return filtersToSearch({ ...filters, page: 1 }) !== '';
@@ -97,6 +102,41 @@ function bindControls() {
         applyFilters(withFilter(state.filters, { page: target })).then(() => els.rows.closest('.card').scrollIntoView({ block: 'start' }));
     });
     window.addEventListener('popstate', () => loadPage(readFilters(window.location.search)));
+
+    const openFrom = (event) => {
+        const target = event.target.closest('[data-incident-id]');
+        if (target && !event.target.closest('a')) detail.open(Number(target.dataset.incidentId));
+    };
+    els.rows.addEventListener('click', openFrom);
+    els.cards.addEventListener('click', openFrom);
+    els.rows.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        openFrom(event);
+    });
+}
+
+function setUpDetail() {
+    detail = createIncidentDetail({
+        L: window.L,
+        Modal: window.bootstrap.Modal,
+        element: document.getElementById('incidentModal'),
+        needTypes: state.needTypes,
+        fetchIncident: (id) => apiGet(API.incident(id)),
+        page: () => ({
+            ids: state.page.results.map((i) => i.id),
+            page: state.filters.page,
+            pages: totalPages(state.page.count),
+        }),
+        goToPage: async (page) => {
+            await applyFilters(withFilter(state.filters, { page }));
+            return state.page.results.map((i) => i.id);
+        },
+        render: { details: incidentDetailsHtml, icon: incidentIcon },
+        // Focus goes back to the incident's row (or card) so keyboard users keep their place.
+        onClosed: (id) => [...document.querySelectorAll(`[data-incident-id="${id}"]`)]
+            .find((el) => el.offsetParent !== null)?.focus(),
+    });
 }
 
 async function init() {
@@ -113,7 +153,10 @@ async function init() {
     state.needTypes = needTypes.ok ? needTypes.data : [];
     state.events = events.ok ? events.data : [];
     bindControls();
-    await loadPage(readFilters(window.location.search));
+    setUpDetail();
+    const loaded = await loadPage(readFilters(window.location.search));
+    const linked = incidentIdFromHash(window.location.hash);
+    if (loaded && linked) detail.open(linked);
 }
 
 init();
