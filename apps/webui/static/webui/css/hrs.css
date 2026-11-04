@@ -688,7 +688,7 @@ button.hrs-chip[aria-pressed=true] {
     background: var(--hrs-surface); color: var(--hrs-text);
 }
 .hrs-panel--incidents { border-right: 1px solid var(--hrs-border); }
-.hrs-panel--volunteers { border-left: 1px solid var(--hrs-border); }
+.hrs-panel--volunteers { border-left: 1px solid var(--hrs-border); border-right: 0; }
 .hrs-panel-head {
     display: flex; align-items: center; gap: .25rem; min-height: 52px; padding: .5rem .5rem .5rem 1rem;
     background: var(--hrs-panel-head); border-bottom: 1px solid var(--hrs-border);

@@ -24,7 +24,8 @@ in both themes.
 | `--hrs-brand` (rescue navy) | Primary actions, active navigation, links |
 | `--hrs-accent` (SOS orange) | Rare emphasis, e.g. new or urgent highlights |
 | `--hrs-status-pending` / `-validated` / `-rejected` | Incident validation status everywhere: map markers, dots, badges, list items |
-| `--hrs-volunteer` | Volunteers on the map and in badges |
+| `--hrs-volunteer` / `--hrs-volunteer-inactive` | Volunteers on the map and in badges; the active / inactive dot on avatars |
+| `--hrs-panel-head`, `--hrs-highlight` | Dashboard panel headers (lavender tint); selected incident card and assigned volunteer |
 | `--hrs-success` / `-warning` / `-danger` / `-info` | Feedback (alerts, toasts, destructive buttons) |
 | `--hrs-background`, `--hrs-surface`, `--hrs-surface-muted`, `--hrs-border` | Page, cards and panels, hover and fills, dividers |
 | `--hrs-text`, `--hrs-text-muted`, `--hrs-text-subtle` | Body, secondary, placeholder and disabled text |
@@ -67,6 +68,17 @@ the `-text` variants (`--hrs-danger-text` …) for text on tinted backgrounds; t
 | `hrs-report-panel` | Panel shown to non-operators instead of incident data, with a Report button |
 | `hrs-report-map` | Map in the report form (tap to place the pin; 45vh on phones) |
 | `hrs-map-legend` (`.is-collapsed`) | Collapsible on-map legend (needs, pin outlines, badges, volunteer). Built by `addLegend()` in `map-legend.js`; open on ≥768px, remembers the operator's choice |
+
+| `hrs-dashboard` (`--no-incidents`, `--no-volunteers`, `[data-mobile-tab]`) | Live dashboard grid: 320px · map · 320px, a collapsed side becomes a 48px rail; under 992px one section at a time with `hrs-dash-tabs` at the bottom |
+| `hrs-panel--incidents` / `--volunteers` (`.is-collapsed`), `hrs-panel-head`, `hrs-panel-body`, `hrs-panel-controls`, `hrs-panel-showing` | Dashboard side panels |
+| `hrs-stat-card--{pending,resolved,active,inactive,all}` | Count card that filters (`button[aria-pressed]`): tinted fill, outline when chosen |
+| `hrs-area-row`, `hrs-area-select` | Zilla / Upazilla dropdowns on a muted fill |
+| `hrs-dash-item` (`.is-selected`), `hrs-dash-card`, `hrs-dash-title`, `-meta`, `-place`, `-message`, `-foot`, `hrs-dash-status--{status}`, `hrs-vol-badge` | Incident card: title, date • time, District • Thana, one-line message, "N volunteers", status outline badge |
+| `hrs-popup-card` | The incident card inside a map popup |
+| `hrs-vol-card` (`.is-assigned`), `hrs-avatar`, `hrs-avatar-dot--on/off` | Volunteer card; round photo (or initials) with an active dot |
+| `hrs-live-status[data-status]`, `hrs-map-report` | "Live" badge at the top of the map; Report incident button at its bottom-centre |
+| `hrs-bell`, `hrs-bell-badge`, `hrs-bell-menu`, `hrs-avatar-button` | Navbar bell with unread count; account avatar |
+| `hrs-place-list`, `hrs-place`, `hrs-place-row`, `hrs-place-map` | Location tab: districts with their thanas, boundary preview |
 
 Leaflet's stylesheet loads after `hrs.css`, so map overrides are scoped under `.leaflet-container`.
 In dark mode the OpenStreetMap tiles are inverted with a CSS filter (`--hrs-map-tiles-filter`).

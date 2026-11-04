@@ -127,6 +127,17 @@ class NudgeTests(DashboardSocketTestCase):
         await self.run_and_commit(lambda: incident.volunteers.remove(volunteer))
         self.assertEqual(await socket.receive_json_from(), {"type": "incident.changed", "id": incident.id})
 
+    async def test_assigning_from_the_volunteers_side_nudges_about_each_incident(self):
+        first, second = await self.run_and_commit(save_incident), await self.run_and_commit(save_incident)
+        volunteer = await self.run_and_commit(
+            lambda: Volunteer.objects.create(full_name="Karim", contact_number="018", address="x", notes=""))
+        socket = await self.signed_in_socket()
+
+        await self.run_and_commit(lambda: volunteer.assigned_incidents.add(first, second))
+
+        received = {(await socket.receive_json_from())["id"] for _ in range(2)}
+        self.assertEqual(received, {first.id, second.id})
+
     async def test_deleting_an_incident_nudges_with_its_old_id(self):
         incident = await self.run_and_commit(save_incident)
         old_id = incident.id

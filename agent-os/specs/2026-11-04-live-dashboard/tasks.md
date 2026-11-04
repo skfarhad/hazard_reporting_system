@@ -1,7 +1,7 @@
 # Task Breakdown: Live three-panel dashboard (incidents, map, volunteers)
 
 **Spec**: `2026-11-04-live-dashboard`
-**Status**: In progress
+**Status**: Implemented; next: `/run-tests live-dashboard`
 **Branch**: `feat/live-dashboard`. Commit after each group with prefix `feat(live-dashboard):`.
 
 Every subtask is test-first:
@@ -351,16 +351,30 @@ Browser check:
 - `agent-os/specs/2026-11-04-live-dashboard/spec.md`, `tasks.md`
 
 #### Subtasks:
-- [ ] Document:
+- [x] Document:
   - the ASGI server and WebSocket;
   - new APIs and the behaviour changes (volunteers API operator-only, `volunteer` FK deprecated, throttle default);
   - media/photos;
   - the dashboard components.
-- [ ] Run the E2E Playwright checks (desktop, phone, live from a second context, Location tab).
-- [ ] Run the mutation checks listed in the spec and close any survivors with tests.
-- [ ] Record the results in tasks.md.
+- [x] Run the E2E Playwright checks (desktop, phone, live from a second context, Location tab).
+- [x] Run the mutation checks listed in the spec and close any survivors with tests.
+- [x] Record the results in tasks.md.
 
 ---
+
+Results:
+- Django: 231 tests, all passing; no missing migrations.
+- Vitest: 172 tests in 17 files, all passing.
+- Mutation checks:
+  - Backend: 14 mutants. 13 were caught at once. The survivor (no nudge when assigning from the volunteer's side) is now caught by `test_assigning_from_the_volunteers_side_nudges_about_each_incident`.
+  - JS: 15 mutants. 14 were caught at once. The survivor (card dates not converted to Bangladesh time) went unnoticed because this machine runs on UTC+6. `vitest.config.js` now pins `TZ=UTC`, so it is caught.
+- Found by the browser checks and fixed:
+  - Popups were hidden behind the Report button.
+  - The legend covered the button.
+  - On phones the map took taps meant for the sheets.
+  - The phone toggle arrow was visible.
+  - The volunteer panel had a double border.
+  - Dev static files raised ASGI streaming warnings.
 
 ## Execution Order
 

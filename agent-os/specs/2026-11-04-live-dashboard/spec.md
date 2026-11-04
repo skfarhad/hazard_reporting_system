@@ -1,6 +1,6 @@
 # Specification: Live three-panel dashboard (incidents, map, volunteers)
 
-**Status:** Planned — ready for `/execute live-dashboard`
+**Status:** Implemented (Groups 1–8); next: `/run-tests live-dashboard`
 **Branch:** `feat/live-dashboard` (one branch, commits per task group, one PR)
 **Mockup:** `live_dashboard.jpeg` (repo root)
 
