@@ -94,20 +94,20 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `static/webui/js/incident-views.js` (+ test, new), `incidents.js`, `tables.js` (+ test), `templates/webui/incidents.html`, `css/hrs.css`, `css/app.css`
 
 **4.1 Cells and rows**
-- [ ] Write failing tests: need icons in order with screen-reader labels; event + hazard or No event; urgency + people count; table row clickable/keyboard with id; card content; escaping and unsafe icons/colours
-- [ ] Verify they fail
-- [ ] Implement `needIcons`, `hazardLabel`, `urgencyBadge`, `locationText`, `incidentTableRow`, `incidentCard`
+- [x] Write failing tests: need icons in order with screen-reader labels; event + hazard or No event; urgency + people count; table row clickable/keyboard with id; card content; escaping and unsafe icons/colours
+- [x] Verify they fail
+- [x] Implement `needIcons`, `hazardLabel`, `urgencyBadge`, `locationText`, `incidentTableRow`, `incidentCard`
 
 **4.2 Filter bar and pager**
-- [ ] Write failing tests: need chips show selection; event/hazard dropdown groups and keeps the choice; pager disables Prev/Next at the ends
-- [ ] Verify they fail
-- [ ] Implement `needChips`, `eventHazardOptions`, `pagerHtml`
+- [x] Write failing tests: need chips show selection; event/hazard dropdown groups and keeps the choice; pager disables Prev/Next at the ends
+- [x] Verify they fail
+- [x] Implement `needChips`, `eventHazardOptions`, `pagerHtml`
 
 **4.3 Page wiring**
-- [ ] Template: filter bar, chips, table + cards, pager, showing text
-- [ ] `incidents.js`: load need types + events, URL state, fetch page, render, debounced search, popstate, 403 notice
-- [ ] Remove `filterIncidents` / `incidentRow` and their tests from `tables.js`
-- [ ] Styles: need icons, cards, clickable rows
+- [x] Template: filter bar, chips, table + cards, pager, showing text
+- [x] `incidents.js`: load need types + events, URL state, fetch page, render, debounced search, popstate, 403 notice
+- [x] Remove `filterIncidents` / `incidentRow` and their tests from `tables.js`
+- [x] Styles: need icons, cards, clickable rows
 
 **Acceptance Criteria**: FR8–FR11, FR13; tests first, now passing
 

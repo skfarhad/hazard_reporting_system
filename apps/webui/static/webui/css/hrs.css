@@ -503,6 +503,42 @@ button.hrs-chip[aria-pressed=true] {
 }
 .leaflet-container .leaflet-control-attribution a { color: var(--hrs-brand); }
 
+/* ---- Incidents list ----
+ * Filter bar, need icons (filled with the need colour, like the map pins), clickable rows and phone cards.
+ */
+.hrs-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.hrs-filter-bar .hrs-search { min-width: 220px; }
+.hrs-need-icons { display: inline-flex; gap: .2rem; flex-wrap: wrap; }
+.hrs-need-icon {
+    display: inline-flex; align-items: center; justify-content: center; flex: none;
+    width: 24px; height: 24px; border-radius: 50%; background: var(--hrs-pin-fill, #64748B); color: #fff; font-size: 12px;
+}
+.hrs-badge-urgent { background: rgba(var(--hrs-danger-rgb), .13); color: var(--hrs-danger-text); }
+.hrs-badge-urgent .bi { font-size: .75em; }
+.hrs-hazard { white-space: nowrap; }
+.hrs-truncate-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hrs-incident-table .hrs-cell-needs { width: 1%; }
+.hrs-incident-table .hrs-cell-needs .hrs-need-icons { flex-wrap: nowrap; }
+.hrs-incident-table .hrs-cell-message { min-width: 200px; }
+.hrs-incident-table .hrs-hazard { white-space: normal; }
+.hrs-chip-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+@media (max-width: 767.98px) {
+    /* One swipeable row of need chips instead of four rows on a phone. */
+    .hrs-chip-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: .25rem; scrollbar-width: thin; }
+    .hrs-chip-row .hrs-chip { flex: none; }
+}
+.hrs-row-link { cursor: pointer; }
+.hrs-row-link:focus-visible { outline: 2px solid var(--hrs-brand); outline-offset: -2px; }
+.hrs-incident-card {
+    display: flex; flex-direction: column; gap: .35rem; width: 100%; padding: .75rem;
+    text-align: left; color: var(--hrs-text); background: var(--hrs-surface);
+    border: 1px solid var(--hrs-border); border-radius: var(--hrs-radius-md);
+}
+.hrs-incident-card:hover { background: var(--hrs-surface-muted); }
+.hrs-incident-card:focus-visible { outline: 2px solid var(--hrs-brand); outline-offset: 2px; }
+.hrs-incident-card-top, .hrs-incident-card-bottom { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; }
+.hrs-incident-card-message { font-weight: 500; }
+
 /* ---- Map pins (incident markers) ----
  * Teardrop pin filled with the main need's colour (--hrs-pin-fill, set inline),
  * outline in the status colour, white need icon, "+N" and "!" badges.

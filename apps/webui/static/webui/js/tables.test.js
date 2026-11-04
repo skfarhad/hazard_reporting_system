@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterIncidents, filterVolunteers, summarize, incidentRow, volunteerRow, operatorAccessNotice } from './tables.js';
+import { filterVolunteers, summarize, volunteerRow, operatorAccessNotice } from './tables.js';
 
 const incidents = [
     { id: 1, description: 'Water in house', address: 'Mirpur', contact_number: '01711111111', validation_status: 'pending' },
@@ -10,21 +10,6 @@ const volunteers = [
     { full_name: 'Rahim', address: 'Sylhet', assistance_type: 'boat' },
     { full_name: 'Karim', address: 'Dhaka', assistance_type: 'doctor' },
 ];
-
-describe('filterIncidents', () => {
-    it('matches the query against description, address and phone, case-insensitively', () => {
-        expect(filterIncidents(incidents, { query: 'sylhet' }).map((i) => i.id)).toEqual([2, 3]);
-        expect(filterIncidents(incidents, { query: '0172' }).map((i) => i.id)).toEqual([2]);
-    });
-
-    it('combines the query with the status filter', () => {
-        expect(filterIncidents(incidents, { query: 'sylhet', status: 'validated' }).map((i) => i.id)).toEqual([2]);
-    });
-
-    it('returns everything for an empty filter', () => {
-        expect(filterIncidents(incidents)).toHaveLength(3);
-    });
-});
 
 describe('filterVolunteers', () => {
     it('matches name, address and assistance type', () => {
@@ -39,12 +24,6 @@ describe('summarize', () => {
 });
 
 describe('rows', () => {
-    it('escapes incident text', () => {
-        const row = incidentRow({ ...incidents[0], description: '<script>x</script>' });
-        expect(row).not.toContain('<script>');
-        expect(row).toContain('&lt;script&gt;');
-    });
-
     it('shows a dash for a volunteer without a location', () => {
         expect(volunteerRow({ ...volunteers[0], latitude: null, longitude: null })).toContain('–');
     });

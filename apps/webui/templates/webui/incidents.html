@@ -4,25 +4,45 @@
 {% block content %}
 <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
   <h1 class="h4 mb-0 me-auto">Incidents</h1>
-  <input id="incidentSearch" type="search" class="form-control form-control-sm w-auto"
-         placeholder="Search description, address, phone" aria-label="Search incidents">
+  <span class="small text-secondary" id="incidentShowing" aria-live="polite"></span>
+</div>
+
+<div data-page-body>
+<form class="hrs-filter-bar mb-2" id="incidentFilters" role="search" aria-label="Filter incidents" novalidate>
+  <div class="hrs-search flex-grow-1">
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <input id="incidentSearch" name="q" type="search" class="form-control form-control-sm"
+           placeholder="Search message, address, phone, place or event" aria-label="Search incidents">
+  </div>
   <select id="incidentStatus" class="form-select form-select-sm w-auto" aria-label="Validation status">
     <option value="">All statuses</option>
     <option value="pending">Pending</option>
     <option value="validated">Validated</option>
     <option value="rejected">Rejected</option>
   </select>
-</div>
-<div class="card" data-page-body>
-  <div class="table-responsive">
-    <table class="table table-hover align-middle mb-0">
+  <select id="incidentScope" class="form-select form-select-sm w-auto" aria-label="Event or hazard">
+    <option value="">All events</option>
+  </select>
+  <button type="button" class="hrs-chip" id="incidentUrgent" aria-pressed="false">
+    <i class="bi bi-exclamation-triangle-fill text-danger" aria-hidden="true"></i>Life-threatening
+  </button>
+  <button type="button" class="btn btn-sm btn-ghost d-none" id="incidentClear">Clear filters</button>
+</form>
+<div class="hrs-chip-row mb-3" id="incidentNeedChips" role="group" aria-label="Filter by need"></div>
+
+<div class="card">
+  <div class="table-responsive d-none d-md-block">
+    <table class="table table-hover align-middle mb-0 hrs-incident-table">
       <thead class="table-light">
-        <tr><th>Reported</th><th>Description</th><th>Address</th><th>Contact</th><th>Status</th><th>Task</th></tr>
+        <tr><th>Needs</th><th>Message</th><th>Event</th><th>Status</th><th>Reported</th></tr>
       </thead>
       <tbody id="incidentRows"></tbody>
     </table>
   </div>
-  <div id="incidentEmpty" class="card-body text-secondary d-none">No incidents match.</div>
+  <div class="d-md-none p-2 d-grid gap-2" id="incidentCards"></div>
+  <div id="incidentEmpty" class="hrs-empty d-none"><i class="bi bi-inbox" aria-hidden="true"></i>No incidents match these filters.</div>
+</div>
+<div class="d-flex justify-content-center mt-3" id="incidentPager"></div>
 </div>
 {% endblock %}
 {% block scripts %}<script type="module" src="{% static 'webui/js/incidents.js' %}"></script>{% endblock %}

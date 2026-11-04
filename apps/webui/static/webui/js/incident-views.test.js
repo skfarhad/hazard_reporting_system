@@ -1,0 +1,158 @@
+import { describe, it, expect } from 'vitest';
+import {
+    needIcons, hazardLabel, urgencyBadge, locationText, incidentTableRow, incidentCard,
+    needChips, eventHazardOptions, pagerHtml,
+} from './incident-views.js';
+
+export const NEED_TYPES = [
+    { code: 'rescue', label_en: 'Rescue', icon: 'life-preserver', colour: '#DC2626', is_fallback: false },
+    { code: 'medical', label_en: 'Medical', icon: 'heart-pulse', colour: '#DB2777', is_fallback: false },
+    { code: 'food', label_en: 'Food', icon: 'basket', colour: '#D97706', is_fallback: false },
+    { code: 'other', label_en: 'Other', icon: 'question-circle', colour: '#64748B', is_fallback: true },
+];
+
+const FLOOD = { code: 'flood', label_en: 'Flood', icon: 'water', colour: '#0284C7' };
+
+export const INCIDENT = {
+    id: 12,
+    description: '5 people on roof, one injured',
+    address: 'Govt. Primary School',
+    contact_number: '01712345678',
+    validation_status: 'validated',
+    task_status: 'open',
+    needs: ['medical', 'rescue'],
+    life_threatening: true,
+    people_count: 5,
+    event: { id: 3, name: 'Feni Flood', hazard: FLOOD },
+    latitude: 23.21,
+    longitude: 91.43,
+    created_at: '2026-11-04T11:19:00Z',
+};
+
+function el(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html.trim();
+    return template.content.firstElementChild;
+}
+
+function table(rowHtml) {
+    const t = document.createElement('table');
+    t.innerHTML = `<tbody>${rowHtml}</tbody>`;
+    return t.querySelector('tr');
+}
+
+describe('incident cells', () => {
+    it("shows each need's icon in need-type order with its label for screen readers", () => {
+        const icons = el(needIcons(INCIDENT, NEED_TYPES));
+
+        const classes = [...icons.querySelectorAll('i')].map((i) => i.className);
+        expect(classes[0]).toContain('bi-life-preserver');
+        expect(classes[1]).toContain('bi-heart-pulse');
+        expect(icons.textContent).toContain('Rescue');
+        expect(icons.textContent).toContain('Medical');
+        expect(icons.querySelector('[style*="--hrs-pin-fill:#DC2626"]')).not.toBeNull();
+    });
+
+    it('shows the fallback need when the incident has no known need', () => {
+        expect(el(needIcons({ needs: [] }, NEED_TYPES)).textContent).toContain('Other');
+    });
+
+    it('shows the event with its hazard icon and label, or No event', () => {
+        const html = hazardLabel(INCIDENT.event);
+
+        expect(html).toContain('Feni Flood');
+        expect(html).toContain('Flood');
+        expect(html).toContain('bi-water');
+        expect(hazardLabel(null)).toContain('No event');
+    });
+
+    it('marks life-threatening incidents and shows the people count', () => {
+        expect(urgencyBadge(INCIDENT)).toContain('Life-threatening');
+        expect(urgencyBadge(INCIDENT)).toContain('5 people');
+        expect(urgencyBadge({ life_threatening: false, people_count: 1 })).toContain('1 person');
+        expect(urgencyBadge({ life_threatening: false, people_count: null })).toBe('');
+    });
+
+    it('describes the place by thana and district when known, otherwise the address', () => {
+        expect(locationText({ address: 'School', thana: 'Parshuram', district: 'Feni' })).toBe('Parshuram, Feni');
+        expect(locationText({ address: 'School' })).toBe('School');
+    });
+});
+
+describe('table row and card', () => {
+    it('a table row can be opened by click or keyboard and carries the incident id', () => {
+        const row = table(incidentTableRow(INCIDENT, NEED_TYPES));
+
+        expect(row.dataset.incidentId).toBe('12');
+        expect(row.getAttribute('tabindex')).toBe('0');
+        expect(row.getAttribute('aria-label')).toContain('Open incident 12');
+        expect(row.textContent).toContain('5 people on roof');
+        expect(row.textContent).toContain('Feni Flood');
+        expect(row.textContent).toContain('validated');
+    });
+
+    it('a card shows needs, urgency, status, message, place, event and time', () => {
+        const card = el(incidentCard(INCIDENT, NEED_TYPES));
+
+        expect(card.dataset.incidentId).toBe('12');
+        expect(card.tagName).toBe('BUTTON');
+        ['Rescue', 'Life-threatening', '5 people', 'validated', '5 people on roof', 'Govt. Primary School', 'Feni Flood']
+            .forEach((text) => expect(card.textContent).toContain(text));
+        expect(card.querySelector('time')).not.toBeNull();
+    });
+
+    it('all incident text is escaped and unsafe icons or colours are ignored', () => {
+        const evil = {
+            ...INCIDENT,
+            description: '<img src=x onerror=alert(1)>',
+            address: '<b>here</b>',
+            event: { id: 1, name: '<script>', hazard: { code: 'x', label_en: '<i>', icon: '"><svg>', colour: 'url(x)' } },
+        };
+        const html = incidentTableRow(evil, NEED_TYPES) + incidentCard(evil, NEED_TYPES);
+
+        expect(html).not.toContain('<img');
+        expect(html).not.toContain('<script>');
+        expect(html).not.toContain('<b>here');
+        expect(html).not.toContain('"><svg>');
+        expect(html).not.toContain('url(x)');
+    });
+});
+
+describe('filter bar and pager', () => {
+    it('need chips show which needs are selected', () => {
+        const wrap = el(`<div>${needChips(NEED_TYPES, ['food'])}</div>`);
+        const chips = [...wrap.querySelectorAll('button[data-need]')];
+
+        expect(chips.map((c) => c.dataset.need)).toEqual(['rescue', 'medical', 'food', 'other']);
+        expect(chips.find((c) => c.dataset.need === 'food').getAttribute('aria-pressed')).toBe('true');
+        expect(chips.find((c) => c.dataset.need === 'rescue').getAttribute('aria-pressed')).toBe('false');
+        expect(chips[0].querySelector('.bi-life-preserver')).not.toBeNull();
+    });
+
+    it('the event/hazard dropdown groups events and hazards and keeps the current choice', () => {
+        const events = [
+            { id: 3, name: 'Feni Flood', hazard: FLOOD },
+            { id: 4, name: 'Sylhet Flood', hazard: FLOOD },
+            { id: 5, name: 'Dhaka Fire', hazard: { code: 'fire', label_en: 'Fire', icon: 'fire', colour: '#DC2626' } },
+        ];
+        const select = el(`<select>${eventHazardOptions(events, 'hazard:flood')}</select>`);
+
+        expect([...select.options].slice(0, 2).map((o) => o.value)).toEqual(['', 'event:none']);
+        const groups = [...select.querySelectorAll('optgroup')];
+        expect(groups.map((g) => g.label)).toEqual(['Events', 'Hazards']);
+        expect([...groups[0].children].map((o) => o.value)).toEqual(['event:3', 'event:4', 'event:5']);
+        expect([...groups[1].children].map((o) => o.value)).toEqual(['hazard:fire', 'hazard:flood']);
+        expect(select.value).toBe('hazard:flood');
+    });
+
+    it('the pager disables Prev on the first page and Next on the last', () => {
+        const first = el(pagerHtml(1, 3));
+        const last = el(pagerHtml(3, 3));
+
+        expect(first.querySelector('[data-page="prev"]').disabled).toBe(true);
+        expect(first.querySelector('[data-page="next"]').disabled).toBe(false);
+        expect(first.querySelector('[aria-current="page"]').textContent.trim()).toBe('1');
+        expect(last.querySelector('[data-page="next"]').disabled).toBe(true);
+        expect(pagerHtml(1, 1)).toBe('');
+    });
+});
