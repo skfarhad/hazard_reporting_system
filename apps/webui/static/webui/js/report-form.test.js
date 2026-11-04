@@ -39,6 +39,8 @@ describe('phone and place checks', () => {
     it('knows whether a point is inside Bangladesh', () => {
         expect(insideBangladesh(23.21, 91.43)).toBe(true);
         expect(insideBangladesh(51.5, -0.12)).toBe(false);
+        expect(insideBangladesh(22.0, 94.0)).toBe(false); // Bangladesh's latitude, but in Myanmar
+        expect(insideBangladesh(24.0, 86.0)).toBe(false); // and in India
         expect(insideBangladesh(NaN, 90)).toBe(false);
     });
 });

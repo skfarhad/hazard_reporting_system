@@ -1,6 +1,6 @@
 # Specification: Report an incident from the web app for staff review
 
-**Status:** Implemented, awaiting `/run-tests`
+**Status:** Implemented and tested
 
 ## Executive Summary
 
@@ -259,6 +259,13 @@ made to pass. Django in Docker; Vitest on the host. No external services (Celery
 | `tables.test.js` | the report panel invites non-operators to report and explains operator access | FR2 |
 | `incident-views.test.js` | web reports show a Web badge in rows and cards | FR12 |
 | `incident-views.test.js` | the details name the reporter of a web report, or the provider | FR12 |
+
+### Test files and results
+- Django: `test_incident_report_api.py` (23), `test_incident_service.py` (1), `test_places_api.py` (3),
+  `test_incident_model_source.py` (1), plus additions to `test_create_incidents.py`,
+  `test_need_types.py`, `test_incident_detail_api.py`.
+- Vitest: `report-form.test.js` (10), plus additions to `tables.test.js`, `incident-views.test.js`,
+  `map.test.js`. Results and the mutation check are in `tasks.md`.
 
 ### Manual (browser, headless Chromium)
 - Operator and non-operator (`viewer1`), desktop 1280 and phone 375, light/dark: Report button on

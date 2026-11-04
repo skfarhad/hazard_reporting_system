@@ -14,6 +14,7 @@ def create_incident(*, description, address, contact_number, location, needs=Non
     boundaries containing the location. The incident is attached to the active event covering its
     district.
     """
+    fields.pop("validation_status", None)  # every new incident waits for staff review
     report = parse_report(description, NeedType.keyword_map(), fallback=NeedType.fallback_code())
     if district is None and report.district:
         district = District.objects.filter(name__iexact=report.district).first()

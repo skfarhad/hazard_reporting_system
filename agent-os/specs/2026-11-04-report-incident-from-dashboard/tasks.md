@@ -1,7 +1,7 @@
 # Task Breakdown: Report an incident from the web app for staff review
 
 **Spec**: `2026-11-04-report-incident-from-dashboard`
-**Status**: Implemented (awaiting `/run-tests`)
+**Status**: Tested, ready for PR
 
 Django: `docker compose exec be python manage.py test apps.incident_manager.tests.<module>`.
 Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm test`.
@@ -161,6 +161,28 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
   `example.env`) also applies to operators' normal browsing.
 - Throttle counters use the default local-memory cache (per process).
 - No district/thana boundary shapes are loaded yet, so detection from the pin is inactive in dev.
+
+## Test Results (2026-11-04, /run-tests)
+
+- **Django** (`docker compose run --rm unit_tests`, as in CI, fresh DB incl. migration 0011):
+  162 run, 162 passed, 0 failed. `makemigrations --check`: no changes.
+- **Vitest** (`npm test`): 11 files, 99 run, 99 passed, 0 failed.
+- All 38 tests named in the spec exist (need-types access is split into two tests).
+- **Mutation check**, 22 deliberate breaks:
+  - Backend (12): provider status writable, web report saved as provider, reporter not saved,
+    thana/district mismatch allowed, no boundary fallback, location bounds unchecked, loose phone
+    regex, staff throttled, no throttle, response leaking the contact number — caught.
+    Survivors fixed:
+    - "always pending" in the service was only backed by the model default, and a caller passing
+      its own status crashed → the service now drops a caller's status
+      (`test_incident_service.py`: "the creation service ignores a status from its caller");
+    - thana detection ignoring the chosen district → new test with overlapping boundaries in two
+      districts.
+  - Frontend (10): unanchored / too-wide phone pattern, needs always sent, untrimmed message,
+    fractional people, thanas of all districts, unescaped phone and reporter, Web badge on every
+    incident — caught. Survivor fixed: the longitude bound was untested (only London used) →
+    Myanmar and India points added to the client and server tests.
+- No coverage tool is installed, so no coverage figure.
 
 ## Execution Order
 

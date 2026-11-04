@@ -138,6 +138,15 @@ class ReportNeedsPlaceAndEventTests(ReportApiTestCase):
         incident = Incident.objects.get()
         self.assertEqual((incident.district, incident.thana), (feni, parshuram))
 
+    def test_a_detected_thana_must_be_in_the_chosen_district_when_boundaries_overlap(self):
+        feni, sylhet = district("Feni"), district("Sylhet")
+        in_sylhet = Thana.objects.create(name="In Sylhet", district=sylhet, polygon=square(91.43, 23.21))
+        Thana.objects.create(name="In Feni", district=feni, polygon=square(91.43, 23.21))
+
+        self.report(district=sylhet.id)
+
+        self.assertEqual(Incident.objects.get().thana, in_sylhet)
+
     def test_the_report_is_attached_to_the_active_event_covering_its_district(self):
         feni = district("Feni")
         flood = event("Feni Flood", districts=[feni])
@@ -168,6 +177,7 @@ class ReportValidationTests(ReportApiTestCase):
 
     def test_a_location_outside_bangladesh_or_missing_is_rejected(self):
         self.assert_rejected("latitude", latitude=51.5, longitude=-0.12)
+        self.assert_rejected("latitude", latitude=22.0, longitude=94.0)  # Bangladesh's latitude, in Myanmar
         self.assert_rejected("latitude", latitude=None)
         self.assert_rejected("longitude", longitude=None)
 
