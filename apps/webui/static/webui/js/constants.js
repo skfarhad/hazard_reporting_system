@@ -24,3 +24,7 @@ export const VOLUNTEER_COLOR = '#16A34A';
 
 // Shown for an incident's need when need types could not be loaded or the fallback type is gone.
 export const GENERIC_NEED = { code: '', label_en: 'Unclassified', icon: 'question-circle', colour: '#64748B', is_fallback: true };
+
+// The map legend remembers whether the operator left it open; by default it is open on wide screens.
+export const LEGEND_STORAGE_KEY = 'hrs.mapLegend.open';
+export const LEGEND_WIDE_QUERY = '(min-width: 768px)';

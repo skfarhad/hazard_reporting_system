@@ -80,19 +80,19 @@ Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test
 - `apps/webui/static/webui/js/constants.js`
 
 **3.1 Legend content**
-- [ ] Write failing tests: lists every need type with its icon and label; leaves out the needs section when need types could not be loaded; explains pin outlines for each status, rejected as faded, life-threatening and volunteers; escapes labels and ignores unsafe icons and colours
-- [ ] Verify they fail
-- [ ] Implement `legendHtml`
+- [x] Write failing tests: lists every need type with its icon and label; leaves out the needs section when need types could not be loaded; explains pin outlines for each status, rejected as faded, life-threatening and volunteers; escapes labels and ignores unsafe icons and colours
+- [x] Verify they fail
+- [x] Implement `legendHtml`
 
 **3.2 Initial state**
-- [ ] Write failing tests: starts open on wide screens and collapsed on narrow ones; a remembered choice wins over the screen width
-- [ ] Verify they fail
-- [ ] Implement `legendInitiallyOpen`
+- [x] Write failing tests: starts open on wide screens and collapsed on narrow ones; a remembered choice wins over the screen width
+- [x] Verify they fail
+- [x] Implement `legendInitiallyOpen`
 
 **3.3 Control and toggle**
-- [ ] Write failing tests: toggling collapses and expands the body, updates aria-expanded and saves the choice; keeps working when the browser refuses storage
-- [ ] Verify they fail
-- [ ] Implement `addLegend` (Leaflet control, bottom-right, click/scroll propagation stopped)
+- [x] Write failing tests: toggling collapses and expands the body, updates aria-expanded and saves the choice; keeps working when the browser refuses storage
+- [x] Verify they fail
+- [x] Implement `addLegend` (Leaflet control, bottom-right, click/scroll propagation stopped)
 
 **Acceptance Criteria**:
 - FR7, FR8 legend behaviour covered
