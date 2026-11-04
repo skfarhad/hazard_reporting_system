@@ -138,7 +138,7 @@ describe('drawMarkers', () => {
             marker: vi.fn(() => marker),
             divIcon: vi.fn((opts) => opts),
             layerGroup: vi.fn(() => layer),
-            control: { layers: vi.fn(() => ({ addTo: vi.fn() })) },
+            control: { layers: vi.fn(() => ({ addTo: vi.fn().mockReturnThis() })) },
         };
     }
 
@@ -176,6 +176,15 @@ describe('drawMarkers', () => {
 
         const [urgent, calm] = L.marker.mock.calls.map(([, options]) => options.zIndexOffset);
         expect(urgent).toBeGreaterThan(calm);
+    });
+
+    it('returns what it drew so the page can remove it before drawing again', () => {
+        const L = fakeLeaflet();
+
+        const drawn = drawMarkers(L, { fitBounds: vi.fn() }, [], []);
+
+        expect(drawn).toHaveLength(3);
+        drawn.forEach((layer) => expect(layer).toBeDefined());
     });
 
     it('keeps the default view when nothing has coordinates', () => {

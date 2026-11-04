@@ -2,7 +2,8 @@
 import { requireLogin, initNavbar } from './auth.js';
 import { apiGet, apiPatch } from './api.js';
 import { API } from './constants.js';
-import { operatorAccessNotice } from './tables.js';
+import { reportPanelHtml } from './tables.js';
+import { createReportModal } from './report-modal.js';
 import { showToast } from './ui.js';
 import {
     DEFAULT_FILTERS, readFilters, filtersToSearch, filtersToApiParams, withFilter, withScope, scopeValue,
@@ -18,7 +19,9 @@ import { incidentIcon } from './map.js';
 const SEARCH_DELAY_MS = 300;
 
 const els = {};
-const state = { filters: { ...DEFAULT_FILTERS }, needTypes: [], events: [], page: { count: 0, results: [] }, request: 0 };
+const state = {
+    filters: { ...DEFAULT_FILTERS }, needTypes: [], events: [], page: { count: 0, results: [] }, request: 0, isOperator: true,
+};
 let detail = null;
 
 function isFiltered(filters) {
@@ -50,7 +53,8 @@ async function loadPage(filters) {
     const res = await apiGet(`${API.incidents}?${filtersToApiParams(filters)}`);
     if (request !== state.request) return true; // a newer request has been made since
     if (res.status === 403) {
-        document.querySelector('[data-page-body]').innerHTML = operatorAccessNotice();
+        document.querySelector('[data-page-body]').innerHTML = reportPanelHtml();
+        state.isOperator = false;
         return false;
     }
     if (res.status === 404 && filters.page > 1) {
@@ -209,6 +213,13 @@ async function init() {
     bindControls();
     setUpDetail();
     bindQuickActions();
+    createReportModal({
+        L: window.L,
+        Modal: window.bootstrap.Modal,
+        element: document.getElementById('reportModal'),
+        // A new report is the newest incident: operators see it on page 1 of an unfiltered list.
+        onCreated: () => { if (state.isOperator) applyFilters({ ...DEFAULT_FILTERS }); },
+    });
     const loaded = await loadPage(readFilters(window.location.search));
     const linked = incidentIdFromHash(window.location.hash);
     if (loaded && linked) detail.open(linked);

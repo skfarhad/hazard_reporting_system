@@ -39,13 +39,6 @@ export function volunteerRow(v) {
     </tr>`;
 }
 
-// Shown instead of data when the API answers 403: the account exists but isn't an operator.
-export function operatorAccessNotice() {
-    return `<div class="hrs-empty"><i class="bi bi-shield-lock"></i>
-        <strong class="d-block mb-1">Your account isn't an operator yet.</strong>
-        Ask an administrator to give you operator access.</div>`;
-}
-
 // Shown to non-operators instead of incident data: anyone with an account can report.
 export function reportPanelHtml() {
     return `<div class="hrs-report-panel">

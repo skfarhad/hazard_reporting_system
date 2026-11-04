@@ -110,10 +110,10 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `report-modal.js` (new), `templates/webui/components/report_modal.html` (new), `dashboard.html`, `incidents.html`, `dashboard.js`, `incidents.js`, CSS
 
 **6.1 Modal**
-- [ ] Markup partial; lazy lookups; form render; profile phone; map click + draggable pin; "Use my location" with inline errors; submit, 400 → field errors, 429 → form message; success → close, toast, `onCreated`
+- [x] Markup partial; lazy lookups; form render; profile phone; map click + draggable pin; "Use my location" with inline errors; submit, 400 → field errors, 429 → form message; success → close, toast, `onCreated`
 
 **6.2 Pages**
-- [ ] Report button in both headers; non-operator panel replaces the access notice; operators reload data after a report
+- [x] Report button in both headers; non-operator panel replaces the access notice; operators reload data after a report
 
 **Acceptance Criteria**: FR1, FR2, FR4, FR5 (browser-checked in Group 7)
 

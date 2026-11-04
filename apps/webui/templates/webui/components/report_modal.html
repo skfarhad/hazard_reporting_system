@@ -1,0 +1,20 @@
+{# "Report an incident" pop-up, shared by the dashboard and the Incidents page. Filled by report-modal.js. #}
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title h5" id="reportModalTitle">Report an incident</h2>
+          <p class="small text-secondary mb-0">Staff review every report before help is sent.</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="reportModalBody"><div class="text-secondary">Loading…</div></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary" form="reportForm" id="reportSubmit">
+          <i class="bi bi-send" aria-hidden="true"></i> Send report</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -101,7 +101,8 @@ export function createMap(L, element) {
     return map;
 }
 
-// Draws both layers with a toggle, and zooms to the markers when there are any.
+// Draws both layers with a toggle, and zooms to the markers when there are any. Returns the layers
+// and the toggle so a page can `.remove()` them before drawing fresh data.
 export function drawMarkers(L, map, incidents, volunteers, needTypes = []) {
     const incidentLayer = L.layerGroup(incidents.filter(hasCoordinates).map((i) => L.marker(
         [i.latitude, i.longitude],
@@ -114,8 +115,9 @@ export function drawMarkers(L, map, incidents, volunteers, needTypes = []) {
 
     incidentLayer.addTo(map);
     volunteerLayer.addTo(map);
-    L.control.layers(null, { Incidents: incidentLayer, Volunteers: volunteerLayer }).addTo(map);
+    const layerControl = L.control.layers(null, { Incidents: incidentLayer, Volunteers: volunteerLayer }).addTo(map);
 
     const points = [...incidents, ...volunteers].filter(hasCoordinates).map((p) => [p.latitude, p.longitude]);
     if (points.length) map.fitBounds(points, { padding: [30, 30], maxZoom: 12 });
+    return [incidentLayer, volunteerLayer, layerControl];
 }
