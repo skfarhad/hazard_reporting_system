@@ -1,0 +1,15 @@
+# Task groups run in order; each ends with a green commit (see tasks.md).
+# They are sequential because later groups build on earlier models and migrations.
+task_groups:
+  - name: Operator access and PATCH endpoint
+    claude_code_subagent: general-purpose
+  - name: Need types and incident triage fields
+    claude_code_subagent: general-purpose
+  - name: Report parser and provider intake
+    claude_code_subagent: general-purpose
+  - name: Events and hazards
+    claude_code_subagent: general-purpose
+  - name: Volunteer skills
+    claude_code_subagent: general-purpose
+  - name: Verification and docs
+    claude_code_subagent: general-purpose
