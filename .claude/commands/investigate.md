@@ -27,13 +27,13 @@ Perform comprehensive investigation across the project to identify root causes.
 
 ## What This Command Does
 
-1. **Environment Setup**: Confirms the stack is up (`docker compose -f backend/docker-compose.yml ps`), all services healthy
+1. **Environment Setup**: Confirms the stack is up (`docker compose ps`), all services healthy
 2. **Health Check**: `GET /admin/` (compose healthcheck), `GET /swagger.json`, `POST /api/user/token/verify/`
 3. **Incident intake**: `POST /api/incidents/` (`IncidentCreateView`, `HasAPIKey`, no user auth) — provider API key, serializer errors, lat/long → `PointField`
 4. **Incident pipeline**: `pre_save` signal in `apps/incident_manager/signals.py` queues `process_incident_and_send_sms` when `validation_status` becomes `validated` — check the worker received and ran it
 5. **Volunteers**: `GET /api/volunteers/volunteers/` (`apps/volunteer_hub`), teams, locations
 6. **Users / auth**: JWT (simplejwt), password login/signup/OTP in `apps/user/apis_auth.py`, Firebase phone verification in `apps/user/fb_auth.py`
-7. **SMS parser**: `backend/incident_manager/smsparser/` (district/thana spell correction models) — standalone scripts, not a Django app
+7. **SMS parser**: `smsparser/` (district/thana spell correction models) — standalone scripts, not a Django app
 8. **Database Queries**: Inspect `Incident`, `Provider`, `Division`/`District`/`Thana`, `Volunteer`, `VolunteerTeam`, `User` rows directly
 9. **Recovery Actions**: Suggest admin fixes, task re-queues, data corrections
 10. **Report Generation**: Produces structured root cause analysis
@@ -74,16 +74,16 @@ Perform comprehensive investigation across the project to identify root causes.
 ## Useful Commands
 
 ```bash
-docker compose -f backend/docker-compose.yml ps
+docker compose ps
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8001/admin/
 curl -s -X POST -H 'Content-Type: application/json' -d "{\"token\": \"$TOKEN\"}" http://localhost:8001/api/user/token/verify/
 curl -s -X POST -H "Authorization: Api-Key $API_KEY" -H 'Content-Type: application/json' -d '{...}' http://localhost:8001/api/incidents/
 curl -s http://localhost:8001/api/volunteers/volunteers/
-docker compose -f backend/docker-compose.yml logs --tail=200 be
-docker compose -f backend/docker-compose.yml logs --tail=200 celery_worker
-docker compose -f backend/docker-compose.yml exec rabbitmq rabbitmqctl list_queues
-docker compose -f backend/docker-compose.yml exec be python manage.py showmigrations --list
-docker compose -f backend/docker-compose.yml exec be python manage.py shell
+docker compose logs --tail=200 be
+docker compose logs --tail=200 celery_worker
+docker compose exec rabbitmq rabbitmqctl list_queues
+docker compose exec be python manage.py showmigrations --list
+docker compose exec be python manage.py shell
 ```
 
 Never print secrets (`DJANGO_SECRET_KEY`, provider API keys, Firebase credentials, `POSTGRES_PASSWORD`) into the report.

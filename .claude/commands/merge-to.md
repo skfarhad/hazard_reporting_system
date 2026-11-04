@@ -58,7 +58,7 @@ Extract:
 
 ### Step 3: Run tests
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test
+docker compose exec be python manage.py test
 ```
 
 ### Step 4: Fetch and check target branch
@@ -115,8 +115,8 @@ If conflicts occur:
 1. Run tests on target branch
 2. Verify application runs correctly:
    ```bash
-   docker compose -f backend/docker-compose.yml up -d
-   docker compose -f backend/docker-compose.yml ps
+   docker compose up -d
+   docker compose ps
    ```
 
 ### Step 8: Update spec documentation

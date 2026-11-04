@@ -157,8 +157,8 @@ Link existing specs to roadmap items and identify gaps needing new specs.
 |---------|------------|---------|
 | Django Backend | Python 3.8, Django 4.2, DRF, GeoDjango, Gunicorn | Incident intake API, volunteers, users |
 | Celery | RabbitMQ broker | Incident processing, SMS dispatch |
-| SMS parser | spell-correction models (`backend/incident_manager/smsparser/`) | Parse district/thana from SMS text |
-| Live map | Next.js 14, TypeScript, Tailwind, Mapbox GL, next-auth | Live incident/volunteer dashboard |
+| SMS parser | spell-correction models (`smsparser/`) | Parse district/thana from SMS text |
+| Web dashboard | Django templates (`apps/webui`), Bootstrap 5, ES modules, Leaflet + OpenStreetMap | Live incident/volunteer dashboard |
 
 ## Databases
 | Database | Purpose |
@@ -171,7 +171,7 @@ Link existing specs to roadmap items and identify gaps needing new specs.
 |---------|---------|
 | Telecom SMS providers (API-key `Provider`s) | Incoming SMS incident reports |
 | Firebase Admin | Phone-number verification |
-| Mapbox | Map tiles and search in the live map |
+| OpenStreetMap | Map tiles for the dashboard |
 
 ## Infrastructure
 | Service | Provider |

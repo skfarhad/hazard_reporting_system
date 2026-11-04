@@ -77,15 +77,16 @@ Here is sample view of the live dashboard-
 
 ### Tech Stack
 
-Initial implementation for Back-End we are using 
-[Python version 3.8](https://www.python.org/downloads/release/python-380/). 
-The chosen back-end framework is [Django](https://www.djangoproject.com/). For background
-processes, we are using [Celery](https://docs.celeryq.dev/). 
-For live dashboard, [Next.js](https://nextjs.org/) is the frameworks being adopted initially. 
-[PostgreSQL](https://www.postgresql.org/) is the database of choice for backend.
-Docker and Kubernetes will be integrated as well.
+- **Backend:** [Django](https://www.djangoproject.com/) + Django REST Framework + GeoDjango on
+  [PostgreSQL/PostGIS](https://postgis.net/), with [Celery](https://docs.celeryq.dev/) on RabbitMQ for
+  background processing (SMS dispatch).
+- **Web dashboard:** served by Django itself (`apps/webui`): Django templates, Bootstrap 5 and
+  plain JavaScript ES modules, with a [Leaflet](https://leafletjs.com/) map on OpenStreetMap tiles.
+  No separate frontend build.
+- **Everything runs in Docker Compose** (`docker-compose.yaml`). Kubernetes is planned for deployment
+  (see `dev_ops_pipeline/`).
 
-![Tech stack](https://github.com/skfarhad/hazard_reporting_system/blob/main/HMS_tech_stack.jpg)
+See [docs/development.md](docs/development.md) to run it locally.
 
 ## If you want to contribute
 

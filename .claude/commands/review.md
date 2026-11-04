@@ -64,7 +64,7 @@ Perform comprehensive code review following project standards.
 
 **Signals and tasks**: `apps/incident_manager/signals.py` reacts to `validation_status` changes on `pre_save`; Celery `@shared_task`s take IDs, are idempotent, and are mocked/patched (`.delay`) in tests. Watch for `QuerySet.update()` bypassing signals, and for extra queries in `pre_save`.
 
-**Web app** (`web_app/hrs_map`): TypeScript types in `types/`, no secrets in client code (only `NEXT_PUBLIC_*`), `npm run lint` and `npm run build` pass
+**Web dashboard** (`apps/webui`): all API/SMS text goes through `escapeHtml` before `innerHTML`, API calls go through `api.js`, no secrets in templates or JS, CDN assets pinned to exact versions, Vitest tests for new logic (`npm test`)
 
 ## Critical Issues (Auto-fail)
 

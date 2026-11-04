@@ -86,14 +86,15 @@ Extract:
 2. **Verify RED** — Run it. Confirm it fails for the *expected* reason (feature missing,
    not a typo/import error). If it passes or errors, fix the test first.
    ```bash
-   docker compose -f backend/docker-compose.yml exec be python manage.py test apps.<app>.tests.test_<thing>
+   docker compose exec be python manage.py test apps.<app>.tests.test_<thing>
    ```
 3. **GREEN** — Write the simplest production code that makes it pass. No extra features.
-   For Django backend (`backend/apps/`, `backend/config/`): models, migrations
-   (`docker compose -f backend/docker-compose.yml exec be python manage.py makemigrations && ... migrate`), views, URLs,
+   For Django backend (`apps/`, `config/`): models, migrations
+   (`docker compose exec be python manage.py makemigrations && ... migrate`), views, URLs,
    serializers, background tasks (Celery `@shared_task` in `apps/<app>/tasks.py`; restart
    `celery_worker` after changing them) — but only as far as the current test requires.
-   For the live map (`web_app/hrs_map/`), check with `npm run lint` and `npm run build`; it has no test runner.
+   For the web dashboard (`apps/webui/`): templates in `templates/webui/`, ES modules in
+   `static/webui/js/` with Vitest tests next to them (`npm test` on the host).
 4. **Verify GREEN** — Re-run the test; confirm it passes and no other tests broke.
 5. **REFACTOR** — Clean up while staying green. Add no new behavior.
 
@@ -104,8 +105,8 @@ a failing test; if you do, delete it and restart from the test.
 
 #### Run the affected app's suite and check for regressions:
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.<app>
-docker compose -f backend/docker-compose.yml logs be --tail=50
+docker compose exec be python manage.py test apps.<app>
+docker compose logs be --tail=50
 ```
 Output must be pristine (no errors/warnings). Fix any broken test before committing.
 

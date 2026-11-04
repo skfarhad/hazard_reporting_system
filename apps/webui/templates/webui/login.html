@@ -1,0 +1,70 @@
+{% extends "webui/base.html" %}
+{% load static %}
+{% block title %}Sign in · Hazard Reporting System{% endblock %}
+{% block navbar %}{% endblock %}
+{% block main_class %}login-page{% endblock %}
+{% block content %}
+<div class="row g-0 min-vh-100">
+  <section class="col-lg-6 hrs-hero d-none d-lg-flex flex-column justify-content-between p-5">
+    <div class="hrs-brand fs-5"><span class="hrs-brand-mark"><i class="bi bi-exclamation-triangle-fill"></i></span>Hazard Reporting</div>
+    <div>
+      <p class="hrs-eyebrow text-white-50 mb-2">Flood response · Bangladesh</p>
+      <h1 class="hrs-display text-white mb-3">See every SOS on one map,<br>and send help faster.</h1>
+      <p class="text-white-50 mb-0" style="max-width: 32rem;">Reports arrive by SMS, get validated by operators, and are routed to the nearest volunteers.</p>
+    </div>
+    <p class="small text-white-50 mb-0">Open source · <a class="text-white" href="https://github.com/skfarhad/hazard_reporting_system">GitHub</a></p>
+  </section>
+
+  <section class="col-lg-6 d-flex align-items-center justify-content-center p-4">
+    <div class="w-100" style="max-width: 400px;">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="hrs-brand d-lg-none"><span class="hrs-brand-mark"><i class="bi bi-exclamation-triangle-fill"></i></span>Hazard Reporting</div>
+        <button id="themeToggle" class="btn btn-ghost btn-sm btn-icon ms-auto" type="button" aria-label="Toggle theme"></button>
+      </div>
+      <h2 class="mb-1">Welcome back</h2>
+      <p class="text-secondary mb-4">Sign in to the operations dashboard.</p>
+
+      <ul class="nav nav-pills hrs-segmented mb-4" role="tablist">
+        <li class="nav-item flex-fill"><button class="nav-link active w-100" data-bs-toggle="tab" data-bs-target="#loginForm" type="button" role="tab">Sign in</button></li>
+        <li class="nav-item flex-fill"><button class="nav-link w-100" data-bs-toggle="tab" data-bs-target="#registerForm" type="button" role="tab">Register</button></li>
+      </ul>
+
+      <div class="tab-content">
+        <form id="loginForm" class="tab-pane fade show active" novalidate>
+          <div class="mb-3">
+            <label for="loginUsername" class="form-label">Username</label>
+            <input id="loginUsername" name="username" class="form-control" autocomplete="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="loginPassword" class="form-label">Password</label>
+            <input id="loginPassword" name="password" type="password" class="form-control" autocomplete="current-password" required>
+          </div>
+          <div class="text-danger small mb-2" data-error></div>
+          <button class="btn btn-primary w-100" type="submit">Sign in</button>
+        </form>
+        <form id="registerForm" class="tab-pane fade" novalidate>
+          <div class="mb-3">
+            <label for="regFullName" class="form-label">Full name</label>
+            <input id="regFullName" name="full_name" class="form-control" autocomplete="name">
+          </div>
+          <div class="mb-3">
+            <label for="regUsername" class="form-label">Username</label>
+            <input id="regUsername" name="username" class="form-control" autocomplete="username" required>
+          </div>
+          <div class="mb-3">
+            <label for="regEmail" class="form-label">Email</label>
+            <input id="regEmail" name="email" type="email" class="form-control" autocomplete="email">
+          </div>
+          <div class="mb-3">
+            <label for="regPassword" class="form-label">Password</label>
+            <input id="regPassword" name="password" type="password" class="form-control" autocomplete="new-password" required>
+          </div>
+          <div class="text-danger small mb-2" data-error></div>
+          <button class="btn btn-primary w-100" type="submit">Create account</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'webui/js/login.js' %}"></script>{% endblock %}

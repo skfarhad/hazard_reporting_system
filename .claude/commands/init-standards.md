@@ -175,14 +175,14 @@ testing:
 # Testing Standards
 
 ## Django Tests
-- Location: `backend/apps/<app>/tests/`
+- Location: `apps/<app>/tests/`
 - Use `TestCase` for DB tests
 - Create test data in `setUp` (as the existing tests do); fixtures optional
-- Run: `docker compose -f backend/docker-compose.yml exec be python manage.py test`
+- Run: `docker compose exec be python manage.py test`
 
-## Web App (web_app/hrs_map)
-- No test runner yet; `npm run lint` and `npm run build` must pass
-- Don't call the live backend in builds; sample data lives in `public/fake_incident_response.json`
+## Web Dashboard (apps/webui)
+- JS tests: `apps/webui/static/webui/js/*.test.js`, Vitest + jsdom, run `npm test` on the host
+- Keep DOM-free logic (filtering, formatting, map helpers) in modules that tests can import
 ```
 
 #### 3.6 `agent-os/standards/global/conventions.md`
@@ -244,7 +244,7 @@ See `agent-os/standards/` for coding conventions:
 | Language | Formatter | Linter |
 |----------|-----------|--------|
 | Python | none configured (PEP 8, 80 cols per CONTRIBUTING.md) | none configured |
-| TypeScript (web_app/hrs_map) | prettier | eslint (`next lint`) |
+| JavaScript (apps/webui) | none configured | none configured |
 
 ### Next Steps
 - /execute <slug> - Standards will be applied

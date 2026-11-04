@@ -1,0 +1,22 @@
+{% extends "webui/base.html" %}
+{% load static %}
+{% block title %}Volunteers · Hazard Reporting System{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+  <h1 class="h4 mb-0 me-auto">Volunteers</h1>
+  <input id="volunteerSearch" type="search" class="form-control form-control-sm w-auto"
+         placeholder="Search name, address, assistance" aria-label="Search volunteers">
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Name</th><th>Assistance</th><th>Address</th><th>Location</th></tr>
+      </thead>
+      <tbody id="volunteerRows"></tbody>
+    </table>
+  </div>
+  <div id="volunteerEmpty" class="card-body text-secondary d-none">No volunteers match.</div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'webui/js/volunteers.js' %}"></script>{% endblock %}

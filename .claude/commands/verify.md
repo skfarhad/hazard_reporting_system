@@ -30,8 +30,8 @@ ls agent-os/specs/ | grep <slug>
 
 ### 1. Start Docker Environment
 ```bash
-docker compose -f backend/docker-compose.yml up -d
-docker compose -f backend/docker-compose.yml ps  # Verify all services running
+docker compose up -d
+docker compose ps  # Verify all services running
 ```
 
 ---
@@ -40,9 +40,9 @@ docker compose -f backend/docker-compose.yml ps  # Verify all services running
 
 #### Migrations
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py migrate
-docker compose -f backend/docker-compose.yml exec be python manage.py check
-docker compose -f backend/docker-compose.yml exec be python manage.py showmigrations --list
+docker compose exec be python manage.py migrate
+docker compose exec be python manage.py check
+docker compose exec be python manage.py showmigrations --list
 ```
 
 #### Linting (if configured)
@@ -51,12 +51,12 @@ gets added, run it here; otherwise skip and say so in the report.
 
 #### Unit Tests
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test
+docker compose exec be python manage.py test
 ```
 
 #### Coverage (if `coverage` is installed)
 ```bash
-docker compose -f backend/docker-compose.yml exec be coverage run manage.py test && docker compose -f backend/docker-compose.yml exec be coverage report
+docker compose exec be coverage run manage.py test && docker compose exec be coverage report
 ```
 
 ---
@@ -73,7 +73,7 @@ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8001/swagger/
 
 ### 4. Manual Verification
 
-- Check Docker logs: `docker compose -f backend/docker-compose.yml logs be --tail=100`
+- Check Docker logs: `docker compose logs be --tail=100`
 - Access API docs: http://localhost:8001/swagger/
 - Test key endpoints manually
 

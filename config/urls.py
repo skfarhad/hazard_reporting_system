@@ -1,0 +1,50 @@
+from django.contrib import admin
+from django.urls import path, include
+from config import settings
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.generic import RedirectView
+
+# Change the Django admin header and title
+admin.site.site_header = "Hazard Reporting System Admin"
+admin.site.site_title = "Hazard Reporting System Portal"
+admin.site.index_title = "Welcome to the Hazard Reporting System Admin"
+
+# Define the schema view for Swagger
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Volunteer and Incident Management API",
+        default_version="v1",
+        description="API documentation for the Volunteer and Incident management system",
+        terms_of_service="https://www.yourcompany.com/terms/",
+        contact=openapi.Contact(email="contact@yourcompany.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns = [
+    path("", RedirectView.as_view(url="/app/", permanent=False)),
+    path("app/", include("apps.webui.urls")),
+    path("admin/", admin.site.urls),
+    path("api/incidents/", include("apps.incident_manager.urls")),
+    path("api/volunteers/", include("apps.volunteer_hub.urls")),
+    path('api/user/', include('apps.user.urls')),
+    # Swagger and Redoc URLs
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    path("swagger.json", schema_view.without_ui(cache_timeout=0), name="schema-json"),
+    path("swagger.yaml", schema_view.without_ui(cache_timeout=0), name="schema-yaml"),
+]
+
+# Gunicorn doesn't serve static files: in DEBUG, serve them from the app folders
+# (no collectstatic needed while editing JS/CSS).
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()

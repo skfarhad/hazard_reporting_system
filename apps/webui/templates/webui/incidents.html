@@ -1,0 +1,28 @@
+{% extends "webui/base.html" %}
+{% load static %}
+{% block title %}Incidents · Hazard Reporting System{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+  <h1 class="h4 mb-0 me-auto">Incidents</h1>
+  <input id="incidentSearch" type="search" class="form-control form-control-sm w-auto"
+         placeholder="Search description, address, phone" aria-label="Search incidents">
+  <select id="incidentStatus" class="form-select form-select-sm w-auto" aria-label="Validation status">
+    <option value="">All statuses</option>
+    <option value="pending">Pending</option>
+    <option value="validated">Validated</option>
+    <option value="rejected">Rejected</option>
+  </select>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th>Reported</th><th>Description</th><th>Address</th><th>Contact</th><th>Status</th><th>Task</th></tr>
+      </thead>
+      <tbody id="incidentRows"></tbody>
+    </table>
+  </div>
+  <div id="incidentEmpty" class="card-body text-secondary d-none">No incidents match.</div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'webui/js/incidents.js' %}"></script>{% endblock %}

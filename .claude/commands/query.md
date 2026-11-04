@@ -70,10 +70,10 @@ PARALLEL:
 ### For Code:
 ```
 PARALLEL:
-- Grep: "<symbol>" in backend/apps/
-- Grep: "<symbol>" in backend/config/
-- Grep: "<symbol>" in backend/incident_manager/smsparser/
-- Grep: "<symbol>" in web_app/hrs_map/
+- Grep: "<symbol>" in apps/
+- Grep: "<symbol>" in config/
+- Grep: "<symbol>" in smsparser/
+- Grep: "<symbol>" in apps/webui/
 - Read: CLAUDE.md
 ```
 
@@ -102,7 +102,7 @@ If initial search insufficient, do targeted follow-up:
 |------|--------|
 | Spec details | Read `agent-os/specs/<YYYY-MM-DD>-<slug>/spec.md` |
 | Task progress | Read `agent-os/specs/<YYYY-MM-DD>-<slug>/tasks.md` |
-| Implementation | Read source file in `backend/apps/` or `web_app/hrs_map/` |
+| Implementation | Read source file in `apps/` (web dashboard: `apps/webui/`) |
 | Standard details | Read `agent-os/standards/<category>/<file>.md` |
 
 ---
