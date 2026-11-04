@@ -28,5 +28,7 @@ describe('deep link', () => {
         expect(incidentIdFromHash('#incident-abc')).toBeNull();
         expect(incidentIdFromHash('')).toBeNull();
         expect(incidentIdFromHash('#something')).toBeNull();
+        expect(incidentIdFromHash('#incident-12x')).toBeNull();
+        expect(incidentIdFromHash('#not-incident-12')).toBeNull();
     });
 });

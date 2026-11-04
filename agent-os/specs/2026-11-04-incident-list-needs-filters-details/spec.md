@@ -1,6 +1,6 @@
 # Specification: Incident list: needs and hazard, filters, search and details view
 
-**Status:** Implemented, awaiting `/run-tests`
+**Status:** Implemented and tested
 
 ## Executive Summary
 
@@ -279,6 +279,13 @@ Vitest on the host (`npx vitest run …`).
 ### Vitest: existing suites
 - `map.test.js` unchanged; `tables.test.js` drops `filterIncidents`/`incidentRow` tests with the
   functions; `api.test.js` gains "sends PATCH with a JSON body and the token".
+
+### Test files and results
+- Django: `apps/incident_manager/tests/test_incident_list_filters.py` (16),
+  `apps/incident_manager/tests/test_incident_detail_api.py` (5); existing list and PATCH tests
+  updated to the paginated / detail shapes.
+- Vitest: `incident-query.test.js` (9), `incident-views.test.js` (21), `incident-detail.test.js` (4),
+  `api.test.js` (+1). Results and the mutation check are in `tasks.md`.
 
 ### Manual (browser, headless Chromium)
 - Desktop 1280 / phone 375, light/dark: filters, chips, search, pager and URL (refresh, back);

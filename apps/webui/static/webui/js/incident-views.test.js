@@ -252,6 +252,10 @@ describe('quick actions', () => {
             body: { needs: ['rescue', 'medical', 'food'], life_threatening: false, people_count: null, event: null, task_status: 'closed' },
             errors: {},
         });
+
+        f.elements.event.value = '3';
+        f.elements.people_count.value = '0';
+        expect(formToPatch(f).body).toMatchObject({ event: 3, people_count: 0 });
     });
 
     it('a PATCH body always has at least one need, otherwise the form reports it', () => {

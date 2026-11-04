@@ -1,7 +1,7 @@
 # Task Breakdown: Incident list: needs and hazard, filters, search and details view
 
 **Spec**: `2026-11-04-incident-list-needs-filters-details`
-**Status**: Implemented (awaiting `/run-tests`)
+**Status**: Tested, ready for PR
 
 Django: `docker compose exec be python manage.py test apps.incident_manager.tests.<module>`.
 Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm test`.
@@ -190,6 +190,25 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Known limits**
 - Dashboard summary cards still count the incidents the map loads (≤500), as before.
 - Validating queues the SMS task, which is still a placeholder.
+
+## Test Results (2026-11-04, /run-tests)
+
+- **Django** (`docker compose run --rm unit_tests`, as in CI): 131 run, 131 passed, 0 failed.
+- **Vitest** (`npm test`): 10 files, 86 run, 86 passed, 0 failed.
+- Every test named in the spec's Testing Strategy exists and passes, plus 8 extra.
+- **Mutation check**, 22 deliberate breaks:
+  - Backend (10): needs without `distinct`, unknown needs accepted, bad `event` ignored, search
+    skipping thana, case-sensitive search, page-size cap raised, hazard missing, `select_related`
+    without the hazard, PATCH answering in the list shape, detail view open to any signed-in user.
+    All caught.
+  - Frontend (12): filter change keeping the page, page 1 written to the URL, status not
+    whitelisted, single page gap shown as "…", hazard choice keeping the event, Prev at a page edge
+    going forward, unanchored deep-link pattern, event id sent as a string, field errors not
+    cleared, ended events editable, unescaped card message, unescaped contact. 10 caught at first;
+    two tests were strengthened until the rest were caught:
+    - `#incident-12x` / `#not-incident-12` must not open an incident;
+    - choosing an event sends its id as a number (and a people count of 0 is kept).
+- No coverage tool is installed, so no coverage figure.
 
 ## Execution Order
 
