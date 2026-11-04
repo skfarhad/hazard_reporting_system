@@ -103,3 +103,18 @@ class IncidentListViewTestCase(APITestCase):
 
         self.assertEqual(data[0]["event"], {"id": flood.id, "name": "Sylhet Flood"})
         self.assertIsNone(data[1]["event"])
+
+    def test_listing_incidents_with_events_uses_the_same_number_of_queries_for_one_or_twenty(self):
+        self.client.force_authenticate(self.operator)
+
+        def count_queries(n):
+            Incident.objects.all().delete()
+            for i in range(n):
+                Incident.objects.create(
+                    contact_number=str(i), description="x", address="y", event=event(f"Event {i}"),
+                )
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(self.url)
+            return len(ctx.captured_queries)
+
+        self.assertEqual(count_queries(1), count_queries(20))

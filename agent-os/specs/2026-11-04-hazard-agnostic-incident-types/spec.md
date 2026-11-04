@@ -1,6 +1,6 @@
 # Specification: Hazard-agnostic incident types: needs, hazards and events
 
-**Status:** Implemented (2026-11-04); pending `/run-tests`
+**Status:** Implemented and tested (2026-11-04): 110 Django + 30 JS tests passing
 **Branch:** `feat/hazard-agnostic-incident-types` · **Delivery:** one PR, one green commit per task group
 
 ## Executive Summary
@@ -372,6 +372,30 @@ are patched.
 ### E2E (manual check before PR, headless Chrome)
 - A staff user sees the map and list. A non-staff user sees the operator-access message on both
   pages.
+
+### Test files
+- `apps/incident_manager/tests/`:
+  - `test_report_parser.py` (parser);
+  - `test_need_types.py` (model and lookup);
+  - `test_seed_need_types.py` (seed and backfill);
+  - `test_incident_fields.py` (triage, `__str__`);
+  - `test_list_incidents.py` (access, fields, query counts);
+  - `test_operator_update.py` (PATCH);
+  - `test_create_incidents.py` (intake: needs, district and thana, event).
+- `apps/events/tests/`:
+  - `test_models.py` (active events, hazard seed);
+  - `test_services.py` (`attach_event`);
+  - `test_api.py` (events list);
+  - `factories.py`.
+- `apps/volunteer_hub/tests/`:
+  - `test_get_volunteer.py` (skills, query count);
+  - `test_skills_migration.py`.
+- `apps/webui/static/webui/js/`: `api.test.js` (403), `tables.test.js` (operator notice).
+
+### Results
+- 110 Django tests and 30 JS tests pass (`/run-tests`, 2026-11-04).
+- No coverage tool is installed. Instead, the query-count and 403 guards were each checked by
+  breaking the code on purpose and watching the test fail.
 
 ### Mapping to acceptance criteria
 Each criterion in `planning/requirements.md` is covered by the tests above: keywords → parser

@@ -1,7 +1,7 @@
 # Task Breakdown: Hazard-agnostic incident types: needs, hazards and events
 
 **Spec**: `2026-11-04-hazard-agnostic-incident-types`
-**Status**: Implemented (all task groups done; pending /run-tests)
+**Status**: Implemented and tested (`/run-tests` passed 2026-11-04)
 **Branch**: `feat/hazard-agnostic-incident-types` (one PR; one green commit per task group)
 
 Every subtask is test-first (`tdd` skill): write the failing test, watch it fail for the expected
@@ -385,3 +385,22 @@ Run commands:
   - end-to-end provider POST → event attach → operator PATCH → Celery task received;
   - headless Chrome for staff and non-staff accounts;
   - all new admin pages and Swagger return 200.
+
+## Test results (/run-tests, 2026-11-04)
+
+| Suite | Command | Result |
+|---|---|---|
+| Django, as CI (fresh DB, all migrations from zero) | `docker compose run --rm unit_tests` | **110 passed**, 0 failed, 0 warnings |
+| Web app JS | `npm test` | **30 passed** (6 files) |
+
+By app: incident_manager 56 new-style tests plus the older docstring-named ones, events 11, user 14, volunteer_hub 7
+plus older ones, webui 3. All pass.
+
+Gaps found against the spec's test plan and closed during `/run-tests`:
+- "listing incidents with events uses the same number of queries for one or twenty". Removing
+  `select_related("event")` makes it fail with 3 vs 22 queries.
+- "listing volunteers with skills uses the same number of queries for two or twenty". Removing
+  `prefetch_related("skills")` makes it fail with 3 vs 21 queries.
+
+Not covered by `manage.py test`: `smsparser/tests.py` (standalone scripts, unchanged by this
+feature).
