@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
     needIcons, hazardLabel, urgencyBadge, locationText, incidentTableRow, incidentCard,
     needChips, eventHazardOptions, pagerHtml, incidentDetailsHtml,
+    statusActionsHtml, editFormHtml, formToPatch, showFieldErrors, editableEvents,
 } from './incident-views.js';
 
 export const NEED_TYPES = [
@@ -199,5 +200,96 @@ describe('details', () => {
         expect(html).not.toContain('<b>p');
         expect(html).not.toContain('<i>v');
         expect(html).not.toContain('"><img>');
+    });
+});
+
+describe('quick actions', () => {
+    const EVENTS = [
+        { id: 3, name: 'Feni Flood', hazard: FLOOD, started_at: '2026-11-01T00:00:00Z', ended_at: null },
+        { id: 4, name: 'Old Cyclone', hazard: FLOOD, started_at: '2025-05-01T00:00:00Z', ended_at: '2025-05-10T00:00:00Z' },
+        { id: 5, name: 'Old Fire', hazard: FLOOD, started_at: '2025-01-01T00:00:00Z', ended_at: '2025-01-02T00:00:00Z' },
+    ];
+
+    function form(incident = INCIDENT) {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = editFormHtml(incident, NEED_TYPES, editableEvents(EVENTS, incident.event?.id ?? null, new Date('2026-11-04T12:00:00Z')));
+        document.body.replaceChildren(wrap);
+        return wrap.querySelector('form');
+    }
+
+    it('offers the status changes the incident is not already in', () => {
+        const box = el(`<div>${statusActionsHtml({ validation_status: 'pending' })}</div>`);
+        const actions = [...box.querySelectorAll('button[data-status]')].map((b) => b.dataset.status);
+
+        expect(actions).toEqual(['validated', 'rejected']);
+        expect([...el(`<div>${statusActionsHtml({ validation_status: 'validated' })}</div>`).querySelectorAll('button[data-status]')]
+            .map((b) => b.dataset.status)).toEqual(['pending', 'rejected']);
+    });
+
+    it('offers active events plus the incident\'s current event, never other ended ones', () => {
+        const now = new Date('2026-11-04T12:00:00Z');
+
+        expect(editableEvents(EVENTS, null, now).map((e) => e.id)).toEqual([3]);
+        expect(editableEvents(EVENTS, 4, now).map((e) => e.id)).toEqual([3, 4]);
+    });
+
+    it('the edit form is pre-filled from the incident and turns back into a PATCH body', () => {
+        const f = form();
+
+        expect([...f.querySelectorAll('input[name="needs"]:checked')].map((i) => i.value)).toEqual(['rescue', 'medical']);
+        expect(f.elements.life_threatening.checked).toBe(true);
+        expect(f.elements.people_count.value).toBe('5');
+        expect(f.elements.event.value).toBe('3');
+        expect(f.elements.task_status.value).toBe('open');
+
+        f.querySelector('input[name="needs"][value="food"]').checked = true;
+        f.elements.life_threatening.checked = false;
+        f.elements.people_count.value = '';
+        f.elements.event.value = '';
+        f.elements.task_status.value = 'closed';
+
+        expect(formToPatch(f)).toEqual({
+            body: { needs: ['rescue', 'medical', 'food'], life_threatening: false, people_count: null, event: null, task_status: 'closed' },
+            errors: {},
+        });
+    });
+
+    it('a PATCH body always has at least one need, otherwise the form reports it', () => {
+        const f = form();
+        f.querySelectorAll('input[name="needs"]').forEach((i) => { i.checked = false; });
+
+        expect(formToPatch(f).errors).toEqual({ needs: ['Pick at least one need.'] });
+    });
+
+    it('rejects a negative or fractional people count before sending', () => {
+        const f = form();
+        f.elements.people_count.value = '-2';
+
+        expect(formToPatch(f).errors.people_count).toEqual(['Enter a whole number, 0 or more.']);
+    });
+
+    it('server field errors are shown next to the right fields', () => {
+        const f = form();
+
+        showFieldErrors(f, { people_count: ['Ensure this value is greater than or equal to 0.'], needs: ['Bad need'] });
+
+        const count = f.elements.people_count;
+        expect(count.classList.contains('is-invalid')).toBe(true);
+        const message = document.getElementById(count.getAttribute('aria-describedby'));
+        expect(message.textContent).toContain('greater than or equal to 0');
+        expect(f.querySelector('[data-error-for="needs"]').textContent).toContain('Bad need');
+
+        showFieldErrors(f, {});
+        expect(count.classList.contains('is-invalid')).toBe(false);
+        expect(f.querySelector('[data-error-for="needs"]').textContent).toBe('');
+    });
+
+    it('errors for fields the form does not have are shown at the top of the form', () => {
+        const f = form();
+
+        showFieldErrors(f, { detail: 'Not allowed', non_field_errors: ['Conflict'] });
+
+        expect(f.querySelector('[data-error-for="form"]').textContent).toContain('Not allowed');
+        expect(f.querySelector('[data-error-for="form"]').textContent).toContain('Conflict');
     });
 });

@@ -393,6 +393,10 @@ h4, h5, h6, .h4, .h5, .h6 { font-weight: 600; line-height: 1.35; }
 .hrs-chip .hrs-chip-label { color: var(--hrs-text-muted); font-weight: 500; }
 button.hrs-chip { cursor: pointer; transition: background-color var(--hrs-fast) var(--hrs-ease), border-color var(--hrs-fast) var(--hrs-ease); }
 button.hrs-chip:hover { background: var(--hrs-surface-muted); }
+/* Need chips in the edit form are checkbox labels (`.btn-check + .hrs-chip`). */
+.btn-check + .hrs-chip { cursor: pointer; }
+.btn-check:focus-visible + .hrs-chip { outline: 2px solid var(--hrs-brand); outline-offset: 2px; }
+.btn-check:checked + .hrs-chip,
 button.hrs-chip[aria-pressed=true] {
     background: rgba(var(--hrs-brand-rgb), .1);
     border-color: rgba(var(--hrs-brand-rgb), .5);
@@ -544,6 +548,7 @@ button.hrs-chip[aria-pressed=true] {
 .hrs-detail-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .75rem 1.25rem; margin: 0; }
 .hrs-detail-fields dt { font-size: .75rem; font-weight: 600; color: var(--hrs-text-muted); text-transform: uppercase; letter-spacing: .04em; }
 .hrs-detail-fields dd { margin: 0; overflow-wrap: anywhere; }
+.hrs-edit-form { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--hrs-border); }
 
 /* ---- Map pins (incident markers) ----
  * Teardrop pin filled with the main need's colour (--hrs-pin-fill, set inline),

@@ -1,6 +1,6 @@
 // Incidents page: server-side filters, search and pages, kept in the page URL.
 import { requireLogin, initNavbar } from './auth.js';
-import { apiGet } from './api.js';
+import { apiGet, apiPatch } from './api.js';
 import { API } from './constants.js';
 import { operatorAccessNotice } from './tables.js';
 import { showToast } from './ui.js';
@@ -10,6 +10,7 @@ import {
 } from './incident-query.js';
 import {
     incidentTableRow, incidentCard, needChips, eventHazardOptions, pagerHtml, incidentDetailsHtml,
+    statusActionsHtml, editFormHtml, formToPatch, showFieldErrors, editableEvents,
 } from './incident-views.js';
 import { createIncidentDetail, incidentIdFromHash } from './incident-detail.js';
 import { incidentIcon } from './map.js';
@@ -116,6 +117,59 @@ function bindControls() {
     });
 }
 
+const STATUS_TOASTS = { validated: 'Incident validated.', rejected: 'Incident rejected.', pending: 'Incident is pending again.' };
+
+function renderQuickActions(incident) {
+    document.getElementById('incidentDetailActions').innerHTML = statusActionsHtml(incident);
+    document.getElementById('incidentDetailEdit').innerHTML = editFormHtml(
+        incident, state.needTypes, editableEvents(state.events, incident.event?.id ?? null),
+    );
+}
+
+function clearQuickActions() {
+    document.getElementById('incidentDetailActions').innerHTML = '';
+    document.getElementById('incidentDetailEdit').innerHTML = '';
+}
+
+// Sends one PATCH; on success the pop-up and the list show the saved incident.
+async function saveIncident(id, body, form) {
+    const res = await apiPatch(API.incident(id), body);
+    if (!res.ok) {
+        if (form) showFieldErrors(form, res.data || {});
+        else showToast(res.data?.detail || 'Could not update this incident.', 'error');
+        return false;
+    }
+    if (detail.current()?.id === id) detail.show(res.data);
+    await loadPage(state.filters);
+    detail.refreshNav();
+    return true;
+}
+
+function bindQuickActions() {
+    document.getElementById('incidentDetailActions').addEventListener('click', async (event) => {
+        const button = event.target.closest('button[data-status]');
+        const incident = detail.current();
+        if (!button || !incident?.id) return;
+        button.disabled = true;
+        const { status } = button.dataset;
+        if (await saveIncident(incident.id, { validation_status: status })) showToast(STATUS_TOASTS[status], 'success');
+        button.disabled = false;
+    });
+    document.getElementById('incidentDetailEdit').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const incident = detail.current();
+        const { body, errors } = formToPatch(form);
+        showFieldErrors(form, errors);
+        if (Object.keys(errors).length || !incident?.id) return;
+        const save = form.querySelector('button[type="submit"]');
+        save.disabled = true;
+        if (await saveIncident(incident.id, body, form)) showToast('Changes saved.', 'success');
+        save.disabled = false;
+    });
+    document.getElementById('incidentDetailEdit').addEventListener('reset', (event) => showFieldErrors(event.target, {}));
+}
+
 function setUpDetail() {
     detail = createIncidentDetail({
         L: window.L,
@@ -132,7 +186,7 @@ function setUpDetail() {
             await applyFilters(withFilter(state.filters, { page }));
             return state.page.results.map((i) => i.id);
         },
-        render: { details: incidentDetailsHtml, icon: incidentIcon },
+        render: { details: incidentDetailsHtml, icon: incidentIcon, afterShow: renderQuickActions, clear: clearQuickActions },
         // Focus goes back to the incident's row (or card) so keyboard users keep their place.
         onClosed: (id) => [...document.querySelectorAll(`[data-incident-id="${id}"]`)]
             .find((el) => el.offsetParent !== null)?.focus(),
@@ -154,6 +208,7 @@ async function init() {
     state.events = events.ok ? events.data : [];
     bindControls();
     setUpDetail();
+    bindQuickActions();
     const loaded = await loadPage(readFilters(window.location.search));
     const linked = incidentIdFromHash(window.location.hash);
     if (loaded && linked) detail.open(linked);

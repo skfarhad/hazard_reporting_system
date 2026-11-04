@@ -80,6 +80,7 @@ export function createIncidentDetail({ L, Modal, element, needTypes, fetchIncide
         current = { id };
         title.textContent = `Incident #${id}`;
         body.innerHTML = '<div class="text-secondary">Loading…</div>';
+        render.clear?.();
         updateNav();
         window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${incidentHash(id)}`);
         modal.show();

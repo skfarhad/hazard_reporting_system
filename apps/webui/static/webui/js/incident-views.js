@@ -1,8 +1,10 @@
-// HTML builders for the Incidents page (no DOM access); all text is escaped.
+// HTML builders for the Incidents page; all text is escaped. formToPatch and showFieldErrors read or
+// update a rendered edit form; everything else only returns HTML.
 import { escapeHtml, formatDateTime } from './utils.js';
 import { incidentNeeds, primaryNeed, safeIcon, safeColour } from './map.js';
 import { pageRange } from './incident-query.js';
 import { statusBadge } from './tables.js';
+import { TASK_STATUSES } from './constants.js';
 
 function needIcon(need) {
     return `<span class="hrs-need-icon" style="--hrs-pin-fill:${safeColour(need.colour)}" title="${escapeHtml(need.label_en)}">`
@@ -137,4 +139,120 @@ export function incidentDetailsHtml(incident, needTypes) {
         ${field('Reported', timeHtml(incident.created_at))}
         ${field('Updated', timeHtml(incident.updated_at))}
     </dl>`;
+}
+
+const STATUS_ACTIONS = [
+    ['validated', 'Validate', 'btn-success', 'check-lg'],
+    ['pending', 'Back to pending', 'btn-outline-secondary', 'arrow-counterclockwise'],
+    ['rejected', 'Reject', 'btn-outline-danger', 'x-lg'],
+];
+
+export function statusActionsHtml(incident) {
+    const buttons = STATUS_ACTIONS.filter(([status]) => status !== incident.validation_status)
+        .map(([status, label, css, icon]) => `<button type="button" class="btn btn-sm ${css}" data-status="${status}">`
+            + `<i class="bi bi-${icon}" aria-hidden="true"></i> ${label}</button>`);
+    return `<div class="d-flex flex-wrap align-items-center gap-2"><span class="me-auto">${statusBadge(incident.validation_status)}</span>${buttons.join('')}</div>`;
+}
+
+// Events an operator can attach: the ones running now, plus whatever the incident already has.
+export function editableEvents(events, currentId, now = new Date()) {
+    return events.filter((e) => e.id === currentId
+        || (new Date(e.started_at) <= now && (!e.ended_at || new Date(e.ended_at) > now)));
+}
+
+function errorSlot(name) {
+    return `<div class="invalid-feedback d-block" id="incidentEdit-${name}-error" data-error-for="${name}"></div>`;
+}
+
+export function editFormHtml(incident, needTypes, events) {
+    const chosen = new Set(incident.needs || []);
+    const needs = needTypes.map((t) => {
+        const id = `incidentEdit-need-${escapeHtml(t.code)}`;
+        return `<input type="checkbox" class="btn-check" name="needs" value="${escapeHtml(t.code)}" id="${id}"${chosen.has(t.code) ? ' checked' : ''}>`
+            + `<label class="hrs-chip" for="${id}"><i class="bi bi-${safeIcon(t.icon)}" style="color:${safeColour(t.colour)}" aria-hidden="true"></i>${escapeHtml(t.label_en)}</label>`;
+    }).join('');
+    const eventId = incident.event?.id ?? null;
+    const eventOptions = option('', 'No event', eventId === null ? '' : String(eventId))
+        + events.map((e) => option(String(e.id), e.name, String(eventId))).join('');
+    const taskOptions = TASK_STATUSES.map((t) => option(t, t, incident.task_status)).join('');
+    const people = Number.isFinite(incident.people_count) ? incident.people_count : '';
+
+    return `<form id="incidentEditForm" class="hrs-edit-form" novalidate>
+        <h3 class="h6 mb-2">Edit triage</h3>
+        <div class="alert alert-danger py-2 small mb-2" data-error-for="form" role="alert" hidden></div>
+        <fieldset class="mb-3" aria-describedby="incidentEdit-needs-error">
+            <legend class="form-label small fw-semibold mb-1">Needs</legend>
+            <div class="d-flex flex-wrap gap-2">${needs}</div>
+            ${errorSlot('needs')}
+        </fieldset>
+        <div class="row g-3 align-items-end">
+            <div class="col-sm-6">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="incidentEdit-life" name="life_threatening"${incident.life_threatening ? ' checked' : ''}>
+                    <label class="form-check-label" for="incidentEdit-life">Life-threatening</label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label small fw-semibold" for="incidentEdit-people">People affected</label>
+                <input class="form-control form-control-sm" type="number" min="0" step="1" inputmode="numeric" id="incidentEdit-people" name="people_count" value="${people}">
+                ${errorSlot('people_count')}
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label small fw-semibold" for="incidentEdit-event">Event</label>
+                <select class="form-select form-select-sm" id="incidentEdit-event" name="event">${eventOptions}</select>
+                ${errorSlot('event')}
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label small fw-semibold" for="incidentEdit-task">Task status</label>
+                <select class="form-select form-select-sm" id="incidentEdit-task" name="task_status">${taskOptions}</select>
+                ${errorSlot('task_status')}
+            </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="reset" class="btn btn-sm btn-ghost">Undo changes</button>
+            <button type="submit" class="btn btn-sm btn-primary">Save</button>
+        </div>
+    </form>`;
+}
+
+// Reads the edit form into a PATCH body, checking what the server would reject anyway.
+export function formToPatch(form) {
+    const needs = [...form.querySelectorAll('input[name="needs"]:checked')].map((i) => i.value);
+    const peopleText = form.elements.people_count.value.trim();
+    const people = peopleText === '' ? null : Number(peopleText);
+    const errors = {};
+    if (!needs.length) errors.needs = ['Pick at least one need.'];
+    if (people !== null && !(Number.isInteger(people) && people >= 0)) errors.people_count = ['Enter a whole number, 0 or more.'];
+    const eventValue = form.elements.event.value;
+    return {
+        body: {
+            needs,
+            life_threatening: form.elements.life_threatening.checked,
+            people_count: people,
+            event: eventValue ? Number(eventValue) : null,
+            task_status: form.elements.task_status.value,
+        },
+        errors,
+    };
+}
+
+// Shows DRF-style errors ({field: [messages]}, or {detail}) next to their fields; {} clears them.
+export function showFieldErrors(form, errors) {
+    const fieldNames = new Set();
+    form.querySelectorAll('[data-error-for]').forEach((slot) => {
+        const name = slot.dataset.errorFor;
+        fieldNames.add(name);
+        const messages = [].concat(errors[name] || []);
+        slot.textContent = messages.join(' ');
+        if (name === 'form') return;
+        const input = form.elements[name];
+        if (input && !(input instanceof RadioNodeList)) {
+            input.classList.toggle('is-invalid', messages.length > 0);
+            input.setAttribute('aria-describedby', slot.id);
+        }
+    });
+    const other = Object.entries(errors).filter(([name]) => !fieldNames.has(name)).flatMap(([, m]) => [].concat(m));
+    const top = form.querySelector('[data-error-for="form"]');
+    top.textContent = other.join(' ');
+    top.hidden = other.length === 0;
 }

@@ -139,12 +139,12 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `incident-views.js` (+ test), `incident-detail.js`, `incidents.js`
 
 **6.1 Form**
-- [ ] Write failing tests: edit form pre-filled and turned back into a PATCH body; at least one need required; server field errors shown next to fields
-- [ ] Verify they fail
-- [ ] Implement `editFormHtml`, `formToPatch`, `formErrorsHtml`
+- [x] Write failing tests: edit form pre-filled and turned back into a PATCH body; at least one need required; server field errors shown next to fields
+- [x] Verify they fail
+- [x] Implement `editFormHtml`, `formToPatch`, `formErrorsHtml`
 
 **6.2 Wiring**
-- [ ] Validate / Reject / Pending buttons and Save → `apiPatch`; on success refresh pop-up + row/card and toast; on 400 show errors
+- [x] Validate / Reject / Pending buttons and Save → `apiPatch`; on success refresh pop-up + row/card and toast; on 400 show errors
 
 **Acceptance Criteria**: FR12 quick actions; tests first, now passing
 
