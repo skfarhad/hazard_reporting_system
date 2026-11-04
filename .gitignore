@@ -167,3 +167,6 @@ media/
 
 # Local production-ops skill: server details, never committed
 .claude/skills/prod-ops/
+
+# Local data downloads (e.g. Bangladesh boundary GeoJSON), never committed
+.local/
