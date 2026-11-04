@@ -311,8 +311,9 @@ h4, h5, h6, .h4, .h5, .h6 { font-weight: 600; line-height: 1.35; }
 .hrs-search > .form-control { padding-left: 2.3rem; }
 
 /* ---- Layout ----
- * Content is centred at a readable width (--hrs-content-max) instead of spanning the window;
- * the navbar's inner row uses the same width so brand and actions line up with the content.
+ * Content is centred at a readable width (--hrs-content-max) instead of spanning the window.
+ * The navbar spans the full width (brand at the left edge, actions at the right); its centred
+ * tabs still line up with the content column.
  */
 .hrs-container {
     width: 100%;
@@ -321,6 +322,7 @@ h4, h5, h6, .h4, .h5, .h6 { font-weight: 600; line-height: 1.35; }
     padding-inline: var(--hrs-gutter);
 }
 @media (min-width: 992px) { :root { --hrs-gutter: 1.5rem; } }
+.hrs-navbar-inner { width: 100%; padding-inline: var(--hrs-gutter); }
 
 /* ---- Surfaces ---- */
 .card, .hrs-card {
