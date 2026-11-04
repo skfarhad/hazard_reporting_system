@@ -45,6 +45,7 @@ the `-text` variants (`--hrs-danger-text` …) for text on tinted backgrounds; t
 | Class | What |
 |---|---|
 | `hrs-navbar`, `hrs-brand`, `hrs-brand-mark`, `hrs-nav-center` | Top bar: brand left, page tabs centred (lg and up), account actions right |
+| `hrs-container` | Centred content column, `--hrs-content-max` wide (900px, leaving room for a sidebar later); the navbar's inner row uses it too |
 | `hrs-card`, `hrs-panel`, `hrs-hero` | Surfaces (Bootstrap `.card` is styled the same way) |
 | `hrs-dot hrs-dot-{status}` | Status dot: `pending`, `validated`, `rejected`, `volunteer` |
 | `hrs-badge hrs-badge-{status}` | Status pill with a tinted background |

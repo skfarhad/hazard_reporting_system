@@ -126,7 +126,7 @@
     --hrs-medium: 250ms;
     --hrs-control-height: 44px;
     --hrs-navbar-height: 60px;
-    --hrs-content-max: 1200px;
+    --hrs-content-max: 900px;   /* leaves room for a sidebar later */
     --hrs-gutter: 1rem;
 }
 
