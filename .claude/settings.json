@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(git:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(touch:*)",
+      "Bash(pwd:*)",
+      "Bash(cd:*)",
+      "Bash(tree:*)",
+      "Bash(docker:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(poetry:*)",
+      "Bash(pip:*)",
+      "Bash(gh:*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run-tests-after-coding.sh",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}
