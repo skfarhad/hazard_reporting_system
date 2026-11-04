@@ -18,27 +18,27 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 #### Subtasks (test-first — RED before GREEN):
 
 **1.1 Pagination**
-- [ ] Write failing tests: the list is paginated with 25 incidents per page by default and reports the total count; page_size can be raised up to 500 but not beyond
-- [ ] Verify they fail (plain array today)
-- [ ] Implement `IncidentPagination`; `IncidentListView` → `ListAPIView`; update existing list tests to read `results`
-- [ ] Refactor while green
+- [x] Write failing tests: the list is paginated with 25 incidents per page by default and reports the total count; page_size can be raised up to 500 but not beyond
+- [x] Verify they fail (plain array today)
+- [x] Implement `IncidentPagination`; `IncidentListView` → `ListAPIView`; update existing list tests to read `results`
+- [x] Refactor while green
 
 **1.2 Filters**
-- [ ] Write failing tests: needs (any, distinct; unknown → 400); status (+ invalid 400); event id / none (+ invalid 400); hazard; life_threatening; filters combine
-- [ ] Verify they fail
-- [ ] Implement `IncidentFilter`
-- [ ] Refactor while green
+- [x] Write failing tests: needs (any, distinct; unknown → 400); status (+ invalid 400); event id / none (+ invalid 400); hazard; life_threatening; filters combine
+- [x] Verify they fail
+- [x] Implement `IncidentFilter`
+- [x] Refactor while green
 
 **1.3 Search**
-- [ ] Write failing test: search matches description, address, contact number, district, thana and event name, ignoring case
-- [ ] Verify it fails
-- [ ] Implement `q`
+- [x] Write failing test: search matches description, address, contact number, district, thana and event name, ignoring case
+- [x] Verify it fails
+- [x] Implement `q`
 
 **1.4 Hazard and query count**
-- [ ] Write failing tests: each result's event includes its hazard code, label, icon and colour; a page takes the same number of queries whatever the page size
-- [ ] Verify they fail
-- [ ] Extend `get_event`; `select_related("event__hazard", "district", "thana")`
-- [ ] Non-operators still get 403 (regression test)
+- [x] Write failing tests: each result's event includes its hazard code, label, icon and colour; a page takes the same number of queries whatever the page size
+- [x] Verify they fail
+- [x] Extend `get_event`; `select_related("event__hazard", "district", "thana")`
+- [x] Non-operators still get 403 (regression test)
 
 **Acceptance Criteria**:
 - FR1–FR4 covered; existing tests green; tests written first, watched fail, now passing

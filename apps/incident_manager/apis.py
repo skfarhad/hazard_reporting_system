@@ -1,9 +1,12 @@
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Incident, NeedType, Provider
+from .filters import IncidentFilter
+from .pagination import IncidentPagination
 from .serializers import IncidentSerializer, IncidentListSerializer, IncidentOperatorSerializer, NeedTypeSerializer
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
@@ -86,19 +89,25 @@ class IncidentCreateView(APIView):
         return None
 
 
-class IncidentListView(APIView):
-    """Incidents for operators (staff accounts), newest first. Contains reporters' phone numbers."""
+class IncidentListView(generics.ListAPIView):
+    """Incidents for operators (staff accounts), newest first, 25 per page. Contains reporters' phone numbers."""
 
     permission_classes = [IsAdminUser]
-    MAX_RESULTS = 500
+    serializer_class = IncidentListSerializer
+    pagination_class = IncidentPagination
+    filterset_class = IncidentFilter
+    queryset = (
+        Incident.objects.select_related("event__hazard", "district", "thana")
+        .prefetch_related("needs")
+        .order_by("-created_at", "-id")
+    )
 
     @swagger_auto_schema(
-        operation_description="List the most recent incidents (max 500), newest first",
+        operation_description="List incidents, newest first, paginated (page, page_size up to 500)",
         responses={200: IncidentListSerializer(many=True), 401: "Not signed in", 403: "Not an operator"},
     )
     def get(self, request, *args, **kwargs):
-        incidents = Incident.objects.select_related("event").prefetch_related("needs").order_by("-created_at", "-id")[: self.MAX_RESULTS]
-        return Response(IncidentListSerializer(incidents, many=True).data)
+        return super().get(request, *args, **kwargs)
 
 
 class IncidentDetailView(APIView):

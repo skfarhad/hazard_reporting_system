@@ -94,7 +94,14 @@ class IncidentListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_event(self, obj):
-        return {"id": obj.event.id, "name": obj.event.name} if obj.event else None
+        if not obj.event:
+            return None
+        hazard = obj.event.hazard
+        return {
+            "id": obj.event.id,
+            "name": obj.event.name,
+            "hazard": {"code": hazard.code, "label_en": hazard.label_en, "icon": hazard.icon, "colour": hazard.colour},
+        }
 
     def get_latitude(self, obj):
         return obj.location.y if obj.location else None
