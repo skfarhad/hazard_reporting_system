@@ -29,12 +29,12 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `services/incidents.py` (new), `serializers.py`, `tests/test_create_incidents.py`
 
 **2.1 Provider cannot skip review**
-- [ ] Write failing test: a provider cannot create an already validated incident
-- [ ] Verify it fails; make `validation_status` read-only on create
+- [x] Write failing test: a provider cannot create an already validated incident
+- [x] Verify it fails; make `validation_status` read-only on create
 
 **2.2 Service refactor**
-- [ ] Move creation into `create_incident(...)` (needs, district/thana explicit → parsed → polygon, pending, event); provider serializer uses it
-- [ ] All existing provider/parser/event tests stay green (refactor under the existing safety net)
+- [x] Move creation into `create_incident(...)` (needs, district/thana explicit → parsed → polygon, pending, event); provider serializer uses it
+- [x] All existing provider/parser/event tests stay green (refactor under the existing safety net)
 
 **Acceptance Criteria**: FR13; provider behaviour otherwise unchanged
 

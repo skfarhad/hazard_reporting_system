@@ -274,3 +274,19 @@ class IntakeLocationAndEventTests(APITestCase):
         incident = self.post("RESCUE#Feni#Parshuram#School#5 people on roof")
 
         self.assertEqual(incident.event, flood)
+
+
+class ProviderCannotSkipReviewTests(APITestCase):
+    def test_a_provider_cannot_create_an_already_validated_incident(self):
+        provider = Provider.objects.create(name="Gateway")
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION="Api-Key " + provider.api_key)
+
+        response = client.post(reverse("incident-create"), {
+            "contact_number": "01700000001", "latitude": 23.8, "longitude": 90.4,
+            "description": "Need boat", "address": "Mirpur", "validation_status": "validated",
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Incident.objects.get().validation_status, "pending")
+        self.assertEqual(response.data["validation_status"], "pending")

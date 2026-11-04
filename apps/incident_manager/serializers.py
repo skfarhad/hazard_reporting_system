@@ -1,10 +1,8 @@
 from rest_framework import serializers
 from django.contrib.gis.geos import Point
-from apps.events.models import Event
-from apps.events.services import attach_event
 
-from .models import District, Incident, NeedType, Thana
-from .services.report_parser import parse_report
+from .models import Incident, NeedType
+from .services.incidents import create_incident
 
 
 class IncidentSerializer(serializers.ModelSerializer):
@@ -36,28 +34,13 @@ class IncidentSerializer(serializers.ModelSerializer):
             "location_latitude",
             "location_longitude",
         ]
-        read_only_fields = ["provider", "location_latitude", "location_longitude"]
+        # New incidents always wait for staff review, whatever the provider sends.
+        read_only_fields = ["provider", "validation_status", "location_latitude", "location_longitude"]
 
     def create(self, validated_data):
         latitude = validated_data.pop("latitude")
         longitude = validated_data.pop("longitude")
-        location = Point(
-            float(longitude), float(latitude), srid=4326
-        )  # Create a Point object
-
-        needs = validated_data.pop("needs", None)
-        report = parse_report(
-            validated_data.get("description", ""), NeedType.keyword_map(), fallback=NeedType.fallback_code(),
-        )
-        district = District.objects.filter(name__iexact=report.district).first() if report.district else None
-        thana = (
-            Thana.objects.filter(name__iexact=report.thana, district=district).first()
-            if district and report.thana else None
-        )
-        incident = Incident.objects.create(location=location, district=district, thana=thana, **validated_data)
-        incident.needs.set(needs or NeedType.objects.filter(code__in=report.need_codes))
-        attach_event(incident)
-        return incident
+        return create_incident(location=Point(float(longitude), float(latitude), srid=4326), **validated_data)
 
     def get_location_latitude(self, obj):
         return obj.location.y
