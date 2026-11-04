@@ -17,18 +17,18 @@
 #### Subtasks (test-first — RED before GREEN):
 
 **1.1 Names unique per parent**
-- [ ] Write failing tests: same thana name allowed in two districts; rejected twice in one district ignoring case; district name rejected twice in one division
-- [ ] Verify they fail (global unique rule) for the expected reason
-- [ ] Drop `unique=True`, add `UniqueConstraint(Lower("name"), parent)`; migration
-- [ ] Refactor while green
+- [x] Write failing tests: same thana name allowed in two districts; rejected twice in one district ignoring case; district name rejected twice in one division
+- [x] Verify they fail (global unique rule) for the expected reason
+- [x] Drop `unique=True`, add `UniqueConstraint(Lower("name"), parent)`; migration
+- [x] Refactor while green
 
 **1.2 Area codes**
-- [ ] Write failing tests: codes unique across the country; hand-added places need no code
-- [ ] Verify fail → add nullable unique `code` on each level
+- [x] Write failing tests: codes unique across the country; hand-added places need no code
+- [x] Verify fail → add nullable unique `code` on each level
 
 **1.3 Union model and `Incident.union`**
-- [ ] Write failing test: same union name allowed in two thanas, not twice in one
-- [ ] Verify fail → add `Union`, `Incident.union` (SET_NULL), admin registration
+- [x] Write failing test: same union name allowed in two thanas, not twice in one
+- [x] Verify fail → add `Union`, `Incident.union` (SET_NULL), admin registration
 
 **Acceptance Criteria**:
 - One migration `0013`, applies on the current DB; existing place tests still pass
@@ -103,8 +103,9 @@
 #### Subtasks:
 
 **4.1 Place management validation**
-- [ ] Failing tests: thana name from another district accepted; same name twice in one district → 400 `name` error (not 500); rows and details show `code`
-- [ ] Implement serializer validation (case-insensitive, per parent) and read-only `code`
+- [x] Failing tests: thana name from another district accepted; same name twice in one district → 400 `name` error (not 500) — pulled into Group 1 (dropping the global rule broke the existing duplicate-district test)
+- [x] Implement serializer validation (case-insensitive, per parent)
+- [ ] Failing test + implementation: rows and details show read-only `code`
 
 **4.2 Union in incident data**
 - [ ] Failing test: incident list and details include `union` name

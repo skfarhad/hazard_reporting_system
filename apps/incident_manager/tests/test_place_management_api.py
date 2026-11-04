@@ -88,6 +88,30 @@ class DistrictAndThanaCrudTests(PlaceManagementTestCase):
         self.assertEqual({no_division.status_code, duplicate.status_code, no_district.status_code},
                          {status.HTTP_400_BAD_REQUEST})
 
+    def test_an_operator_can_add_a_thana_whose_name_exists_in_another_district(self):
+        feni, cumilla = district("Feni"), district("Cumilla")
+        Thana.objects.create(name="Daganbhuiyan", district=feni)
+
+        response = self.client.post(self.thanas_url, {"name": "Daganbhuiyan", "district": cumilla.id}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Thana.objects.filter(name="Daganbhuiyan").count(), 2)
+
+    def test_adding_the_same_thana_name_twice_to_one_district_is_a_name_error_not_a_crash(self):
+        feni = district("Feni")
+        sonagazi = Thana.objects.create(name="Sonagazi", district=feni)
+        fulgazi = Thana.objects.create(name="Fulgazi", district=feni)
+
+        added = self.client.post(self.thanas_url, {"name": "sonagazi", "district": feni.id}, format="json")
+        renamed = self.client.patch(self.thana_url(fulgazi), {"name": "SONAGAZI"}, format="json")
+        unchanged = self.client.patch(self.thana_url(sonagazi), {"name": "Sonagazi"}, format="json")
+
+        self.assertEqual(added.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(added.data["name"], ["Feni already has a thana called sonagazi."])
+        self.assertEqual(renamed.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("name", renamed.data)
+        self.assertEqual(unchanged.status_code, status.HTTP_200_OK)
+
     def test_non_operators_cannot_manage_places(self):
         feni = district("Feni")
         self.client.force_authenticate(get_user_model().objects.create(username="citizen"))
