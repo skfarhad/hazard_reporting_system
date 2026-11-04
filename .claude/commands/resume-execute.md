@@ -65,9 +65,9 @@ Read `agent-os/specs/<YYYY-MM-DD>-<slug>/spec.md`:
 ```bash
 # Create/update models
 # Generate migrations
-docker compose -f backend/docker-compose.yml exec be python manage.py makemigrations
+docker compose exec be python manage.py makemigrations
 # Apply migrations
-docker compose -f backend/docker-compose.yml exec be python manage.py migrate
+docker compose exec be python manage.py migrate
 # Create views/APIs
 # Configure URLs
 # Add background tasks if needed (Celery @shared_task in apps/<app>/tasks.py)
@@ -76,8 +76,8 @@ docker compose -f backend/docker-compose.yml exec be python manage.py migrate
 ### 5. After each task completion
 
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.<app>
-docker compose -f backend/docker-compose.yml logs be --tail=50
+docker compose exec be python manage.py test apps.<app>
+docker compose logs be --tail=50
 ```
 
 ### 6. Update tasks.md

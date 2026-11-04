@@ -95,7 +95,7 @@ For each comment, categorize:
 ### Step 8: Map comments to files
 Group inline comments by file path for easier navigation:
 ```
-backend/apps/incident_manager/models/incident.py
+apps/incident_manager/models/incident.py
   - Line 45: "Consider adding index" (@reviewer1)
   - Line 89: "This should use select_related" (@reviewer2)
 ```

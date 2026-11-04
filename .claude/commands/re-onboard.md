@@ -32,29 +32,29 @@ PARALLEL:
 - List: scope/*.md (discover all scope documents)
 - Read: ALL .md files found in scope/ folder
 - This repo has no `scope/` folder yet. If it is missing, use `README.md` (problem statement, goals, tech stack),
-  `CONTRIBUTING.md`, `backend/README.md`, `dev_ops_pipeline/*.md` and `architechture_roadmap.drawio` instead
+  `CONTRIBUTING.md`, `docs/development.md`, `dev_ops_pipeline/*.md` and `architechture_roadmap.drawio` instead
 ```
 
 ### Batch C: Django Backend Structure
 ```
 PARALLEL:
-- List: backend/apps/*/
-- List: backend/config/
-- List: web_app/hrs_map/
+- List: apps/*/
+- List: config/
+- List: apps/webui/
 - List: dev_ops_pipeline/
-- Read: backend/pyproject.toml (dependencies)
-- Read: backend/docker-compose.yml (services)
-- Read: backend/example.env (env vars)
+- Read: pyproject.toml (dependencies)
+- Read: docker-compose.yaml (services)
+- Read: example.env (env vars)
 ```
 
 ### Batch D: Scan Code Patterns (Django)
 ```
 PARALLEL:
-- Grep: "class.*Model" in backend/apps/*/models.py and backend/apps/*/models/*.py
-- Grep: "class.*Serializer" in backend/apps/*/serializers.py
-- Grep: "class.*View\|class.*API" in backend/apps/*/
-- Grep: "@shared_task" in backend/apps/*/tasks.py
-- Grep: "path\(" in backend/apps/*/urls.py
+- Grep: "class.*Model" in apps/*/models.py and apps/*/models/*.py
+- Grep: "class.*Serializer" in apps/*/serializers.py
+- Grep: "class.*View\|class.*API" in apps/*/
+- Grep: "@shared_task" in apps/*/tasks.py
+- Grep: "path\(" in apps/*/urls.py
 ```
 
 ### Batch E: Check Recent Git Activity
@@ -96,20 +96,20 @@ Compare discovered vs documented:
 ### Django Backend
 | Check | Source | Compare To |
 |-------|--------|------------|
-| Django apps | `backend/apps/*/` listing | `CLAUDE.md` |
+| Django apps | `apps/*/` listing | `CLAUDE.md` |
 | Models | Grep from models.py | CLAUDE.md models section |
 | Serializers | Grep from serializers.py | CLAUDE.md |
 | URL patterns | Grep from urls.py | CLAUDE.md |
-| Background tasks | Grep @shared_task in backend/apps/*/tasks.py, signals.py | CLAUDE.md |
-| SMS parser | backend/incident_manager/smsparser/ | CLAUDE.md |
-| Live map | web_app/hrs_map/ | CLAUDE.md |
+| Background tasks | Grep @shared_task in apps/*/tasks.py, signals.py | CLAUDE.md |
+| SMS parser | smsparser/ | CLAUDE.md |
+| Web dashboard | apps/webui/ (templates, static/webui/js) | CLAUDE.md |
 
 ### Infrastructure
 | Check | Source | Compare To |
 |-------|--------|------------|
-| Docker services | backend/docker-compose.yml | `CLAUDE.md` |
-| Dependencies | backend/pyproject.toml, web_app/hrs_map/package.json | `CLAUDE.md` |
-| Env vars | backend/example.env | `CLAUDE.md` |
+| Docker services | docker-compose.yaml | `CLAUDE.md` |
+| Dependencies | pyproject.toml, package.json (Vitest only) | `CLAUDE.md` |
+| Env vars | example.env | `CLAUDE.md` |
 
 ### Active Specs
 | Check | Source | Compare To |
@@ -196,11 +196,11 @@ Update in this order (dependencies first):
 
 ```bash
 # Docker services
-docker compose -f backend/docker-compose.yml ps
+docker compose ps
 
 # Django checks
-docker compose -f backend/docker-compose.yml exec be python manage.py check
-docker compose -f backend/docker-compose.yml exec be python manage.py showmigrations --list
+docker compose exec be python manage.py check
+docker compose exec be python manage.py showmigrations --list
 ```
 
 Check for:

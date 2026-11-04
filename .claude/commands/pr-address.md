@@ -177,7 +177,7 @@ For each code change:
 
 #### 6b: Run tests
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test <affected_app>
+docker compose exec be python manage.py test <affected_app>
 ```
 
 #### 6c: Commit changes

@@ -32,7 +32,7 @@ ls agent-os/specs/ | grep <slug>
 Run `/verify <slug>` or manually:
 
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test
+docker compose exec be python manage.py test
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8001/admin/  # /admin/ is the compose healthcheck endpoint
 ```
 
@@ -72,7 +72,7 @@ EOF
 
 ### 6. Cleanup (optional)
 ```bash
-docker compose -f backend/docker-compose.yml down
+docker compose down
 ```
 
 ---

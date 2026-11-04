@@ -45,33 +45,33 @@ Check `agent-os/specs/<YYYY-MM-DD>-<slug>/spec.md` for:
 
 ```bash
 # All tests
-docker compose -f backend/docker-compose.yml exec be python manage.py test
+docker compose exec be python manage.py test
 
 # Faster local reruns (parallel, reuse test DB)
-docker compose -f backend/docker-compose.yml exec be python manage.py test --parallel auto --keepdb
+docker compose exec be python manage.py test --parallel auto --keepdb
 
 # Specific app
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.<app>
+docker compose exec be python manage.py test apps.<app>
 
 # Specific module / class / method (dotted paths)
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.<app>.tests.test_<module>
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.<app>.tests.test_<module>.<Class>
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.<app>.tests.test_<module>.<Class>.test_<method>
+docker compose exec be python manage.py test apps.<app>.tests.test_<module>
+docker compose exec be python manage.py test apps.<app>.tests.test_<module>.<Class>
+docker compose exec be python manage.py test apps.<app>.tests.test_<module>.<Class>.test_<method>
 
 # Stop at first failure
-docker compose -f backend/docker-compose.yml exec be python manage.py test --failfast apps.<app>
+docker compose exec be python manage.py test --failfast apps.<app>
 ```
 
 > After a migration changes the schema, a `--keepdb` test DB is stale: drop
 > `--keepdb` once to force a rebuild.
 
 **Test locations:**
-- Apps live in `backend/apps/`; test labels are relative to `backend/` (the container's `/code`)
+- Apps live in `apps/`; test labels are relative to the repo root (the container's `/code`)
 - Apps with a `tests/` package (`apps/incident_manager`, `apps/volunteer_hub`): `apps/<app>/tests/test_<module>.py`
 - Apps with a single `tests.py` (`apps/common`, `apps/user`): add to `tests.py`, or convert it to a `tests/` package (with `__init__.py`) when it grows
 - Existing examples: `apps/incident_manager/tests/test_create_incidents.py` (API-key auth via `APIClient.credentials`), `apps/incident_manager/tests/test_model_validation.py`, `apps/volunteer_hub/tests/test_team.py`
-- CI (`.github/workflows/django.yml`) runs `docker-compose up unit_tests` in `backend/`, i.e. `run_tests.sh` (`migrate` + `test`)
-- `backend/incident_manager/smsparser/tests.py` is outside the Django apps and is not picked up by `manage.py test`
+- CI (`.github/workflows/django.yml`) runs `docker compose run --rm unit_tests`, i.e. `run_tests.sh` (`migrate` + `test apps`), plus `npm test` in a `webui` job
+- `smsparser/tests.py` is outside the Django apps and is not picked up by `manage.py test`
 
 ---
 
@@ -115,7 +115,7 @@ Use `django.contrib.gis.geos.Point(lon, lat)` for locations.
 ### 5. Run Full Test Suite
 
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test
+docker compose exec be python manage.py test
 ```
 
 ---

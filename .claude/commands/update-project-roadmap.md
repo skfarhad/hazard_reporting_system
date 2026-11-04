@@ -34,7 +34,7 @@ Read and analyze existing documents:
 
 For each roadmap item, check:
 - Is it marked complete `[x]` or pending `[ ]`?
-- Does corresponding code exist in `backend/apps/` or `web_app/hrs_map/`?
+- Does corresponding code exist in `apps/` (web dashboard in `apps/webui/`)?
 - Is there a spec in `agent-os/specs/` for it?
 - What's the actual implementation status?
 
@@ -117,9 +117,10 @@ Update `agent-os/product/roadmap.md` with:
 
 ---
 
-## Phase 3: Live Map (web_app/hrs_map)
+## Phase 3: Web Dashboard (apps/webui)
 
-- [ ] Map reads real incidents from the backend instead of `fake_incident_response.json`
+- [x] Map shows real incidents and volunteers (Leaflet)
+- [ ] Incident details page and validation actions
 ...
 
 **Progress:** X/Y complete (Z%)

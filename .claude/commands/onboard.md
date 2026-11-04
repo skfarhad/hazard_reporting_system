@@ -31,21 +31,21 @@ To check project status, run: /query "current status"
 ### Batch A: Core Config Files
 ```
 PARALLEL:
-- Read: README.md, backend/README.md, CONTRIBUTING.md
-- Read: backend/pyproject.toml
-- Read: backend/docker-compose.yml
-- Read: backend/example.env
-- Read: web_app/hrs_map/package.json
+- Read: README.md, docs/development.md, CONTRIBUTING.md
+- Read: pyproject.toml
+- Read: docker-compose.yaml
+- Read: example.env
+- Read: package.json, vitest.config.js
 - Read: .github/workflows/django.yml
 ```
 
 ### Batch B: Structure Discovery
 ```
 PARALLEL:
-- List: backend/apps/
-- List: backend/config/
-- List: backend/incident_manager/smsparser/
-- List: web_app/hrs_map/
+- List: apps/
+- List: config/
+- List: smsparser/
+- List: apps/webui/
 - List: dev_ops_pipeline/
 - List: scope/
 ```
@@ -56,7 +56,7 @@ PARALLEL:
 - List: scope/*.md (discover all scope documents)
 - Read: ALL .md files found in scope/ folder
 - This repo has no `scope/` folder yet. If it is missing, use `README.md` (problem statement, goals, tech stack),
-  `CONTRIBUTING.md`, `backend/README.md`, `dev_ops_pipeline/*.md` and `architechture_roadmap.drawio` instead
+  `CONTRIBUTING.md`, `docs/development.md`, `dev_ops_pipeline/*.md` and `architechture_roadmap.drawio` instead
 ```
 
 Known scope documents (read if present):
@@ -102,12 +102,12 @@ From scope documents, extract:
 
 | Service | Path | Stack | Port |
 |---------|------|-------|------|
-| Django Backend (`be`) | `backend/apps/`, `backend/config/` | Python 3.8, Django 4.2, DRF, GeoDjango, Gunicorn | 8001 |
+| Django Backend (`be`) | `apps/`, `config/` | Python 3.8, Django 4.2, DRF, GeoDjango, Gunicorn | 8001 |
 | Postgres (`postgres`) | — | PostGIS | 5433 |
-| Celery Worker (`celery_worker`) | `backend/config/celery.py`, `backend/apps/*/tasks.py` | Celery on RabbitMQ | N/A |
+| Celery Worker (`celery_worker`) | `config/celery.py`, `apps/*/tasks.py` | Celery on RabbitMQ | N/A |
 | RabbitMQ (`rabbitmq`) | — | RabbitMQ 3 + management UI | 5672 / 15672 |
-| Live map (`web_app`) | `web_app/hrs_map/` | Next.js 14, TypeScript, Tailwind, Mapbox GL, next-auth | 3001 |
-| SMS parser | `backend/incident_manager/smsparser/` | Standalone spell-correction scripts (districts/thanas) | N/A |
+| Web dashboard | `apps/webui/` | Django templates, Bootstrap 5, ES modules, Leaflet; Vitest for JS | 8001 (`/app/`) |
+| SMS parser | `smsparser/` | Standalone spell-correction scripts (districts/thanas) | N/A |
 
 ---
 
@@ -161,17 +161,17 @@ Create `agent-os/product/roadmap.md` from scope documents:
 
 ```bash
 # Build all services
-docker compose -f backend/docker-compose.yml build
+docker compose build
 
 # Start all services
-docker compose -f backend/docker-compose.yml up -d
+docker compose up -d
 
 # Check service status
-docker compose -f backend/docker-compose.yml ps
+docker compose ps
 
 # Verify Django
-docker compose -f backend/docker-compose.yml exec be python manage.py check
-docker compose -f backend/docker-compose.yml exec be python manage.py migrate
+docker compose exec be python manage.py check
+docker compose exec be python manage.py migrate
 ```
 
 ---
@@ -180,7 +180,7 @@ docker compose -f backend/docker-compose.yml exec be python manage.py migrate
 
 ### Django Tests
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test
+docker compose exec be python manage.py test
 ```
 
 If no tests exist, note as blocker.

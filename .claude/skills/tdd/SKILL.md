@@ -117,7 +117,7 @@ Vague name, tests mock not code
 **MANDATORY. Never skip.**
 
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.incident_manager.tests.test_incident
+docker compose exec be python manage.py test apps.incident_manager.tests.test_incident
 ```
 
 Confirm:
@@ -163,7 +163,7 @@ Don't add features, refactor other code, or "improve" beyond the test.
 **MANDATORY.**
 
 ```bash
-docker compose -f backend/docker-compose.yml exec be python manage.py test apps.incident_manager.tests.test_incident
+docker compose exec be python manage.py test apps.incident_manager.tests.test_incident
 ```
 
 Confirm:
@@ -304,7 +304,7 @@ def test_rejects_empty_email():
 **Verify RED**
 
 ```bash
-$ docker compose -f backend/docker-compose.yml exec be python manage.py test apps.volunteer_hub.tests.test_team
+$ docker compose exec be python manage.py test apps.volunteer_hub.tests.test_team
 FAILED: KeyError: 'error'
 ```
 
@@ -319,7 +319,7 @@ def submit_form(data):
 **Verify GREEN**
 
 ```bash
-$ docker compose -f backend/docker-compose.yml exec be python manage.py test apps.volunteer_hub.tests.test_team
+$ docker compose exec be python manage.py test apps.volunteer_hub.tests.test_team
 PASSED
 ```
 
