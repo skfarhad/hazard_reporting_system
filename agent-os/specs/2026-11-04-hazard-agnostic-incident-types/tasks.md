@@ -1,7 +1,7 @@
 # Task Breakdown: Hazard-agnostic incident types: needs, hazards and events
 
 **Spec**: `2026-11-04-hazard-agnostic-incident-types`
-**Status**: In progress (Task Groups 1-5 done)
+**Status**: Implemented (all task groups done; pending /run-tests)
 **Branch**: `feat/hazard-agnostic-incident-types` (one PR; one green commit per task group)
 
 Every subtask is test-first (`tdd` skill): write the failing test, watch it fail for the expected
@@ -286,18 +286,18 @@ Run commands:
 #### Subtasks:
 
 **6.1 Full verification**
-- [ ] `docker compose run --rm unit_tests` and `npm test` green
-- [ ] Apply migrations to the running dev database (`migrate`); confirm the existing incidents
+- [x] `docker compose run --rm unit_tests` and `npm test` green
+- [x] Apply migrations to the running dev database (`migrate`); confirm the existing incidents
       have Other and the volunteers have skills
-- [ ] Headless Chrome check: a staff user sees the map and list; a non-staff user sees the
+- [x] Headless Chrome check: a staff user sees the map and list; a non-staff user sees the
       operator-access message on both pages
-- [ ] Manual API smoke test: provider POST with `RESCUE+MEDICAL#…`, PATCH validate plus
+- [x] Manual API smoke test: provider POST with `RESCUE+MEDICAL#…`, PATCH validate plus
       reclassify, `GET /api/events/?active=true` after creating an event in the admin
 
 **6.2 Docs**
-- [ ] `docs/development.md`: operator (staff) access, new endpoints, the SMS format and keywords,
+- [x] `docs/development.md`: operator (staff) access, new endpoints, the SMS format and keywords,
       how to create an event
-- [ ] Mark tasks complete and set the spec status
+- [x] Mark tasks complete and set the spec status
 
 **Acceptance Criteria**:
 - All suites green; manual checks pass; docs updated; final commit; ready for `/pr-create`.
@@ -358,3 +358,30 @@ Run commands:
 - The stashed WIP tests (`git stash list`: "WIP: incident status endpoint tests") are the starting
   point for Task Group 1.
 - `docker compose` stack running for `exec`-based test runs.
+
+---
+
+## Session notes (2026-11-04)
+
+- **Scope addition (recorded in spec.md):** intake sets the incident's district and thana from the
+  parsed report when the names match (ignoring case). Providers send no district, so without it
+  auto-attach could never fire for SMS reports.
+- **Extra test beyond the plan:** an unmatched report still gets the fallback need after an admin
+  renames it, because the fallback is looked up by `is_fallback`, not by the code `other`.
+- **Tests that passed immediately (existing behaviour, kept as guards):**
+  - "a 403 doesn't end the session" (mutation-checked: making `api.js` clear the session on 403
+    fails it);
+  - "listing uses the same number of queries" (mutation-checked: removing the prefetch gives 2 vs
+    21 queries);
+  - "an unknown district name leaves the incident without a district".
+- **Migration order as applied:** incident_manager 0008 → 0009 → events 0001 → 0002 →
+  incident_manager 0010 → volunteer_hub 0006. Applied to the dev database; the 2 sample volunteers
+  mapped boat → rescue and food → food.
+- **Local data:** `operator1` and `farhad` are staff; `viewer1` is a non-staff test account. The
+  smoke test added a "Smoke Test Gateway" provider, Chattogram/Feni/Parshuram, and the "Feni Flood
+  (smoke test)" event.
+- **Verified:**
+  - 108 Django tests and 30 JS tests pass;
+  - end-to-end provider POST → event attach → operator PATCH → Celery task received;
+  - headless Chrome for staff and non-staff accounts;
+  - all new admin pages and Swagger return 200.

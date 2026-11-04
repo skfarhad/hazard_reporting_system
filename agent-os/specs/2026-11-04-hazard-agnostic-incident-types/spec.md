@@ -1,6 +1,6 @@
 # Specification: Hazard-agnostic incident types: needs, hazards and events
 
-**Status:** Planned (2026-11-04), ready for `/execute`
+**Status:** Implemented (2026-11-04); pending `/run-tests`
 **Branch:** `feat/hazard-agnostic-incident-types` · **Delivery:** one PR, one green commit per task group
 
 ## Executive Summary
