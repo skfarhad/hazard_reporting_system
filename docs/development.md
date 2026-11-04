@@ -46,17 +46,26 @@ npm install && npm test                  # web app JS tests (Vitest + jsdom), on
 Incident data (reporters' phone numbers, locations) and operator actions need a **staff** account
 (`is_staff`), because anyone can sign up. Give access in the Django admin (Users → Staff status),
 or in a shell: `User.objects.filter(username="...").update(is_staff=True)`. Signed-in accounts
-without it see "Your account isn't an operator yet" on the dashboard.
+without it can't see incidents; the dashboard and Incidents page show them a "Report incident" panel.
+
+**Anyone with an account can report an incident** (button on the dashboard and the Incidents page).
+Every new incident, from the web or from a provider, starts **pending**; staff validate or reject
+it. Incidents record their `source` (`provider` or `web`) and, for web reports, `reported_by`.
+Non-operators can send 10 reports an hour (`INCIDENT_REPORT_RATE`); operators are not limited.
+Throttle counters live in Django's cache (local memory per process by default), so with several
+Gunicorn workers the effective limit is per worker until a shared cache (e.g. Redis) is configured.
 
 ## APIs
 
 | Method | Path | Who | What |
 |---|---|---|---|
-| POST | `/api/incidents/` | Provider (`Authorization: Api-Key <key>`; create a Provider in the admin to get one) | Submit an incident. Optional `needs` (codes), `life_threatening`, `people_count`; without `needs` they are read from the SMS keywords in `description` |
-| GET | `/api/incidents/list/` | Operators | Incidents, newest first, paginated: `{count, next, previous, results}`, 25 per page, `page`, `page_size` (max 500). Filters: `needs=rescue,medical` (any of them), `status`, `event=<id>` or `event=none`, `hazard=<code>`, `life_threatening=true\|false`, `q` (searches description, address, contact, district, thana and event name). Each result has needs, triage fields and `event` with its `hazard`. Bad filter values give 400 |
-| GET | `/api/incidents/<id>/` | Operators | One incident: the list fields plus `district`, `thana`, `provider`, `volunteer` and `updated_at` |
+| POST | `/api/incidents/` | Provider (`Authorization: Api-Key <key>`; create a Provider in the admin to get one) | Submit an incident. Optional `needs` (codes), `life_threatening`, `people_count`; without `needs` they are read from the SMS keywords in `description`. `validation_status` is ignored: new incidents are always pending |
+| POST | `/api/incidents/report/` | Any signed-in user (non-operators 10/hour) | Report an incident from the web app: `description`, `address`, `contact_number` (Bangladeshi mobile, `+880` normalised to `01…`), `latitude`/`longitude` (inside Bangladesh), optional `needs`, `life_threatening`, `people_count`, `district`, `thana` (ids). District/thana: the ones given, else names in SMS keywords, else the boundaries containing the point. Always pending, `source=web`. Responds `{id, validation_status, created_at}`; 429 when limited |
+| GET | `/api/incidents/places/` | Any signed-in user | Districts with their thanas (`[{id, name, thanas: [{id, name}]}]`) for the report form |
+| GET | `/api/incidents/list/` | Operators | Incidents, newest first, paginated: `{count, next, previous, results}`, 25 per page, `page`, `page_size` (max 500). Filters: `needs=rescue,medical` (any of them), `status`, `event=<id>` or `event=none`, `hazard=<code>`, `life_threatening=true\|false`, `q` (searches description, address, contact, district, thana and event name). Each result has needs, triage fields, `source` and `event` with its `hazard`. Bad filter values give 400 |
+| GET | `/api/incidents/<id>/` | Operators | One incident: the list fields plus `district`, `thana`, `provider`, `volunteer`, `reported_by` (`{id, name}`) and `updated_at` |
 | PATCH | `/api/incidents/<id>/` | Operators | Any of `validation_status`, `task_status`, `needs`, `life_threatening`, `people_count`, `event`; responds with the detail shape. Validating queues the SMS task (still a placeholder: no SMS is sent yet) |
-| GET | `/api/incidents/need-types/` | Operators | Active need types (English and Bangla labels, icon, colour) |
+| GET | `/api/incidents/need-types/` | Any signed-in user | Active need types (English and Bangla labels, icon, colour) |
 | GET | `/api/events/?active=true` | Operators | Events with their hazard and districts; `active=true` keeps ongoing ones |
 | GET | `/api/volunteers/volunteers/` | Anyone | Active volunteers with their skills |
 | | `/api/user/` | Anyone | `signup/`, `login/password/`, `token/refresh/`, `profile/`, password change |

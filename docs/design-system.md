@@ -63,6 +63,9 @@ the `-text` variants (`--hrs-danger-text` …) for text on tinted backgrounds; t
 | `hrs-row-link`, `hrs-incident-card` | Clickable, keyboard-focusable incident row (table, ≥768px) and card (phones) |
 | `hrs-detail-map`, `hrs-detail-fields`, `hrs-edit-form` | Incident details pop-up: map preview, field grid, triage edit form. Need checkboxes are `.btn-check` + `label.hrs-chip` |
 | `.pagination` | Bootstrap pagination mapped to the brand tokens |
+| `hrs-badge-web` | "Web" badge on incidents reported from the web app |
+| `hrs-report-panel` | Panel shown to non-operators instead of incident data, with a Report button |
+| `hrs-report-map` | Map in the report form (tap to place the pin; 45vh on phones) |
 | `hrs-map-legend` (`.is-collapsed`) | Collapsible on-map legend (needs, pin outlines, badges, volunteer). Built by `addLegend()` in `map-legend.js`; open on ≥768px, remembers the operator's choice |
 
 Leaflet's stylesheet loads after `hrs.css`, so map overrides are scoped under `.leaflet-container`.

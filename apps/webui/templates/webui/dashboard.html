@@ -6,6 +6,10 @@
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 {% endblock %}
 {% block content %}
+<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+  <h1 class="h4 mb-0 me-auto">Dashboard</h1>
+  <button type="button" class="btn btn-primary btn-sm" data-action="report"><i class="bi bi-plus-lg" aria-hidden="true"></i> Report incident</button>
+</div>
 <div data-page-body>
 <div class="row g-3 mb-3" id="summaryCards">
   <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
@@ -28,5 +32,6 @@
   </div>
 </div>
 </div>
+{% include "webui/components/report_modal.html" %}
 {% endblock %}
 {% block scripts %}<script type="module" src="{% static 'webui/js/dashboard.js' %}"></script>{% endblock %}

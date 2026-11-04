@@ -121,6 +121,8 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {
         "user": os.getenv("THROTTLE_RATE", "100/hour"),
+        # Web incident reports by non-operators (anyone with an account can report).
+        "incident_report": os.getenv("INCIDENT_REPORT_RATE", "10/hour"),
     },
 }
 

@@ -9,6 +9,7 @@
 <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
   <h1 class="h4 mb-0 me-auto">Incidents</h1>
   <span class="small text-secondary" id="incidentShowing" aria-live="polite"></span>
+  <button type="button" class="btn btn-primary btn-sm" data-action="report"><i class="bi bi-plus-lg" aria-hidden="true"></i> Report incident</button>
 </div>
 
 <div data-page-body>
@@ -70,5 +71,6 @@
     </div>
   </div>
 </div>
+{% include "webui/components/report_modal.html" %}
 {% endblock %}
 {% block scripts %}<script type="module" src="{% static 'webui/js/incidents.js' %}"></script>{% endblock %}

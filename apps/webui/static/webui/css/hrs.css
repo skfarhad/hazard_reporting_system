@@ -567,6 +567,16 @@ button.hrs-chip[aria-pressed=true] {
 .hrs-detail-fields dd { margin: 0; overflow-wrap: anywhere; }
 .hrs-edit-form { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--hrs-border); }
 
+/* ---- Report an incident ---- */
+.hrs-badge-web { background: rgba(var(--hrs-brand-rgb), .12); color: var(--hrs-brand-text); }
+.hrs-report-panel {
+    padding: 2.5rem 1.5rem; text-align: center; max-width: 520px; margin: 1rem auto;
+    background: var(--hrs-surface); border: 1px solid var(--hrs-border); border-radius: var(--hrs-radius-lg, 1rem);
+}
+.hrs-report-panel > .bi { display: block; font-size: 2rem; margin-bottom: .5rem; color: var(--hrs-brand); }
+.hrs-report-map { height: 260px; border-radius: var(--hrs-radius-md); border: 1px solid var(--hrs-border); cursor: crosshair; }
+@media (max-width: 575.98px) { .hrs-report-map { height: 45vh; } }
+
 /* ---- Map pins (incident markers) ----
  * Teardrop pin filled with the main need's colour (--hrs-pin-fill, set inline),
  * outline in the status colour, white need icon, "+N" and "!" badges.

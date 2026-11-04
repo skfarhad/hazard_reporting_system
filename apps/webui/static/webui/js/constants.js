@@ -4,6 +4,8 @@ export const API = {
     signup: '/api/user/signup/',
     incidents: '/api/incidents/list/',
     needTypes: '/api/incidents/need-types/',
+    reportIncident: '/api/incidents/report/',
+    places: '/api/incidents/places/',
     incident: (id) => `/api/incidents/${Number(id)}/`,
     events: '/api/events/',
     volunteers: '/api/volunteers/volunteers/',

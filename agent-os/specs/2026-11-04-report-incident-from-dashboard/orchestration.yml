@@ -1,0 +1,16 @@
+# Task groups run in order; each ends with a green commit (see tasks.md).
+task_groups:
+  - name: Source and reporter on incidents
+    claude_code_subagent: general-purpose
+  - name: Shared creation service and provider status fix
+    claude_code_subagent: general-purpose
+  - name: Report API, validation and rate limit
+    claude_code_subagent: general-purpose
+  - name: Lookups (places, need types) and operator views of source
+    claude_code_subagent: general-purpose
+  - name: Report form helpers and views
+    claude_code_subagent: general-purpose
+  - name: Report pop-up on dashboard and Incidents page
+    claude_code_subagent: general-purpose
+  - name: Verification and docs
+    claude_code_subagent: general-purpose

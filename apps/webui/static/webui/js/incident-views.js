@@ -28,6 +28,11 @@ export function hazardLabel(event) {
     return `<span class="hrs-hazard">${icon}${escapeHtml(event.name)}${hazardText}</span>`;
 }
 
+// Reports sent from the web app (rather than by an SMS provider) are marked for reviewers.
+export function sourceBadge(incident) {
+    return incident.source === 'web' ? ' <span class="hrs-badge hrs-badge-web" title="Reported from the web app">Web</span>' : '';
+}
+
 export function urgencyBadge(incident) {
     const parts = [];
     if (incident.life_threatening) {
@@ -52,7 +57,7 @@ export function incidentTableRow(incident, needTypes) {
         <td class="hrs-cell-message"><div class="hrs-truncate-2">${escapeHtml(incident.description)}</div>
             <div class="small text-secondary">${escapeHtml(locationText(incident))}</div></td>
         <td class="small">${hazardLabel(incident.event)}</td>
-        <td>${statusBadge(incident.validation_status)}</td>
+        <td class="text-nowrap">${statusBadge(incident.validation_status)}${sourceBadge(incident)}</td>
         <td class="text-nowrap small text-secondary"><time datetime="${escapeHtml(incident.created_at)}">${escapeHtml(formatDateTime(incident.created_at))}</time></td>
     </tr>`;
 }
@@ -61,7 +66,7 @@ export function incidentCard(incident, needTypes) {
     const id = Number(incident.id);
     return `<button type="button" class="hrs-incident-card" data-incident-id="${id}" aria-label="Open incident ${id}">
         <span class="hrs-incident-card-top">${needIcons(incident, needTypes)}${urgencyBadge(incident)}
-            <span class="ms-auto">${statusBadge(incident.validation_status)}</span></span>
+            <span class="ms-auto text-nowrap">${statusBadge(incident.validation_status)}${sourceBadge(incident)}</span></span>
         <span class="hrs-truncate-2 hrs-incident-card-message">${escapeHtml(incident.description)}</span>
         <span class="small text-secondary">${escapeHtml(locationText(incident))}</span>
         <span class="hrs-incident-card-bottom small">${hazardLabel(incident.event)}
@@ -109,6 +114,13 @@ function timeHtml(iso) {
     return iso ? `<time datetime="${escapeHtml(iso)}">${escapeHtml(formatDateTime(iso))}</time>` : '–';
 }
 
+function sourceText(incident) {
+    if (incident.source === 'web') {
+        return incident.reported_by ? `Web · reported by ${escapeHtml(incident.reported_by.name)}` : 'Web';
+    }
+    return incident.provider ? `SMS · ${escapeHtml(incident.provider)}` : '–';
+}
+
 // Read-only details for the pop-up. The incident is the detail API shape.
 export function incidentDetailsHtml(incident, needTypes) {
     const hasPlace = Number.isFinite(incident.latitude) && Number.isFinite(incident.longitude);
@@ -135,7 +147,7 @@ export function incidentDetailsHtml(incident, needTypes) {
         ${field('Contact', `<a href="tel:${contact}">${contact}</a>`)}
         ${field('Status', `${statusBadge(incident.validation_status)} <span class="small text-secondary ms-1">Task: ${escapeHtml(incident.task_status)}</span>`)}
         ${field('Volunteer', incident.volunteer ? escapeHtml(incident.volunteer.full_name) : '<span class="text-secondary">Not assigned</span>')}
-        ${field('Source', incident.provider ? escapeHtml(incident.provider) : '–')}
+        ${field('Source', sourceText(incident))}
         ${field('Reported', timeHtml(incident.created_at))}
         ${field('Updated', timeHtml(incident.updated_at))}
     </dl>`;

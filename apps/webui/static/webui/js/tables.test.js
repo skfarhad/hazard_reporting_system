@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterVolunteers, summarize, volunteerRow, operatorAccessNotice } from './tables.js';
+import { filterVolunteers, summarize, volunteerRow, reportPanelHtml } from './tables.js';
 
 const incidents = [
     { id: 1, description: 'Water in house', address: 'Mirpur', contact_number: '01711111111', validation_status: 'pending' },
@@ -29,10 +29,14 @@ describe('rows', () => {
     });
 });
 
-describe('operatorAccessNotice', () => {
-    it('explains how to get operator access', () => {
-        const html = operatorAccessNotice();
-        expect(html).toContain("isn't an operator yet");
-        expect(html).toContain('administrator');
+describe('reportPanelHtml', () => {
+    it('the report panel invites non-operators to report and explains operator access', () => {
+        const box = document.createElement('div');
+        box.innerHTML = reportPanelHtml();
+
+        expect(box.textContent).toContain('Report it');
+        expect(box.textContent).toContain('Staff review every report');
+        expect(box.textContent).toContain('Ask an administrator');
+        expect(box.querySelector('button[data-action="report"]')).not.toBeNull();
     });
 });
