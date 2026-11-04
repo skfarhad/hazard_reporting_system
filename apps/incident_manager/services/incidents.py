@@ -10,14 +10,21 @@ def create_incident(*, description, address, contact_number, location, needs=Non
     """Create a pending incident.
 
     Needs are the ones given, else read from SMS keywords in the description (else the fallback
-    need). District and thana are the ones given, else the names in the SMS report. The incident is
-    attached to the active event covering its district.
+    need). District and thana are the ones given, else the names in the SMS report, else the
+    boundaries containing the location. The incident is attached to the active event covering its
+    district.
     """
     report = parse_report(description, NeedType.keyword_map(), fallback=NeedType.fallback_code())
     if district is None and report.district:
         district = District.objects.filter(name__iexact=report.district).first()
     if thana is None and district and report.thana:
         thana = Thana.objects.filter(name__iexact=report.thana, district=district).first()
+    # Last resort: the boundaries that contain the reported point (once boundary shapes are loaded).
+    if district is None and location is not None:
+        district = District.objects.filter(polygon__contains=location).first()
+    if thana is None and location is not None:
+        thanas = Thana.objects.filter(polygon__contains=location)
+        thana = (thanas.filter(district=district) if district else thanas).first()
 
     incident = Incident.objects.create(
         description=description, address=address, contact_number=contact_number, location=location,

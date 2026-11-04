@@ -46,21 +46,21 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `serializers.py`, `apis.py`, `urls.py`, `config/settings.py`, `tests/test_incident_report_api.py` (new)
 
 **3.1 Create as pending with reporter and source**
-- [ ] Write failing tests: non-operator can report, pending; records reporter + web source; status ignored; anonymous rejected; keeps fields; response has only id/status/time; no SMS task queued
-- [ ] Verify they fail (404 route)
-- [ ] Implement `IncidentReportSerializer`, `IncidentReportView`, URL
+- [x] Write failing tests: non-operator can report, pending; records reporter + web source; status ignored; anonymous rejected; keeps fields; response has only id/status/time; no SMS task queued
+- [x] Verify they fail (404 route)
+- [x] Implement `IncidentReportSerializer`, `IncidentReportView`, URL
 
 **3.2 Needs, place and event**
-- [ ] Write failing tests: SMS keywords/fallback needs; chosen district+thana; thana not in district rejected; polygon detection; active event attached
-- [ ] Verify they fail; implement via the service
+- [x] Write failing tests: SMS keywords/fallback needs; chosen district+thana; thana not in district rejected; polygon detection; active event attached
+- [x] Verify they fail; implement via the service
 
 **3.3 Validation**
-- [ ] Write failing tests: contact required + BD mobile; +880/880 normalised; location missing/outside BD rejected; message/address required + length; unknown need; negative people count
-- [ ] Verify they fail; implement validators
+- [x] Write failing tests: contact required + BD mobile; +880/880 normalised; location missing/outside BD rejected; message/address required + length; unknown need; negative people count
+- [x] Verify they fail; implement validators
 
 **3.4 Rate limit**
-- [ ] Write failing tests: non-operators limited to 10/hour; operators not limited
-- [ ] Verify they fail; implement `IncidentReportThrottle` + settings rate (tests clear the cache)
+- [x] Write failing tests: non-operators limited to 10/hour; operators not limited
+- [x] Verify they fail; implement `IncidentReportThrottle` + settings rate (tests clear the cache)
 
 **Acceptance Criteria**: FR3, FR6–FR8; tests first, now passing
 

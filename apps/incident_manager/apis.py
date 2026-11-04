@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,9 +9,10 @@ from .models import Incident, NeedType, Provider
 from .filters import IncidentFilter
 from .pagination import IncidentPagination
 from .serializers import (
-    IncidentDetailSerializer, IncidentListSerializer, IncidentOperatorSerializer, IncidentSerializer, NeedTypeSerializer,
+    IncidentDetailSerializer, IncidentListSerializer, IncidentOperatorSerializer, IncidentReportSerializer,
+    IncidentSerializer, NeedTypeSerializer,
 )
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -89,6 +91,37 @@ class IncidentCreateView(APIView):
         if auth_header.startswith("Api-Key "):
             return auth_header.split("Api-Key ")[1]
         return None
+
+
+class IncidentReportThrottle(UserRateThrottle):
+    """Limits web reports per account (rate `incident_report`); operators logging calls are exempt."""
+
+    scope = "incident_report"
+
+    def allow_request(self, request, view):
+        if request.user and request.user.is_staff:
+            return True
+        return super().allow_request(request, view)
+
+
+class IncidentReportView(generics.CreateAPIView):
+    """Anyone signed in reports an incident from the web app. It waits for staff review (pending)."""
+
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [IncidentReportThrottle]
+    serializer_class = IncidentReportSerializer
+
+    @swagger_auto_schema(
+        operation_description="Report an incident from the web app (any signed-in user). Always created as pending.",
+        request_body=IncidentReportSerializer,
+        responses={201: "{id, validation_status, created_at}", 400: "Invalid data", 401: "Not signed in",
+                   429: "Too many reports (non-operators)"},
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(reported_by=self.request.user)
 
 
 class IncidentListView(generics.ListAPIView):

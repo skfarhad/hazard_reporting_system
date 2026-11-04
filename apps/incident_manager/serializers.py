@@ -1,8 +1,11 @@
 from rest_framework import serializers
 from django.contrib.gis.geos import Point
 
-from .models import Incident, NeedType
+from .constants import IncidentSource
+from .models import District, Incident, NeedType, Thana
 from .services.incidents import create_incident
+from .services.places import inside_bangladesh, normalise_bd_mobile
+from .services.report_parser import MAX_REPORT_LENGTH
 
 
 class IncidentSerializer(serializers.ModelSerializer):
@@ -47,6 +50,52 @@ class IncidentSerializer(serializers.ModelSerializer):
 
     def get_location_longitude(self, obj):
         return obj.location.x
+
+
+class IncidentReportSerializer(serializers.Serializer):
+    """An incident reported from the web app by a signed-in user. It always starts pending."""
+
+    description = serializers.CharField(max_length=MAX_REPORT_LENGTH)
+    address = serializers.CharField(max_length=255)
+    contact_number = serializers.CharField(max_length=20)
+    latitude = serializers.FloatField(write_only=True)
+    longitude = serializers.FloatField(write_only=True)
+    needs = serializers.SlugRelatedField(
+        slug_field="code", many=True, required=False, queryset=NeedType.objects.filter(is_active=True),
+    )
+    life_threatening = serializers.BooleanField(required=False, default=False)
+    people_count = serializers.IntegerField(required=False, allow_null=True, min_value=0)
+    district = serializers.PrimaryKeyRelatedField(queryset=District.objects.all(), required=False, allow_null=True)
+    thana = serializers.PrimaryKeyRelatedField(queryset=Thana.objects.all(), required=False, allow_null=True)
+
+    id = serializers.IntegerField(read_only=True)
+    validation_status = serializers.CharField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+
+    def validate_contact_number(self, value):
+        number = normalise_bd_mobile(value)
+        if not number:
+            raise serializers.ValidationError("Enter a Bangladeshi mobile number, e.g. 01712345678.")
+        return number
+
+    def validate(self, attrs):
+        if not inside_bangladesh(attrs["latitude"], attrs["longitude"]):
+            raise serializers.ValidationError({"latitude": ["The location must be inside Bangladesh."]})
+        district, thana = attrs.get("district"), attrs.get("thana")
+        if thana and district and thana.district_id != district.id:
+            raise serializers.ValidationError({"thana": [f"{thana.name} is not in {district.name}."]})
+        if thana and not district:
+            attrs["district"] = thana.district
+        return attrs
+
+    def create(self, validated_data):
+        location = Point(validated_data.pop("longitude"), validated_data.pop("latitude"), srid=4326)
+        return create_incident(location=location, source=IncidentSource.WEB.value, **validated_data)
+
+    def to_representation(self, instance):
+        # Only what the reporter needs back: no other incident data.
+        return {"id": instance.id, "validation_status": instance.validation_status,
+                "created_at": serializers.DateTimeField().to_representation(instance.created_at)}
 
 
 class IncidentListSerializer(serializers.ModelSerializer):
