@@ -42,8 +42,8 @@ Every subtask is test-first:
 - [x] Add the `photo` ImageField and validators; admin thumbnail; `is_active` in list_filter.
 
 **1.3 Bell last-seen time**
-- [ ] Write a failing test: `User.notifications_seen_at` defaults to null (covered in the 4.x API tests, written first there if simpler).
-- [ ] Add the field and migration.
+- [x] Write a failing test: `User.notifications_seen_at` defaults to null (covered in the 4.x API tests, written first there if simpler).
+- [x] Add the field and migration.
 
 Notes: added `validate_photo_content` (the model ImageField does not check content, only forms do); admin photo thumbnail tested. 1.3 moved into 4.1, test-first there.
 
@@ -146,27 +146,29 @@ Notes: the list and details now include `district`/`thana` names and `volunteer_
 #### Subtasks (test-first, RED before GREEN):
 
 **4.1 Notifications**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_unread_counts_pending_incidents_reported_since_the_bell_was_last_opened`;
   - `test_a_user_who_never_opened_the_bell_sees_the_last_24_hours`;
   - `test_marking_seen_resets_unread_to_zero_for_that_user_only`;
   - `test_non_operators_get_403`.
-- [ ] Implement the GET notifications and POST seen endpoints.
+- [x] Implement the GET notifications and POST seen endpoints.
 
 **4.2 District and thana management**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_operators_can_create_rename_and_delete_districts_and_thanas`;
   - `test_creating_a_district_needs_a_division_and_a_unique_name`;
   - `test_deleting_a_district_or_thana_in_use_is_refused_with_409`;
   - `test_non_operators_cannot_manage_places`.
-- [ ] Implement the manage views (with counts) and the read-only divisions list.
+- [x] Implement the manage views (with counts) and the read-only divisions list.
 
 **4.3 Boundaries**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_a_geojson_polygon_boundary_is_stored_as_a_multipolygon`;
   - `test_bad_geojson_a_point_or_a_boundary_outside_bangladesh_is_rejected`;
   - `test_an_uploaded_boundary_is_used_to_detect_the_area_of_a_web_report`.
-- [ ] Implement the `boundary` field (GEOS parse, type and bounds check, null clears); GeoJSON in responses.
+- [x] Implement the `boundary` field (GEOS parse, type and bounds check, null clears); GeoJSON in responses.
+
+Notes: place management lives in `apps/incident_manager/places_manage.py`. List rows carry `has_boundary` and counts (subqueries, so the joins don't multiply); the detail GET/PATCH/POST responses carry `boundary` as GeoJSON. `User.notifications_seen_at` (task 1.3) is added here, test-first.
 
 **Acceptance Criteria**:
 - Tests written first, watched fail, now passing.

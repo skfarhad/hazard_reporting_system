@@ -1,7 +1,10 @@
+from datetime import timedelta
+
 from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import no_body, swagger_auto_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -19,7 +22,8 @@ from .models import District, Incident, NeedType, Provider, Thana
 from .pagination import IncidentPagination
 from .serializers import (
     DistrictOptionSerializer, IncidentDetailSerializer, IncidentListSerializer, IncidentOperatorSerializer,
-    IncidentReportSerializer, IncidentSerializer, NeedTypeSerializer, VolunteerAssignmentSerializer,
+    IncidentReportSerializer, IncidentSerializer, NeedTypeSerializer, NotificationSerializer,
+    VolunteerAssignmentSerializer,
 )
 
 
@@ -246,6 +250,42 @@ class IncidentVolunteerView(APIView):
         assigned = get_object_or_404(incident.volunteers, pk=volunteer_id)
         incident.volunteers.remove(assigned)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class NotificationsView(APIView):
+    """New pending reports for the navbar bell: those created since the operator last opened it.
+
+    Someone who has never opened the bell sees the last 24 hours.
+    """
+
+    permission_classes = [IsAdminUser]
+    LIMIT = 10
+    FIRST_LOOK_BACK = timedelta(hours=24)
+
+    @swagger_auto_schema(responses={200: "{unread, results: [10 newest]}", 403: "Not an operator"})
+    def get(self, request, *args, **kwargs):
+        since = request.user.notifications_seen_at or timezone.now() - self.FIRST_LOOK_BACK
+        unread = (
+            Incident.objects.filter(validation_status=IncidentStatus.PENDING.value, created_at__gt=since)
+            .select_related("district", "thana")
+            .order_by("-created_at", "-id")
+        )
+        return Response({
+            "unread": unread.count(),
+            "results": NotificationSerializer(unread[: self.LIMIT], many=True).data,
+        })
+
+
+class NotificationsSeenView(APIView):
+    """The operator opened the bell: nothing before now is unread any more."""
+
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(request_body=no_body, responses={200: "{unread: 0}", 403: "Not an operator"})
+    def post(self, request, *args, **kwargs):
+        request.user.notifications_seen_at = timezone.now()
+        request.user.save(update_fields=["notifications_seen_at"])
+        return Response({"unread": 0})
 
 
 class NeedTypeListView(APIView):

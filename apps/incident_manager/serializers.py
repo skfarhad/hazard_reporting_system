@@ -192,6 +192,18 @@ class IncidentOperatorSerializer(serializers.ModelSerializer):
         fields = ["validation_status", "task_status", "needs", "life_threatening", "people_count", "event", "volunteers"]
 
 
+class NotificationSerializer(serializers.ModelSerializer):
+    """A new pending report, as listed under the navbar bell."""
+
+    district = serializers.CharField(source="district.name", default=None, read_only=True)
+    thana = serializers.CharField(source="thana.name", default=None, read_only=True)
+
+    class Meta:
+        model = Incident
+        fields = ["id", "description", "district", "thana", "address", "created_at"]
+        read_only_fields = fields
+
+
 class VolunteerAssignmentSerializer(serializers.Serializer):
     volunteer = serializers.PrimaryKeyRelatedField(queryset=Volunteer.objects.all())
 
