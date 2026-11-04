@@ -119,6 +119,7 @@ class IncidentListSerializer(serializers.ModelSerializer):
             "life_threatening",
             "people_count",
             "event",
+            "source",
             "latitude",
             "longitude",
             "created_at",
@@ -149,10 +150,17 @@ class IncidentDetailSerializer(IncidentListSerializer):
     thana = serializers.CharField(source="thana.name", default=None, read_only=True)
     provider = serializers.CharField(source="provider.name", default=None, read_only=True)
     volunteer = serializers.SerializerMethodField()
+    reported_by = serializers.SerializerMethodField()
 
     class Meta(IncidentListSerializer.Meta):
-        fields = IncidentListSerializer.Meta.fields + ["district", "thana", "provider", "volunteer", "updated_at"]
+        fields = IncidentListSerializer.Meta.fields + [
+            "district", "thana", "provider", "volunteer", "reported_by", "updated_at",
+        ]
         read_only_fields = fields
+
+    def get_reported_by(self, obj):
+        user = obj.reported_by
+        return {"id": user.id, "name": user.full_name or user.username} if user else None
 
     def get_volunteer(self, obj):
         return {"id": obj.volunteer.id, "full_name": obj.volunteer.full_name} if obj.volunteer else None
@@ -177,3 +185,19 @@ class NeedTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = NeedType
         fields = ["code", "label_en", "label_bn", "icon", "colour", "is_fallback"]
+
+
+class ThanaOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Thana
+        fields = ["id", "name"]
+
+
+class DistrictOptionSerializer(serializers.ModelSerializer):
+    """A district and its thanas, for the report form's dropdowns."""
+
+    thanas = ThanaOptionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = District
+        fields = ["id", "name", "thanas"]

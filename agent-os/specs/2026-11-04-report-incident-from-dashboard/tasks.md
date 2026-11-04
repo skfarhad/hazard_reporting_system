@@ -72,16 +72,16 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `apis.py`, `serializers.py`, `urls.py`, `tests/test_places_api.py` (new), `tests/test_need_types.py`, list/detail tests
 
 **4.1 Places API**
-- [ ] Write failing tests: districts with thanas by name; anonymous rejected; constant queries
-- [ ] Verify they fail; implement `PlaceListView`
+- [x] Write failing tests: districts with thanas by name; anonymous rejected; constant queries
+- [x] Verify they fail; implement `PlaceListView`
 
 **4.2 Need types for everyone signed in**
-- [ ] Write failing test: any signed-in user can list need types; anonymous cannot
-- [ ] Verify it fails; switch permission (update the old operator-only test)
+- [x] Write failing test: any signed-in user can list need types; anonymous cannot
+- [x] Verify it fails; switch permission (update the old operator-only test)
 
 **4.3 Source in operator views**
-- [ ] Write failing test: operators see the source in the list and the reporter's name in the details
-- [ ] Verify it fails; add fields
+- [x] Write failing test: operators see the source in the list and the reporter's name in the details
+- [x] Verify it fails; add fields
 
 **Acceptance Criteria**: FR9, FR10, FR12 (API); tests first, now passing
 

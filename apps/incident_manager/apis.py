@@ -1,21 +1,22 @@
-from rest_framework import generics
+from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, status
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import Incident, NeedType, Provider
+
 from .filters import IncidentFilter
+from .models import District, Incident, NeedType, Provider, Thana
 from .pagination import IncidentPagination
 from .serializers import (
-    IncidentDetailSerializer, IncidentListSerializer, IncidentOperatorSerializer, IncidentReportSerializer,
-    IncidentSerializer, NeedTypeSerializer,
+    DistrictOptionSerializer, IncidentDetailSerializer, IncidentListSerializer, IncidentOperatorSerializer,
+    IncidentReportSerializer, IncidentSerializer, NeedTypeSerializer,
 )
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from django.shortcuts import get_object_or_404
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 
 class IncidentCreateView(APIView):
@@ -153,7 +154,10 @@ class IncidentDetailView(APIView):
     """
 
     permission_classes = [IsAdminUser]
-    queryset = Incident.objects.select_related("event__hazard", "district", "thana", "provider", "volunteer").prefetch_related("needs")
+    queryset = (
+        Incident.objects.select_related("event__hazard", "district", "thana", "provider", "volunteer", "reported_by")
+        .prefetch_related("needs")
+    )
 
     @swagger_auto_schema(
         operation_description="One incident with its needs, event, places, provider and volunteer (operators only)",
@@ -176,13 +180,29 @@ class IncidentDetailView(APIView):
 
 
 class NeedTypeListView(APIView):
-    """Active need types, with labels in both languages, for operator screens."""
+    """Active need types, with labels in both languages. Any signed-in user (the report form uses them)."""
 
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="List active need types (operators only)",
-        responses={200: NeedTypeSerializer(many=True), 403: "Not an operator"},
+        operation_description="List active need types (any signed-in user)",
+        responses={200: NeedTypeSerializer(many=True), 401: "Not signed in"},
     )
     def get(self, request, *args, **kwargs):
         return Response(NeedTypeSerializer(NeedType.objects.filter(is_active=True), many=True).data)
+
+
+class PlaceListView(APIView):
+    """Districts with their thanas, by name, for the report form (any signed-in user)."""
+
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Districts with their thanas, for the report form",
+        responses={200: DistrictOptionSerializer(many=True), 401: "Not signed in"},
+    )
+    def get(self, request, *args, **kwargs):
+        districts = District.objects.order_by("name").prefetch_related(
+            Prefetch("thanas", queryset=Thana.objects.order_by("name").only("id", "name", "district_id")),
+        ).only("id", "name")
+        return Response(DistrictOptionSerializer(districts, many=True).data)

@@ -79,3 +79,25 @@ class IncidentDetailApiTests(APITestCase):
         self.assertEqual(response.data["people_count"], 7)
         self.assertEqual(response.data["thana"], "Parshuram")
         self.assertEqual(response.data["volunteer"]["full_name"], "Rahim Uddin")
+
+
+class IncidentSourceForOperatorsTests(APITestCase):
+    def setUp(self):
+        self.operator = get_user_model().objects.create(username="operator", is_staff=True)
+        self.client.force_authenticate(self.operator)
+
+    def test_operators_see_the_source_in_the_list_and_the_reporters_name_in_the_details(self):
+        reporter = get_user_model().objects.create(username="citizen", full_name="Karim Uddin")
+        no_name = get_user_model().objects.create(username="anon42")
+        web = Incident.objects.create(contact_number="1", description="x", address="y", source="web", reported_by=reporter)
+        unnamed = Incident.objects.create(contact_number="2", description="x", address="y", source="web", reported_by=no_name)
+        sms = Incident.objects.create(contact_number="3", description="x", address="y")
+
+        listed = {i["id"]: i["source"] for i in self.client.get(reverse("incident-list")).data["results"]}
+        detail = lambda incident: self.client.get(reverse("incident-detail", args=[incident.id])).data
+
+        self.assertEqual(listed, {web.id: "web", unnamed.id: "web", sms.id: "provider"})
+        self.assertEqual(detail(web)["reported_by"], {"id": reporter.id, "name": "Karim Uddin"})
+        self.assertEqual(detail(unnamed)["reported_by"]["name"], "anon42")
+        self.assertIsNone(detail(sms)["reported_by"])
+        self.assertEqual(detail(sms)["source"], "provider")

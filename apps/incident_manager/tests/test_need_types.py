@@ -67,7 +67,13 @@ class NeedTypeLookupTests(APITestCase):
             "icon": "life-preserver", "colour": "#DC2626", "is_fallback": False,
         })
 
-    def test_non_operators_get_403_on_need_types(self):
+    def test_any_signed_in_user_can_list_need_types_for_the_report_form(self):
         self.client.force_authenticate(get_user_model().objects.create(username="public"))
 
-        self.assertEqual(self.client.get(self.url).status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("rescue", [t["code"] for t in response.data])
+
+    def test_anonymous_users_cannot_list_need_types(self):
+        self.assertEqual(self.client.get(self.url).status_code, status.HTTP_401_UNAUTHORIZED)
