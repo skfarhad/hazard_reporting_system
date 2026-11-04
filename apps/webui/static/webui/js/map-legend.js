@@ -9,9 +9,9 @@ const STATUS_ROWS = [
     ['rejected', 'Rejected (faded)'],
 ];
 
-function section(title, items) {
+function section(title, items, listClass = '') {
     return `<div class="hrs-map-legend-section"><div class="hrs-map-legend-title">${title}</div>`
-        + `<ul class="hrs-map-legend-list">${items.join('')}</ul></div>`;
+        + `<ul class="hrs-map-legend-list ${listClass}">${items.join('')}</ul></div>`;
 }
 
 export function legendHtml(needTypes) {
@@ -23,7 +23,7 @@ export function legendHtml(needTypes) {
         '<li><span class="hrs-legend-count" aria-hidden="true">+1</span>More needs</li>',
         '<li><span class="hrs-dot hrs-dot-volunteer" aria-hidden="true"></span>Volunteer</li>',
     ];
-    return (needs.length ? section('Needs', needs) : '')
+    return (needs.length ? section('Needs', needs, 'hrs-map-legend-list--cols') : '')
         + section('Pin outline', statuses)
         + section('Also', markers);
 }

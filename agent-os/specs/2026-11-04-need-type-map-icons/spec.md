@@ -1,6 +1,6 @@
 # Specification: Need-type icons on the incident map
 
-**Status:** Planned, ready for `/execute`
+**Status:** Implemented, awaiting `/run-tests`
 
 ## Executive Summary
 
@@ -38,9 +38,9 @@ Frontend only; no backend change.
 3. Explain everything in one collapsible on-map legend.
 
 ### Success Criteria
-- [ ] All acceptance criteria in `planning/requirements.md` are met.
-- [ ] The Vitest tests listed under Testing Strategy were written first, watched fail, and pass.
-- [ ] Checked in the browser in light and dark themes, on desktop and phone widths.
+- [x] All acceptance criteria in `planning/requirements.md` are met.
+- [x] The Vitest tests listed under Testing Strategy were written first, watched fail, and pass.
+- [x] Checked in the browser in light and dark themes, on desktop and phone widths.
 
 ### Non-Goals
 - Map filters by need or event, editing needs on the dashboard, marker clustering, volunteer

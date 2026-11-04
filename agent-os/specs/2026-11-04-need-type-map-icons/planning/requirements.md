@@ -55,16 +55,16 @@ spot life-threatening reports first.
 
 ## Acceptance Criteria
 
-- [ ] Markers show the main need's icon and colour; an incident with rescue and food shows rescue.
-- [ ] Unknown/missing needs show the fallback ("Other"); failed need-type load shows a generic icon.
-- [ ] Markers are teardrop pins; the outline colour shows validation status; rejected pins are faded.
-- [ ] "+N" appears for incidents with several needs.
-- [ ] Life-threatening incidents show a red badge and sit above other markers.
-- [ ] Popup lists needs, life-threatening and people count; all text is escaped.
-- [ ] A collapsible on-map legend lists needs, status and volunteer; open on desktop, collapsed on
+- [x] Markers show the main need's icon and colour; an incident with rescue and food shows rescue.
+- [x] Unknown/missing needs show the fallback ("Other"); failed need-type load shows a generic icon.
+- [x] Markers are teardrop pins; the outline colour shows validation status; rejected pins are faded.
+- [x] "+N" appears for incidents with several needs.
+- [x] Life-threatening incidents show a red badge and sit above other markers.
+- [x] Popup lists needs, life-threatening and people count; all text is escaped.
+- [x] A collapsible on-map legend lists needs, status and volunteer; open on desktop, collapsed on
       phones, choice remembered; the footer legend is gone.
-- [ ] Unsafe icon names or colours from the database never reach the markup.
-- [ ] Works in light and dark themes; Vitest suite passes.
+- [x] Unsafe icon names or colours from the database never reach the markup.
+- [x] Works in light and dark themes; Vitest suite passes.
 
 ## Out of Scope
 

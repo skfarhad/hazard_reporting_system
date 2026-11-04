@@ -1,7 +1,7 @@
 # Task Breakdown: Need-type icons on the incident map
 
 **Spec**: `2026-11-04-need-type-map-icons`
-**Status**: Ready for Implementation
+**Status**: Implemented (awaiting `/run-tests`)
 
 Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test.js`, full suite `npm test`.
 
@@ -128,12 +128,34 @@ Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test
 
 **Priority**: High
 
-- [ ] `npm test` all green
-- [ ] `docker compose exec be python manage.py test apps` all green (no backend change)
-- [ ] Browser check per spec "Manual" list (light/dark, 1280px/375px, remembered state, 403 on need types)
-- [ ] Record results in this file
+- [x] `npm test` all green
+- [x] `docker compose exec be python manage.py test apps` all green (no backend change)
+- [x] Browser check per spec "Manual" list (light/dark, 1280px/375px, remembered state, 403 on need types)
+- [x] Record results in this file
 
 ---
+
+## Session Notes (2026-11-04, /execute)
+
+**Results**
+- Vitest: 7 files, 54 tests passing (`map.test.js` 20, `map-legend.test.js` 10 new/changed).
+- Django: 110 tests passing (no backend change).
+- Browser (headless Chromium, dev data, operator1):
+  - Desktop 1280px light and dark: pins show need icon and colour, outline by status, "!" and "+2" on the rescue/medical/food incident, legend open, footer legend gone, no console errors.
+  - Phone 375px: legend collapsed by default; with a remembered "open" it starts open and scrolls.
+  - Need-type API forced to 403: pins draw with the grey question mark ("Unclassified"), legend without the Needs section.
+  - Popup: needs, "Life-threatening · 5 people".
+
+**Found during the browser check, fixed**
+- leaflet.css `.leaflet-map-pane svg { z-index: 200 }` painted the pin shape over its icon on the map
+  (the design page, without Leaflet, looked fine). `.hrs-pin .hrs-pin-shape { z-index: 0 }` plus
+  `z-index: 1` on icon and badges.
+- Legend was taller than the map on desktop; the Needs list is now two columns from 576px.
+
+**Small additions beyond the spec**
+- Legend "Also" section has a "+1 More needs" entry, so every badge on a pin is explained.
+- Pin outline is drawn as a status-coloured ring under a thin white line, so a red validated ring
+  stays visible on a red (rescue) fill.
 
 ## Execution Order
 
