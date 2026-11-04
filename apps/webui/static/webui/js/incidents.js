@@ -2,7 +2,7 @@
 import { requireLogin, initNavbar } from './auth.js';
 import { apiGet } from './api.js';
 import { API } from './constants.js';
-import { filterIncidents, incidentRow } from './tables.js';
+import { filterIncidents, incidentRow, operatorAccessNotice } from './tables.js';
 import { showToast } from './ui.js';
 
 async function init() {
@@ -14,6 +14,10 @@ async function init() {
     const empty = document.getElementById('incidentEmpty');
 
     const res = await apiGet(API.incidents);
+    if (res.status === 403) {
+        document.querySelector('[data-page-body]').innerHTML = operatorAccessNotice();
+        return;
+    }
     if (!res.ok) showToast('Could not load incidents.', 'error');
     const incidents = res.ok ? res.data : [];
 

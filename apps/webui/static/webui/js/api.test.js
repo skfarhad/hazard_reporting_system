@@ -53,6 +53,18 @@ describe('api', () => {
         expect(go).toHaveBeenCalledWith('/app/login/');
     });
 
+    it('returns a 403 to the page as not allowed without ending the session', async () => {
+        setSession('tok', {});
+        mockFetch(403, { detail: 'You do not have permission to perform this action.' });
+
+        const res = await apiGet('/api/incidents/list/');
+
+        expect(res.ok).toBe(false);
+        expect(res.status).toBe(403);
+        expect(getAccessToken()).toBe('tok');
+        expect(go).not.toHaveBeenCalled();
+    });
+
     it('returns the API error for unauthenticated posts instead of redirecting', async () => {
         mockFetch(401, { detail: 'Invalid credentials!' });
 

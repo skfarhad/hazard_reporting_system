@@ -11,7 +11,7 @@ from apps.incident_manager.models import Incident
 class IncidentListViewTestCase(APITestCase):
     def setUp(self):
         self.url = reverse("incident-list")
-        self.user = get_user_model().objects.create(username="operator")
+        self.operator = get_user_model().objects.create(username="operator", is_staff=True)
         self.older = Incident.objects.create(
             contact_number="01700000001",
             location=Point(90.4125, 23.8103, srid=4326),
@@ -30,8 +30,16 @@ class IncidentListViewTestCase(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_rejects_signed_in_users_who_are_not_operators(self):
+        # Anyone can sign up, so a plain account must not see reporters' phone numbers.
+        self.client.force_authenticate(get_user_model().objects.create(username="public"))
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_lists_incidents_newest_first_with_coordinates(self):
-        self.client.force_authenticate(self.user)
+        self.client.force_authenticate(self.operator)
 
         response = self.client.get(self.url)
 
@@ -47,7 +55,7 @@ class IncidentListViewTestCase(APITestCase):
         Incident.objects.create(
             contact_number="01700000003", description="No GPS", address="Unknown"
         )
-        self.client.force_authenticate(self.user)
+        self.client.force_authenticate(self.operator)
 
         response = self.client.get(self.url)
 

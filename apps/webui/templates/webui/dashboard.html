@@ -6,6 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 {% endblock %}
 {% block content %}
+<div data-page-body>
 <div class="row g-3 mb-3" id="summaryCards">
   <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
     <div class="text-secondary small">Total incidents</div><div class="fs-3 fw-semibold" data-summary="total">–</div>
@@ -31,6 +32,7 @@
     <span><span class="hrs-dot hrs-dot-rejected me-1"></span>Rejected</span>
     <span><span class="hrs-dot hrs-dot-volunteer me-1"></span>Volunteer</span>
   </div>
+</div>
 </div>
 {% endblock %}
 {% block scripts %}<script type="module" src="{% static 'webui/js/dashboard.js' %}"></script>{% endblock %}

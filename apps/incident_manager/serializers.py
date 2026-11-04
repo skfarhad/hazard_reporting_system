@@ -69,3 +69,14 @@ class IncidentListSerializer(serializers.ModelSerializer):
 
     def get_longitude(self, obj):
         return obj.location.x if obj.location else None
+
+
+class IncidentOperatorSerializer(serializers.ModelSerializer):
+    """What operators may change on an incident. Responds with the list shape."""
+
+    class Meta:
+        model = Incident
+        fields = ["validation_status", "task_status"]
+
+    def to_representation(self, instance):
+        return IncidentListSerializer(instance, context=self.context).data

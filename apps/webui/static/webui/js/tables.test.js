@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterIncidents, filterVolunteers, summarize, incidentRow, volunteerRow } from './tables.js';
+import { filterIncidents, filterVolunteers, summarize, incidentRow, volunteerRow, operatorAccessNotice } from './tables.js';
 
 const incidents = [
     { id: 1, description: 'Water in house', address: 'Mirpur', contact_number: '01711111111', validation_status: 'pending' },
@@ -47,5 +47,13 @@ describe('rows', () => {
 
     it('shows a dash for a volunteer without a location', () => {
         expect(volunteerRow({ ...volunteers[0], latitude: null, longitude: null })).toContain('–');
+    });
+});
+
+describe('operatorAccessNotice', () => {
+    it('explains how to get operator access', () => {
+        const html = operatorAccessNotice();
+        expect(html).toContain("isn't an operator yet");
+        expect(html).toContain('administrator');
     });
 });

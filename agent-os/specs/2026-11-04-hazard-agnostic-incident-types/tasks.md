@@ -1,7 +1,7 @@
 # Task Breakdown: Hazard-agnostic incident types: needs, hazards and events
 
 **Spec**: `2026-11-04-hazard-agnostic-incident-types`
-**Status**: Ready for Implementation
+**Status**: In progress (Task Group 1 done)
 **Branch**: `feat/hazard-agnostic-incident-types` (one PR; one green commit per task group)
 
 Every subtask is test-first (`tdd` skill): write the failing test, watch it fail for the expected
@@ -29,39 +29,39 @@ Run commands:
 #### Subtasks (test-first — RED before GREEN):
 
 **1.1 Incident list is staff-only**
-- [ ] Restore the stashed tests (`git stash pop`). Keep "anonymous requests are refused with 401"
+- [x] Restore the stashed tests (`git stash pop`). Keep "anonymous requests are refused with 401"
       and "signed-in accounts that are not operators are refused with 403"; make the list tests
       authenticate a staff user. Drop the stashed status-endpoint tests (replaced by 1.2).
-- [ ] Verify the 403 test fails (the list currently returns 200 to any signed-in user)
-- [ ] Set `IncidentListView.permission_classes = [IsAdminUser]`
-- [ ] Refactor while green
+- [x] Verify the 403 test fails (the list currently returns 200 to any signed-in user)
+- [x] Set `IncidentListView.permission_classes = [IsAdminUser]`
+- [x] Refactor while green
 
 **1.2 Operator PATCH for validation and task status**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - an operator validates an incident and the SMS task is queued (patch
     `apps.incident_manager.signals.process_incident_and_send_sms.delay`);
   - an operator rejects an incident and no SMS task is queued;
   - an unknown status is refused with 400 and nothing changes;
   - non-operators cannot update incidents (403);
   - a missing incident returns 404.
-- [ ] Verify they fail (no route, NoReverseMatch)
-- [ ] Add `IncidentOperatorSerializer` (`validation_status`, `task_status`; responds in list
+- [x] Verify they fail (no route, NoReverseMatch)
+- [x] Add `IncidentOperatorSerializer` (`validation_status`, `task_status`; responds in list
       shape), `IncidentDetailView` (PATCH, `IsAdminUser`, saves via the instance), and route
       `<int:pk>/` named `incident-detail`
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **1.3 Web UI tells non-operators why there's no data**
-- [ ] Write failing Vitest tests:
+- [x] Write failing Vitest tests:
   - a 403 from the API is returned to the page as not allowed, without ending the session;
   - the operator-access notice explains how to get operator access (helper in `tables.js`).
-- [ ] Verify they fail
-- [ ] `api.js` already returns non-401 errors; confirm a 403 doesn't call `clearSession`. Add
+- [x] Verify they fail
+- [x] `api.js` already returns non-401 errors; confirm a 403 doesn't call `clearSession`. Add
       `operatorAccessNotice()` to `tables.js` and use it in `dashboard.js` and `incidents.js`
       when `status === 403`.
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **1.4 Local data**
-- [ ] Give the dev accounts operator access:
+- [x] Give the dev accounts operator access:
       `User.objects.filter(username__in=[...]).update(is_staff=True)`. This changes local data
       only, not code.
 

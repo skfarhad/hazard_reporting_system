@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Incident, Provider
-from .serializers import IncidentSerializer, IncidentListSerializer
-from rest_framework.permissions import IsAuthenticated
+from .serializers import IncidentSerializer, IncidentListSerializer, IncidentOperatorSerializer
+from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -87,15 +87,37 @@ class IncidentCreateView(APIView):
 
 
 class IncidentListView(APIView):
-    """Incidents for signed-in operators (dashboard map and tables), newest first."""
+    """Incidents for operators (staff accounts), newest first. Contains reporters' phone numbers."""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
     MAX_RESULTS = 500
 
     @swagger_auto_schema(
         operation_description="List the most recent incidents (max 500), newest first",
-        responses={200: IncidentListSerializer(many=True), 401: "Not signed in"},
+        responses={200: IncidentListSerializer(many=True), 401: "Not signed in", 403: "Not an operator"},
     )
     def get(self, request, *args, **kwargs):
         incidents = Incident.objects.order_by("-created_at", "-id")[: self.MAX_RESULTS]
         return Response(IncidentListSerializer(incidents, many=True).data)
+
+
+class IncidentDetailView(APIView):
+    """Operators validate, reject or update an incident.
+
+    Saves through the model instance so the pre_save signal still queues the SMS task
+    when an incident becomes validated.
+    """
+
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(
+        operation_description="Update an incident's validation or task status (operators only)",
+        request_body=IncidentOperatorSerializer,
+        responses={200: IncidentListSerializer, 400: "Invalid data", 403: "Not an operator", 404: "Not found"},
+    )
+    def patch(self, request, pk, *args, **kwargs):
+        incident = get_object_or_404(Incident, pk=pk)
+        serializer = IncidentOperatorSerializer(incident, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
