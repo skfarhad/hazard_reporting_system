@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.contrib.gis.geos import Point
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.incident_manager.constants import IncidentStatus
-from apps.incident_manager.models import Incident
+from apps.incident_manager.models import Incident, NeedType
 
 
 class IncidentListViewTestCase(APITestCase):
@@ -61,3 +63,31 @@ class IncidentListViewTestCase(APITestCase):
 
         self.assertIsNone(response.data[0]["latitude"])
         self.assertIsNone(response.data[0]["longitude"])
+
+    def test_operators_see_each_incidents_needs_and_triage_fields(self):
+        self.newer.needs.set(NeedType.objects.filter(code__in=["rescue", "medical"]))
+        self.newer.life_threatening = True
+        self.newer.people_count = 5
+        self.newer.save()
+        self.client.force_authenticate(self.operator)
+
+        first = self.client.get(self.url).data[0]
+
+        self.assertEqual(sorted(first["needs"]), ["medical", "rescue"])
+        self.assertTrue(first["life_threatening"])
+        self.assertEqual(first["people_count"], 5)
+
+    def test_listing_incidents_uses_the_same_number_of_queries_for_one_or_twenty(self):
+        rescue = NeedType.objects.get(code="rescue")
+        self.client.force_authenticate(self.operator)
+        Incident.objects.all().delete()
+
+        def count_queries(n):
+            Incident.objects.all().delete()
+            for i in range(n):
+                Incident.objects.create(contact_number=str(i), description="x", address="y").needs.add(rescue)
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(self.url)
+            return len(ctx.captured_queries)
+
+        self.assertEqual(count_queries(1), count_queries(20))

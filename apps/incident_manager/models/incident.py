@@ -4,6 +4,7 @@ from apps.volunteer_hub.models.volunteer import Volunteer
 from apps.incident_manager.constants import IncidentStatus, TaskStatus
 from .provider import Provider
 from .address import District, Thana
+from .types import NeedType
 
 
 class Incident(models.Model):
@@ -54,10 +55,13 @@ class Incident(models.Model):
         related_name="incidents",
     )
     address = models.CharField(max_length=255)
+    needs = models.ManyToManyField(NeedType, related_name="incidents", blank=True)
+    life_threatening = models.BooleanField(default=False, db_index=True)
+    people_count = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(
         auto_now=True
     )  # Automatically set the field to now every time the object is saved
 
     def __str__(self):
-        return f"Incident {self.id} - {self.status}"
+        return f"Incident {self.id} - {self.validation_status}"

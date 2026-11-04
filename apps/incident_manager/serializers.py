@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.gis.geos import Point
-from .models import Incident
+from .models import Incident, NeedType
 
 
 class IncidentSerializer(serializers.ModelSerializer):
@@ -46,6 +46,7 @@ class IncidentSerializer(serializers.ModelSerializer):
 class IncidentListSerializer(serializers.ModelSerializer):
     """Read-only view of an incident for the dashboard map and tables."""
 
+    needs = serializers.SlugRelatedField(slug_field="code", many=True, read_only=True)
     latitude = serializers.SerializerMethodField()
     longitude = serializers.SerializerMethodField()
 
@@ -58,6 +59,9 @@ class IncidentListSerializer(serializers.ModelSerializer):
             "address",
             "validation_status",
             "task_status",
+            "needs",
+            "life_threatening",
+            "people_count",
             "latitude",
             "longitude",
             "created_at",
@@ -74,9 +78,19 @@ class IncidentListSerializer(serializers.ModelSerializer):
 class IncidentOperatorSerializer(serializers.ModelSerializer):
     """What operators may change on an incident. Responds with the list shape."""
 
+    needs = serializers.SlugRelatedField(
+        slug_field="code", many=True, allow_empty=False, queryset=NeedType.objects.filter(is_active=True),
+    )
+
     class Meta:
         model = Incident
-        fields = ["validation_status", "task_status"]
+        fields = ["validation_status", "task_status", "needs", "life_threatening", "people_count"]
 
     def to_representation(self, instance):
         return IncidentListSerializer(instance, context=self.context).data
+
+
+class NeedTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NeedType
+        fields = ["code", "label_en", "label_bn", "icon", "colour", "is_fallback"]

@@ -1,7 +1,7 @@
 # Task Breakdown: Hazard-agnostic incident types: needs, hazards and events
 
 **Spec**: `2026-11-04-hazard-agnostic-incident-types`
-**Status**: In progress (Task Group 1 done)
+**Status**: In progress (Task Groups 1-2 done)
 **Branch**: `feat/hazard-agnostic-incident-types` (one PR; one green commit per task group)
 
 Every subtask is test-first (`tdd` skill): write the failing test, watch it fail for the expected
@@ -85,57 +85,57 @@ Run commands:
 #### Subtasks (test-first — RED before GREEN):
 
 **2.1 TypeBase and NeedType**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - only one need type can be the fallback;
   - keywords are stored lowercased and stripped;
   - the keyword map includes only active need types;
   - an invalid colour is rejected by validation.
-- [ ] Verify they fail (ImportError or missing model)
-- [ ] Implement `TypeBase` (abstract, in `apps/common/models.py`) and
+- [x] Verify they fail (ImportError or missing model)
+- [x] Implement `TypeBase` (abstract, in `apps/common/models.py`) and
       `NeedType(TypeBase, is_fallback)` with the unique-fallback constraint, plus `fallback()`
       and `keyword_map()`; run `makemigrations` (0008)
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **2.2 Incident triage fields and `__str__` fix**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - an incident's string representation names its id and validation status (regression: it
     referenced a non-existent `status`);
   - a new incident is not life-threatening and has no people count by default.
-- [ ] Verify they fail (AttributeError, missing field)
-- [ ] Add `needs` (M2M), `life_threatening`, `people_count`; fix `__str__`; include them in
+- [x] Verify they fail (AttributeError, missing field)
+- [x] Add `needs` (M2M), `life_threatening`, `people_count`; fix `__str__`; include them in
       migration 0008
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **2.3 Seed need types and backfill existing incidents**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - the seeded need types include every proposed code and exactly one fallback;
   - running the seed again doesn't create duplicates or overwrite edited labels;
   - existing incidents get the Other need (call the migration functions directly with
     `django.apps.apps`).
-- [ ] Verify they fail
-- [ ] Write data migration 0009 (seed table from spec, `update_or_create` by code with defaults
+- [x] Verify they fail
+- [x] Write data migration 0009 (seed table from spec, `update_or_create` by code with defaults
       only on create; backfill `other`; reverse deletes seeded rows)
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **2.4 Needs and triage in the list and PATCH**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - operators see each incident's needs and triage fields in the list;
   - listing incidents uses the same number of queries for one or twenty incidents;
   - an operator reclassifies needs and sets triage fields in the same request as validating;
   - an unknown need code or an empty needs list is refused with 400 and nothing changes.
-- [ ] Verify they fail
-- [ ] Extend `IncidentListSerializer` and `IncidentOperatorSerializer`; add `prefetch_related`
-- [ ] Refactor while green
+- [x] Verify they fail
+- [x] Extend `IncidentListSerializer` and `IncidentOperatorSerializer`; add `prefetch_related`
+- [x] Refactor while green
 
 **2.5 Need types lookup and admin**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - operators get active need types with both labels, icon and colour, and inactive ones are
     hidden;
   - non-operators get 403.
-- [ ] Verify they fail
-- [ ] `NeedTypeListView` at `need-types/`; `NeedTypeAdmin`; `IncidentAdmin` gets
+- [x] Verify they fail
+- [x] `NeedTypeListView` at `need-types/`; `NeedTypeAdmin`; `IncidentAdmin` gets
       `filter_horizontal` needs and the triage fields
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **Acceptance Criteria**:
 - Need types are seeded and editable in the admin; existing incidents have Other.

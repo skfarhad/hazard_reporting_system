@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Provider, Incident
-from django.contrib import admin
+from .models import Provider, Incident, NeedType
 from .models import Division, District, Thana
 from leaflet.admin import LeafletGeoAdmin
 
@@ -22,6 +21,7 @@ class IncidentAdmin(LeafletGeoAdmin):
         "description",
         "validation_status",
         "task_status",
+        "life_threatening",
         "address",
         "created_at",
     )
@@ -32,9 +32,17 @@ class IncidentAdmin(LeafletGeoAdmin):
         "task_status",
         "address",
     )
-    list_filter = ("validation_status", "task_status", "provider")
+    list_filter = ("validation_status", "task_status", "life_threatening", "needs", "provider")
+    filter_horizontal = ("needs",)
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(NeedType)
+class NeedTypeAdmin(admin.ModelAdmin):
+    list_display = ("label_en", "label_bn", "code", "sms_keywords", "is_fallback", "sort_order", "is_active")
+    list_editable = ("sort_order", "is_active")
+    search_fields = ("code", "label_en", "label_bn")
 
 
 # Registering Division model

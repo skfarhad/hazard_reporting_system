@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.incident_manager.constants import IncidentStatus, TaskStatus
-from apps.incident_manager.models import Incident
+from apps.incident_manager.models import Incident, NeedType
 
 
 class IncidentOperatorUpdateTests(APITestCase):
@@ -79,3 +79,38 @@ class IncidentOperatorUpdateTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch("apps.incident_manager.signals.process_incident_and_send_sms.delay")
+    def test_an_operator_reclassifies_needs_and_sets_triage_while_validating(self, mock_delay):
+        self.client.force_authenticate(self.operator)
+
+        response = self.client.patch(self.url, {
+            "validation_status": "validated", "needs": ["rescue", "medical"],
+            "life_threatening": True, "people_count": 5,
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(sorted(response.data["needs"]), ["medical", "rescue"])
+        self.incident.refresh_from_db()
+        self.assertEqual(sorted(self.incident.needs.values_list("code", flat=True)), ["medical", "rescue"])
+        self.assertTrue(self.incident.life_threatening)
+        self.assertEqual(self.incident.people_count, 5)
+        mock_delay.assert_called_once_with(self.incident.id)
+
+    def test_an_unknown_need_code_is_refused_with_400_and_nothing_changes(self):
+        self.incident.needs.set([NeedType.objects.get(code="other")])
+        self.client.force_authenticate(self.operator)
+
+        response = self.client.patch(self.url, {"needs": ["rescue", "teleport"]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("needs", response.data)
+        self.assertEqual(list(self.incident.needs.values_list("code", flat=True)), ["other"])
+
+    def test_an_empty_needs_list_is_refused_with_400(self):
+        self.client.force_authenticate(self.operator)
+
+        response = self.client.patch(self.url, {"needs": []}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("needs", response.data)

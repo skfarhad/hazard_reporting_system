@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import Incident, Provider
-from .serializers import IncidentSerializer, IncidentListSerializer, IncidentOperatorSerializer
+from .models import Incident, NeedType, Provider
+from .serializers import IncidentSerializer, IncidentListSerializer, IncidentOperatorSerializer, NeedTypeSerializer
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
@@ -97,7 +97,7 @@ class IncidentListView(APIView):
         responses={200: IncidentListSerializer(many=True), 401: "Not signed in", 403: "Not an operator"},
     )
     def get(self, request, *args, **kwargs):
-        incidents = Incident.objects.order_by("-created_at", "-id")[: self.MAX_RESULTS]
+        incidents = Incident.objects.prefetch_related("needs").order_by("-created_at", "-id")[: self.MAX_RESULTS]
         return Response(IncidentListSerializer(incidents, many=True).data)
 
 
@@ -121,3 +121,16 @@ class IncidentDetailView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class NeedTypeListView(APIView):
+    """Active need types, with labels in both languages, for operator screens."""
+
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(
+        operation_description="List active need types (operators only)",
+        responses={200: NeedTypeSerializer(many=True), 403: "Not an operator"},
+    )
+    def get(self, request, *args, **kwargs):
+        return Response(NeedTypeSerializer(NeedType.objects.filter(is_active=True), many=True).data)
