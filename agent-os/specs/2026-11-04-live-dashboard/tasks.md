@@ -312,17 +312,29 @@ Browser check (Playwright, 1280×800 and 375×812, seeded TEMP-LIVE data, cleane
 #### Subtasks (test-first, RED before GREEN):
 
 **7.1 Bell**
-- [ ] Write failing tests in `notifications.test.js` (badge text 0/n/9+, item escaping).
-- [ ] Implement the bell: fetch on load and on nudge; opening it lists the items and POSTs seen.
+- [x] Write failing tests in `notifications.test.js` (badge text 0/n/9+, item escaping).
+- [x] Implement the bell: fetch on load and on nudge; opening it lists the items and POSTs seen.
 
 **7.2 Avatar menu**
-- [ ] Write failing tests for `userInitials`.
-- [ ] Implement the menu (name, theme toggle, Sign out), replacing the old controls on every page.
+- [x] Write failing tests for `userInitials`.
+- [x] Implement the menu (name, theme toggle, Sign out), replacing the old controls on every page.
 
 **7.3 Location page**
-- [ ] Write failing tests in `locations-views.test.js` (GeoJSON parsing, accepted and rejected shapes; row HTML escaped with counts).
-- [ ] Implement the page: district list expanding to thanas; add/rename/delete with 409 messages; boundary upload with map preview.
-- [ ] Add the route test: `/app/locations/` renders with `page="locations"`.
+- [x] Write failing tests in `locations-views.test.js` (GeoJSON parsing, accepted and rejected shapes; row HTML escaped with counts).
+- [x] Implement the page: district list expanding to thanas; add/rename/delete with 409 messages; boundary upload with map preview.
+- [x] Add the route test: `/app/locations/` renders with `page="locations"`.
+
+Notes:
+- Login doesn't return `is_staff`, so the bell's own request decides who is an operator: when `/notifications/` answers, the bell and the `[data-operator-only]` Location tab appear.
+- Pages other than the dashboard open their own socket for the bell only after it shows. The dashboard passes `liveBell: false` and sends `hrs:incidents-changed` events instead.
+
+Browser check:
+- Bell: the count rises live after a report from another session (1 → 2); opening it lists the reports and clears the count.
+- Avatar menu: shows the name, the theme toggle and Sign out.
+- Location, as an operator: add a district (refused without a division), add a thana, upload a boundary (a Point file is refused; the polygon is previewed), rename, and delete an unused district. Deleting Feni, which is in use, shows the 409 message.
+- Location, as a viewer: the bell and Location tab are hidden, and the Location page shows the operators-only notice.
+- Phone: no horizontal scroll.
+- Test data cleaned up afterwards.
 
 **Acceptance Criteria**:
 - The bell count rises live and clears when opened.

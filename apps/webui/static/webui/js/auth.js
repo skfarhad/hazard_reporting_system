@@ -1,6 +1,12 @@
-// Login state for the signed-in pages.
-import { getAccessToken, getUser, clearSession, nav, escapeHtml } from './utils.js';
+// Login state for the signed-in pages, and the navbar's account menu and notifications bell.
+import { getAccessToken, getUser, clearSession, nav } from './utils.js';
 import { LOGIN_PAGE } from './constants.js';
+import { apiGet, apiPost } from './api.js';
+import { initials } from './dashboard-views.js';
+import { createBell } from './notifications.js';
+import { createLiveSocket, debounceNudges, socketUrl } from './live.js';
+
+const BELL_NUDGE_DELAY_MS = 2000;
 
 // Returns false (and goes to the login page) when nobody is signed in.
 export function requireLogin() {
@@ -15,11 +21,47 @@ export function logout() {
     nav.go(LOGIN_PAGE);
 }
 
-export function initNavbar() {
+export function userInitials(user) {
+    return initials(user?.full_name || user?.username || '');
+}
+
+function setUpBell({ liveBell }) {
+    const root = document.getElementById('bell');
+    if (!root) return;
+    const bell = createBell({
+        root,
+        button: document.getElementById('bellButton'),
+        badge: document.getElementById('bellBadge'),
+        menu: document.getElementById('bellMenu'),
+        apiGet,
+        apiPost,
+    });
+    root.addEventListener('show.bs.dropdown', () => bell.opened());
+    // The live dashboard has its own socket and tells the bell when incidents change.
+    window.addEventListener('hrs:incidents-changed', () => bell.refresh());
+    bell.refresh().then(() => {
+        if (!liveBell || root.hidden || !window.WebSocket) return;
+        createLiveSocket({
+            url: socketUrl(window.location),
+            getToken: getAccessToken,
+            WebSocket: window.WebSocket,
+            onNudge: debounceNudges((kinds) => { if (kinds.has('incident')) bell.refresh(); }, BELL_NUDGE_DELAY_MS),
+            onReconnect: () => bell.refresh(),
+        });
+    });
+}
+
+// `liveBell: false` when the page already has a live socket (the dashboard) and refreshes the bell itself.
+export function initNavbar({ liveBell = true } = {}) {
     const user = getUser();
-    const label = document.getElementById('currentUser');
-    if (label && user) label.innerHTML = `<i class="bi bi-person-circle me-1"></i>${escapeHtml(user.full_name || user.username)}`;
+    const name = user?.full_name || user?.username || '';
+    const initialsEl = document.getElementById('userInitials');
+    if (initialsEl) initialsEl.textContent = userInitials(user);
+    const nameEl = document.getElementById('userName');
+    if (nameEl) nameEl.textContent = name;
+    document.getElementById('avatarButton')?.setAttribute('aria-label', name ? `Account menu for ${name}` : 'Account menu');
     document.getElementById('logoutBtn')?.addEventListener('click', logout);
+    setUpBell({ liveBell });
 }
 
 // Only same-site paths are allowed as the post-login destination.

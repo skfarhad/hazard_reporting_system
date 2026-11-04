@@ -311,7 +311,7 @@ function showReportPanel() {
 
 async function init() {
     if (!requireLogin()) return;
-    initNavbar();
+    initNavbar({ liveBell: false });
     Object.assign(els, {
         root: document.getElementById('dashboard'),
         period: document.getElementById('periodSelect'),

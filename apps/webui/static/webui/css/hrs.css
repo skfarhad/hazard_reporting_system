@@ -842,3 +842,34 @@ button.hrs-chip[aria-pressed=true] {
 @media (prefers-reduced-motion: reduce) {
     .hrs-dashboard, .hrs-panel-toggle .bi { transition: none; }
 }
+
+/* ---- Navbar: notifications bell and account avatar ---- */
+.hrs-bell { position: relative; }
+.hrs-bell .bi { font-size: 1.15rem; }
+.hrs-bell-badge {
+    position: absolute; top: 2px; right: 0; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px;
+    background: var(--hrs-danger); color: #fff; font-size: .68rem; font-weight: 700; line-height: 18px; text-align: center;
+    border: 2px solid var(--hrs-surface);
+}
+.hrs-bell-badge[hidden] { display: none; }
+.hrs-bell-menu { width: min(340px, calc(100vw - 2rem)); max-height: min(70vh, 480px); overflow-y: auto; }
+.hrs-bell-item { display: grid; gap: .1rem; white-space: normal; padding-block: .5rem; border-bottom: 1px solid var(--hrs-border); }
+.hrs-avatar-button { border: 0; padding: 0; background: transparent; border-radius: 50%; }
+.hrs-avatar-button:focus-visible { outline: 2px solid var(--hrs-brand); outline-offset: 2px; }
+
+/* ---- Location tab: districts, thanas and the place editor ---- */
+.hrs-place-list, .hrs-place-thanas { list-style: none; margin: 0; padding: 0; }
+.hrs-place { border-bottom: 1px solid var(--hrs-border); }
+.hrs-place-row { display: flex; align-items: center; gap: .6rem; padding: .6rem 1rem; }
+.hrs-place-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.hrs-place.is-selected > .hrs-place-row, .hrs-place-row.is-selected { background: var(--hrs-highlight); box-shadow: inset 3px 0 0 var(--hrs-brand); }
+.hrs-place-thanas { background: var(--hrs-surface-muted); }
+.hrs-place-row--thana { padding-left: 3.25rem; border-top: 1px solid var(--hrs-border); }
+.hrs-place-map { height: 260px; border-radius: var(--hrs-radius-sm); border: 1px solid var(--hrs-border); }
+@media (min-width: 992px) {
+    .hrs-place-editor-card { position: sticky; top: calc(var(--hrs-navbar-height) + 1rem); }
+}
+@media (max-width: 575.98px) {
+    .hrs-place-row { flex-wrap: wrap; }
+    .hrs-place-row--thana { padding-left: 1rem; }
+}

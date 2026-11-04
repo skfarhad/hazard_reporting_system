@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { requireLogin, safeNext } from './auth.js';
+import { requireLogin, safeNext, initNavbar, userInitials } from './auth.js';
 import { nav, setSession } from './utils.js';
 
 describe('requireLogin', () => {
@@ -31,5 +31,44 @@ describe('safeNext', () => {
         expect(safeNext('?next=//evil.example/')).toBeNull();
         expect(safeNext('?next=https://evil.example/')).toBeNull();
         expect(safeNext('')).toBeNull();
+    });
+});
+
+describe('avatar menu', () => {
+    beforeEach(() => {
+        localStorage.clear();
+        document.body.innerHTML = `
+            <button id="avatarButton"><span id="userInitials"></span></button>
+            <span id="userName"></span>
+            <button id="logoutBtn"></button>`;
+    });
+    afterEach(() => vi.restoreAllMocks());
+
+    it('takes initials from the full name, else the username', () => {
+        expect(userInitials({ full_name: 'Rezwan Islam', username: 'rezwan' })).toBe('RI');
+        expect(userInitials({ full_name: '', username: 'operator1' })).toBe('O');
+        expect(userInitials(null)).toBe('?');
+    });
+
+    it('fills the avatar and the menu with the signed-in user, escaped', () => {
+        setSession('tok', { full_name: '<b>Karim</b> Uddin', username: 'karim' });
+
+        initNavbar({ liveBell: false });
+
+        expect(document.getElementById('userInitials').textContent).toBe('<U');
+        expect(document.getElementById('userName').textContent).toBe('<b>Karim</b> Uddin');
+        expect(document.getElementById('userName').innerHTML).not.toContain('<b>');
+        expect(document.getElementById('avatarButton').getAttribute('aria-label')).toBe('Account menu for <b>Karim</b> Uddin');
+    });
+
+    it('signs out from the menu', () => {
+        setSession('tok', { username: 'karim' });
+        const go = vi.spyOn(nav, 'go').mockImplementation(() => {});
+        initNavbar({ liveBell: false });
+
+        document.getElementById('logoutBtn').click();
+
+        expect(go).toHaveBeenCalledWith('/app/login/');
+        expect(localStorage.getItem('accessToken')).toBeNull();
     });
 });
