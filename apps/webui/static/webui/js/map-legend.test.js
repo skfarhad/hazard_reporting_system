@@ -117,11 +117,18 @@ describe('addLegend', () => {
             setItem: () => { throw new Error('blocked'); },
         };
 
+        // The DOM swallows errors thrown in click handlers and reports them on window instead.
+        const reported = [];
+        const onError = (event) => { reported.push(event.error); event.preventDefault(); };
+        window.addEventListener('error', onError);
+
         const legend = addLegend(fakeLeaflet(), {}, NEED_TYPES, { storage, isWide: false });
         const button = legend.querySelector('button');
 
         expect(button.getAttribute('aria-expanded')).toBe('false');
-        expect(() => button.click()).not.toThrow();
+        button.click();
+        window.removeEventListener('error', onError);
         expect(button.getAttribute('aria-expanded')).toBe('true');
+        expect(reported).toEqual([]);
     });
 });

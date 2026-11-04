@@ -64,6 +64,12 @@ describe('safe icon and colour', () => {
         expect(safeColour('red;background:url(x)')).toBe('#64748B');
         expect(safeColour('#abc')).toBe('#64748B');
     });
+
+    it('rejects values that only start or end like a safe icon or colour', () => {
+        expect(safeIcon('heart"><script>')).toBe('question-circle');
+        expect(safeColour('#DB2777;background:url(x)')).toBe('#64748B');
+        expect(safeColour('x;#DB2777')).toBe('#64748B');
+    });
 });
 
 describe('pin markup', () => {

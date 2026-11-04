@@ -1,7 +1,7 @@
 # Task Breakdown: Need-type icons on the incident map
 
 **Spec**: `2026-11-04-need-type-map-icons`
-**Status**: Implemented (awaiting `/run-tests`)
+**Status**: Tested, ready for PR
 
 Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test.js`, full suite `npm test`.
 
@@ -156,6 +156,21 @@ Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test
 - Legend "Also" section has a "+1 More needs" entry, so every badge on a pin is explained.
 - Pin outline is drawn as a status-coloured ring under a thin white line, so a red validated ring
   stays visible on a red (rescue) fill.
+
+## Test Results (2026-11-04, /run-tests)
+
+- **Django** (`docker compose run --rm unit_tests`, as in CI): 110 run, 110 passed, 0 failed.
+- **Vitest** (`npm test`): 7 files, 55 run, 55 passed, 0 failed
+  (`map.test.js` 21, `map-legend.test.js` 10).
+- Every test named in the spec's Testing Strategy exists and passes, plus 4 extra.
+- **Mutation check** (12 deliberate breaks in `map.js` / `map-legend.js`): 10 caught at first. Two
+  survived and the tests were strengthened until both were caught:
+  - an unanchored `#RRGGBB`/icon-name check let `#DB2777;background:url(x)` through → new test
+    "rejects values that only start or end like a safe icon or colour";
+  - removing the `catch` around saving the legend state went unnoticed because the DOM swallows
+    errors thrown in click handlers → the storage test now also asserts nothing is reported on
+    `window`.
+- No coverage tool is installed (`@vitest/coverage-*`), so no coverage figure.
 
 ## Execution Order
 

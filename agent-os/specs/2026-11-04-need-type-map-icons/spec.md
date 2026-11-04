@@ -1,6 +1,6 @@
 # Specification: Need-type icons on the incident map
 
-**Status:** Implemented, awaiting `/run-tests`
+**Status:** Implemented and tested
 
 ## Executive Summary
 
@@ -197,6 +197,11 @@ pass. Leaflet is faked (`L.marker`, `L.divIcon`, `L.Control`, `L.DomUtil`, `L.Do
 | a remembered choice wins over the screen width | FR7 |
 | toggling collapses and expands the body, updates aria-expanded and saves the choice | FR7, a11y |
 | keeps working when the browser refuses storage | robustness |
+
+Test files: `apps/webui/static/webui/js/map.test.js` (21 tests),
+`apps/webui/static/webui/js/map-legend.test.js` (10 tests). Results and mutation check in
+`tasks.md`. Added during `/run-tests`: "rejects values that only start or end like a safe icon or
+colour"; the storage test also asserts no error is reported on `window`.
 
 ### Integration / regression
 - Full `npm test` (all webui suites) and `docker compose exec be python manage.py test apps`
