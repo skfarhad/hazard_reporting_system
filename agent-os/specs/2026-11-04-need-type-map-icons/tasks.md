@@ -49,21 +49,21 @@ Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test
 - `apps/webui/static/webui/js/map.test.js`
 
 **2.1 Leaflet icon**
-- [ ] Write failing test: anchors the pin's tip on the incident's point
-- [ ] Verify it fails
-- [ ] Implement `incidentIcon` (`L.divIcon`, 32×42, anchor at the tip)
+- [x] Write failing test: anchors the pin's tip on the incident's point
+- [x] Verify it fails
+- [x] Implement `incidentIcon` (`L.divIcon`, 32×42, anchor at the tip)
 
 **2.2 Popup**
-- [ ] Write failing test: lists the need labels, life-threatening and people count in the popup
-- [ ] Verify it fails
-- [ ] Extend `incidentPopup(i, needTypes)`
+- [x] Write failing test: lists the need labels, life-threatening and people count in the popup
+- [x] Verify it fails
+- [x] Extend `incidentPopup(i, needTypes)`
 
 **2.3 drawMarkers**
-- [ ] Write failing tests: draws incidents as pins and volunteers as circles; draws life-threatening incidents above the others
-- [ ] Update the existing drawMarkers tests' fake Leaflet; verify the new tests fail
-- [ ] Switch incidents to `L.marker` with `incidentIcon` and `zIndexOffset`; accept `needTypes`
-- [ ] Remove `incidentMarkerColor` and its test if unused
-- [ ] Existing coordinate/fit-bounds/OSM tests still pass
+- [x] Write failing tests: draws incidents as pins and volunteers as circles; draws life-threatening incidents above the others
+- [x] Update the existing drawMarkers tests' fake Leaflet; verify the new tests fail
+- [x] Switch incidents to `L.marker` with `incidentIcon` and `zIndexOffset`; accept `needTypes`
+- [x] Remove `incidentMarkerColor` and its test if unused
+- [x] Existing coordinate/fit-bounds/OSM tests still pass
 
 **Acceptance Criteria**:
 - FR1, FR5, FR6, FR9 covered; regression tests green

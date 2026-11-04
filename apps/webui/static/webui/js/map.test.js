@@ -1,9 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
-    hasCoordinates, incidentMarkerColor, incidentPopup, drawMarkers, createMap, primaryNeed,
-    safeIcon, safeColour, incidentPinHtml,
+    hasCoordinates, incidentPopup, drawMarkers, createMap, primaryNeed,
+    safeIcon, safeColour, incidentPinHtml, incidentIcon,
 } from './map.js';
-import { STATUS_COLORS } from './constants.js';
 
 describe('map helpers', () => {
     it('only plots items with numeric coordinates', () => {
@@ -12,9 +11,15 @@ describe('map helpers', () => {
         expect(hasCoordinates({ latitude: '23.8', longitude: '90.4' })).toBe(false);
     });
 
-    it('colours incidents by validation status, defaulting to pending', () => {
-        expect(incidentMarkerColor('validated')).toBe(STATUS_COLORS.validated);
-        expect(incidentMarkerColor('unknown')).toBe(STATUS_COLORS.pending);
+    it('lists the need labels, life-threatening and people count in the popup', () => {
+        const html = incidentPopup({
+            description: 'roof', address: '', contact_number: '', validation_status: 'pending',
+            needs: ['rescue', 'medical'], life_threatening: true, people_count: 5,
+        }, NEED_TYPES);
+
+        expect(html).toContain('Rescue, Medical');
+        expect(html).toContain('Life-threatening');
+        expect(html).toContain('5 people');
     });
 
     it('escapes popup text', () => {
@@ -107,12 +112,25 @@ describe('pin markup', () => {
     });
 });
 
+describe('incidentIcon', () => {
+    it("anchors the pin's tip on the incident's point", () => {
+        const L = { divIcon: vi.fn((opts) => opts) };
+        const icon = incidentIcon(L, { needs: ['rescue'] }, NEED_TYPES);
+
+        expect(icon.html).toContain('bi-life-preserver');
+        expect(icon.className).toBe('hrs-pin-wrap');
+        expect(icon.iconAnchor).toEqual([icon.iconSize[0] / 2, icon.iconSize[1]]);
+    });
+});
+
 describe('drawMarkers', () => {
     function fakeLeaflet() {
         const marker = { bindPopup: vi.fn().mockReturnThis() };
         const layer = { addTo: vi.fn().mockReturnThis() };
         return {
             circleMarker: vi.fn(() => marker),
+            marker: vi.fn(() => marker),
+            divIcon: vi.fn((opts) => opts),
             layerGroup: vi.fn(() => layer),
             control: { layers: vi.fn(() => ({ addTo: vi.fn() })) },
         };
@@ -126,8 +144,32 @@ describe('drawMarkers', () => {
             [{ latitude: 23.8, longitude: 90.4, validation_status: 'pending' }, { latitude: null, longitude: null }],
             [{ latitude: 24.9, longitude: 91.9 }]);
 
-        expect(L.circleMarker).toHaveBeenCalledTimes(2);
+        expect(L.marker).toHaveBeenCalledTimes(1);
+        expect(L.circleMarker).toHaveBeenCalledTimes(1);
         expect(map.fitBounds).toHaveBeenCalledWith([[23.8, 90.4], [24.9, 91.9]], expect.any(Object));
+    });
+
+    it('draws incidents as pins and volunteers as circles', () => {
+        const L = fakeLeaflet();
+
+        drawMarkers(L, { fitBounds: vi.fn() },
+            [{ latitude: 23.8, longitude: 90.4, needs: ['medical'], validation_status: 'pending' }],
+            [{ latitude: 24.9, longitude: 91.9 }], NEED_TYPES);
+
+        expect(L.marker.mock.calls[0][1].icon.html).toContain('bi-heart-pulse');
+        expect(L.circleMarker.mock.calls[0][0]).toEqual([24.9, 91.9]);
+    });
+
+    it('draws life-threatening incidents above the others', () => {
+        const L = fakeLeaflet();
+
+        drawMarkers(L, { fitBounds: vi.fn() }, [
+            { latitude: 23.8, longitude: 90.4, life_threatening: true },
+            { latitude: 23.9, longitude: 90.5, life_threatening: false },
+        ], [], NEED_TYPES);
+
+        const [urgent, calm] = L.marker.mock.calls.map(([, options]) => options.zIndexOffset);
+        expect(urgent).toBeGreaterThan(calm);
     });
 
     it('keeps the default view when nothing has coordinates', () => {

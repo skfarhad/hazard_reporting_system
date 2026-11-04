@@ -7,12 +7,6 @@ export function hasCoordinates(item) {
     return Number.isFinite(item?.latitude) && Number.isFinite(item?.longitude);
 }
 
-// Marker colours come from the design tokens (--hrs-status-*, --hrs-volunteer), so they follow the theme.
-export function incidentMarkerColor(status) {
-    const known = status in STATUS_COLORS ? status : 'pending';
-    return cssVar(`--hrs-status-${known}`, STATUS_COLORS[known]);
-}
-
 // Need-type icons and colours are admin-editable and end up in HTML/CSS, so only plain values pass.
 export function safeIcon(name) {
     return /^[a-z0-9-]+$/.test(name || '') ? name : GENERIC_NEED.icon;
@@ -57,12 +51,33 @@ export function incidentPinHtml(incident, needTypes) {
         + `<i class="bi bi-${safeIcon(need.icon)} hrs-pin-icon" aria-hidden="true"></i>${count}${alert}</span>`;
 }
 
+export const PIN_WIDTH = 32;
+export const PIN_HEIGHT = 42;
+
+export function incidentIcon(L, incident, needTypes) {
+    return L.divIcon({
+        className: 'hrs-pin-wrap',
+        html: incidentPinHtml(incident, needTypes),
+        iconSize: [PIN_WIDTH, PIN_HEIGHT],
+        iconAnchor: [PIN_WIDTH / 2, PIN_HEIGHT],
+        popupAnchor: [0, -PIN_HEIGHT + 4],
+    });
+}
+
+// The volunteer colour comes from the design token, so it follows the theme.
 export function volunteerMarkerColor() {
     return cssVar('--hrs-volunteer', VOLUNTEER_COLOR);
 }
 
-export function incidentPopup(i) {
+export function incidentPopup(i, needTypes = []) {
+    const needs = incidentNeeds(i, needTypes).map((t) => escapeHtml(t.label_en)).join(', ');
+    const triage = [
+        i.life_threatening ? '<span class="text-danger fw-semibold">Life-threatening</span>' : '',
+        Number.isFinite(i.people_count) ? `${i.people_count} people` : '',
+    ].filter(Boolean).join(' · ');
     return `<strong>${escapeHtml(i.description)}</strong><br>`
+        + (needs ? `${needs}<br>` : '')
+        + (triage ? `${triage}<br>` : '')
         + `${escapeHtml(i.address)}<br>`
         + `<a href="tel:${escapeHtml(i.contact_number)}">${escapeHtml(i.contact_number)}</a><br>`
         + `<small>${escapeHtml(i.validation_status)} · ${escapeHtml(formatDateTime(i.created_at))}</small>`;
@@ -86,11 +101,11 @@ export function createMap(L, element) {
 }
 
 // Draws both layers with a toggle, and zooms to the markers when there are any.
-export function drawMarkers(L, map, incidents, volunteers) {
-    const incidentLayer = L.layerGroup(incidents.filter(hasCoordinates).map((i) => L.circleMarker(
+export function drawMarkers(L, map, incidents, volunteers, needTypes = []) {
+    const incidentLayer = L.layerGroup(incidents.filter(hasCoordinates).map((i) => L.marker(
         [i.latitude, i.longitude],
-        { radius: 8, color: incidentMarkerColor(i.validation_status), fillOpacity: 0.8 },
-    ).bindPopup(incidentPopup(i))));
+        { icon: incidentIcon(L, i, needTypes), riseOnHover: true, zIndexOffset: i.life_threatening ? 1000 : 0 },
+    ).bindPopup(incidentPopup(i, needTypes))));
     const volunteerLayer = L.layerGroup(volunteers.filter(hasCoordinates).map((v) => L.circleMarker(
         [v.latitude, v.longitude],
         { radius: 6, color: volunteerMarkerColor(), fillOpacity: 0.8 },
