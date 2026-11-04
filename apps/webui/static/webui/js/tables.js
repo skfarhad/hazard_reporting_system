@@ -1,5 +1,6 @@
-// Summaries, status badges and volunteer rows (no DOM access). Incident rows live in incident-views.js.
+// Status badges, volunteer rows and the report panel (no DOM access). Incident rows live in incident-views.js.
 import { escapeHtml } from './utils.js';
+import { avatarHtml } from './dashboard-views.js';
 
 const STATUSES = ['pending', 'validated', 'rejected'];
 
@@ -9,17 +10,9 @@ function matches(query, values) {
 }
 
 export function filterVolunteers(volunteers, { query = '' } = {}) {
-    return volunteers.filter((v) => matches(query, [v.full_name, v.address, v.assistance_type]));
-}
-
-export function summarize(incidents, volunteers) {
-    const count = (status) => incidents.filter((i) => i.validation_status === status).length;
-    return {
-        total: incidents.length,
-        pending: count('pending'),
-        validated: count('validated'),
-        volunteers: volunteers.length,
-    };
+    return volunteers.filter((v) => matches(query, [
+        v.full_name, v.contact_number, v.address, v.district?.name, v.thana?.name, ...(v.skills || []),
+    ]));
 }
 
 export function statusBadge(status) {
@@ -29,13 +22,19 @@ export function statusBadge(status) {
 }
 
 export function volunteerRow(v) {
-    const hasLocation = v.latitude != null && v.longitude != null;
-    const location = hasLocation ? `${Number(v.latitude).toFixed(4)}, ${Number(v.longitude).toFixed(4)}` : '–';
+    const area = [v.thana?.name, v.district?.name].filter(Boolean).join(', ') || '–';
+    const phone = escapeHtml(v.contact_number);
+    const status = v.is_active
+        ? '<span class="hrs-badge hrs-badge-volunteer">Active</span>'
+        : '<span class="hrs-badge">Inactive</span>';
     return `<tr>
-        <td>${escapeHtml(v.full_name)}</td>
-        <td>${escapeHtml(v.assistance_type)}</td>
-        <td>${escapeHtml(v.address)}</td>
-        <td class="small text-secondary">${escapeHtml(location)}</td>
+        <td><span class="d-flex align-items-center gap-2">${avatarHtml({ name: v.full_name, photo: v.photo, active: v.is_active })}
+            <span>${escapeHtml(v.full_name)}</span></span></td>
+        <td><a href="tel:${phone}">${phone}</a></td>
+        <td>${escapeHtml(area)}<div class="small text-secondary">${escapeHtml(v.address)}</div></td>
+        <td>${(v.skills || []).map(escapeHtml).join(', ') || '–'}</td>
+        <td>${Number(v.assigned_incident_count) || 0}</td>
+        <td>${status}</td>
     </tr>`;
 }
 
@@ -47,5 +46,14 @@ export function reportPanelHtml() {
         <p class="mb-3">Report it. Staff review every report before help is sent.</p>
         <button type="button" class="btn btn-primary" data-action="report"><i class="bi bi-plus-lg" aria-hidden="true"></i> Report incident</button>
         <p class="small text-secondary mt-3 mb-0">Operator? Ask an administrator to give you operator access to see incidents.</p>
+    </div>`;
+}
+
+// Shown to non-operators on operator-only pages (Volunteers, Location).
+export function operatorsOnlyHtml(what) {
+    return `<div class="hrs-report-panel">
+        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+        <h2 class="h5 mb-1">Only operators can see ${escapeHtml(what)}</h2>
+        <p class="mb-0">To report an emergency, go to the <a href="/app/">Dashboard</a>.</p>
     </div>`;
 }

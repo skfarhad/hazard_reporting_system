@@ -5,33 +5,94 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 {% endblock %}
+{% block body_class %}hrs-body-dashboard{% endblock %}
+{% block main_class %}hrs-dashboard-main{% endblock %}
 {% block content %}
-<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-  <h1 class="h4 mb-0 me-auto">Dashboard</h1>
-  <button type="button" class="btn btn-primary btn-sm" data-action="report"><i class="bi bi-plus-lg" aria-hidden="true"></i> Report incident</button>
-</div>
-<div data-page-body>
-<div class="row g-3 mb-3" id="summaryCards">
-  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
-    <div class="text-secondary small">Total incidents</div><div class="fs-3 fw-semibold" data-summary="total">–</div>
-  </div></div></div>
-  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
-    <div class="text-secondary small">Pending validation</div><div class="fs-3 fw-semibold text-warning" data-summary="pending">–</div>
-  </div></div></div>
-  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
-    <div class="text-secondary small">Validated</div><div class="fs-3 fw-semibold text-danger" data-summary="validated">–</div>
-  </div></div></div>
-  <div class="col-6 col-lg-3"><div class="card summary-card"><div class="card-body">
-    <div class="text-secondary small">Active volunteers</div><div class="fs-3 fw-semibold text-success" data-summary="volunteers">–</div>
-  </div></div></div>
-</div>
+<div class="hrs-dashboard" id="dashboard" data-page-body data-mobile-tab="map">
 
-<div class="card">
-  <div class="card-body p-0">
-    <div id="map" class="dashboard-map" aria-label="Map of incidents and volunteers"></div>
-  </div>
+  <aside class="hrs-panel hrs-panel--incidents" data-panel="incidents" id="incidentPanel" aria-labelledby="incidentPanelTitle">
+    <div class="hrs-panel-head">
+      <h1 class="hrs-panel-title" id="incidentPanelTitle">Incident Details</h1>
+      <button type="button" class="btn btn-ghost btn-sm btn-icon hrs-panel-tool" data-toggle-search="incidentSearch"
+              aria-label="Search incidents" aria-expanded="false" aria-controls="incidentSearchBox"><i class="bi bi-search" aria-hidden="true"></i></button>
+      <button type="button" class="btn btn-ghost btn-sm btn-icon hrs-panel-toggle" data-toggle-panel="incidents"
+              aria-label="Show or hide the incident panel" aria-expanded="true" aria-controls="incidentPanelBody">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i></button>
+    </div>
+    <div class="hrs-panel-body" id="incidentPanelBody">
+      <div class="hrs-panel-controls">
+        <div class="hrs-panel-search" id="incidentSearchBox" hidden>
+          <input type="search" id="incidentSearch" class="form-control form-control-sm" placeholder="Search message, address or phone" aria-label="Search incidents">
+        </div>
+        <label class="visually-hidden" for="periodSelect">Period</label>
+        <select id="periodSelect" class="form-select hrs-period-select"></select>
+        <div class="hrs-stat-row" id="incidentStats" role="group" aria-label="Show incidents by status"></div>
+        <div class="hrs-area-row">
+          <div class="hrs-area-select hrs-area-select--zilla">
+            <i class="bi bi-geo-alt" aria-hidden="true"></i>
+            <label class="visually-hidden" for="zillaSelect">Zilla (district)</label>
+            <select id="zillaSelect" class="form-select"></select>
+          </div>
+          <div class="hrs-area-select">
+            <label class="visually-hidden" for="upazilaSelect">Upazilla (thana)</label>
+            <select id="upazilaSelect" class="form-select"></select>
+          </div>
+        </div>
+      </div>
+      <p class="hrs-panel-showing" id="incidentShowing" aria-live="polite"></p>
+      <ul class="hrs-dash-list" id="incidentList" aria-labelledby="incidentShowing"></ul>
+    </div>
+  </aside>
+
+  <section class="hrs-dashboard-map" aria-label="Map">
+    <div id="map" class="hrs-live-map" aria-label="Map of incidents and volunteers"></div>
+    <div class="hrs-live-status" id="liveStatus" role="status" data-status="connecting">
+      <span class="hrs-live-dot" aria-hidden="true"></span><span data-live-text>Connecting…</span>
+    </div>
+    <button type="button" class="btn btn-primary btn-sm hrs-map-report" data-action="report">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i> Report incident</button>
+  </section>
+
+  <aside class="hrs-panel hrs-panel--volunteers" data-panel="volunteers" id="volunteerPanel" aria-labelledby="volunteerPanelTitle">
+    <div class="hrs-panel-head">
+      <button type="button" class="btn btn-ghost btn-sm btn-icon hrs-panel-toggle" data-toggle-panel="volunteers"
+              aria-label="Show or hide the volunteer panel" aria-expanded="true" aria-controls="volunteerPanelBody">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+      <h2 class="hrs-panel-title" id="volunteerPanelTitle">Volunteers</h2>
+      <button type="button" class="btn btn-ghost btn-sm btn-icon hrs-panel-tool" data-toggle-search="volunteerSearch"
+              aria-label="Search volunteers" aria-expanded="false" aria-controls="volunteerSearchBox"><i class="bi bi-search" aria-hidden="true"></i></button>
+    </div>
+    <div class="hrs-panel-body" id="volunteerPanelBody">
+      <div class="hrs-panel-controls">
+        <div class="hrs-panel-search" id="volunteerSearchBox" hidden>
+          <input type="search" id="volunteerSearch" class="form-control form-control-sm" placeholder="Search name, phone or area" aria-label="Search volunteers">
+        </div>
+        <div class="hrs-stat-row" id="volunteerStats" role="group" aria-label="Show volunteers by status"></div>
+        <div class="hrs-area-row">
+          <div class="hrs-area-select hrs-area-select--zilla">
+            <i class="bi bi-geo-alt" aria-hidden="true"></i>
+            <label class="visually-hidden" for="volunteerZillaSelect">Zilla (district)</label>
+            <select id="volunteerZillaSelect" class="form-select" data-area-mirror="district"></select>
+          </div>
+          <div class="hrs-area-select">
+            <label class="visually-hidden" for="volunteerUpazilaSelect">Upazilla (thana)</label>
+            <select id="volunteerUpazilaSelect" class="form-select" data-area-mirror="thana"></select>
+          </div>
+        </div>
+        <div class="hrs-assign-hint" id="assignHint" hidden></div>
+      </div>
+      <p class="hrs-panel-showing" id="volunteerShowing" aria-live="polite"></p>
+      <ul class="hrs-dash-list" id="volunteerList" aria-labelledby="volunteerShowing"></ul>
+    </div>
+  </aside>
+
+  <nav class="hrs-dash-tabs" role="tablist" aria-label="Dashboard sections">
+    <button type="button" role="tab" data-mobile-tab="incidents" aria-controls="incidentPanel"><i class="bi bi-list-ul" aria-hidden="true"></i>Incidents</button>
+    <button type="button" role="tab" data-mobile-tab="map"><i class="bi bi-map" aria-hidden="true"></i>Map</button>
+    <button type="button" role="tab" data-mobile-tab="volunteers" aria-controls="volunteerPanel"><i class="bi bi-people" aria-hidden="true"></i>Volunteers</button>
+  </nav>
 </div>
-</div>
+{% include "webui/components/incident_modal.html" %}
 {% include "webui/components/report_modal.html" %}
 {% endblock %}
 {% block scripts %}<script type="module" src="{% static 'webui/js/dashboard.js' %}"></script>{% endblock %}

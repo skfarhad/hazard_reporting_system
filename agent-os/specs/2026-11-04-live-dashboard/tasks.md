@@ -232,46 +232,66 @@ Notes:
 #### Subtasks (test-first, RED before GREEN):
 
 **6.1 Query state**
-- [ ] Write failing tests in `dashboard-query.test.js` (URL round-trip, Resolved → `task_status=closed`, `near` only with a selection, showing text).
-- [ ] Implement.
+- [x] Write failing tests in `dashboard-query.test.js` (URL round-trip, Resolved → `task_status=closed`, `near` only with a selection, showing text).
+- [x] Implement.
 
 **6.2 Views**
-- [ ] Write failing tests in `dashboard-views.test.js`:
+- [x] Write failing tests in `dashboard-views.test.js`:
   - title fallbacks;
   - card fields and plurals;
   - selected class;
   - avatar photo/initials/dot;
   - Assign/Unassign;
   - XSS escaping.
-- [ ] Implement.
+- [x] Implement.
 
 **6.3 Layout**
-- [ ] Write failing tests in `dashboard-layout.test.js` (collapse remembered, storage errors tolerated; mobile tabs set `aria-selected` and `hidden`).
-- [ ] Implement.
+- [x] Write failing tests in `dashboard-layout.test.js` (collapse remembered, storage errors tolerated; mobile tabs set `aria-selected` and `hidden`).
+- [x] Implement.
 
 **6.4 Live socket**
-- [ ] Write failing tests in `live.test.js`:
+- [x] Write failing tests in `live.test.js`:
   - auth first;
   - nudge handler;
   - backoff 1→30 s, reset after ready;
   - re-fetch after reconnect;
   - 4403 stops retrying;
   - debounce.
-- [ ] Implement.
+- [x] Implement.
 
 **6.5 Map links**
-- [ ] Write failing tests in `map.test.js` (`drawMarkers` returns markers by id; inactive volunteers grey; popup card content).
-- [ ] Implement.
+- [x] Write failing tests in `map.test.js` (`drawMarkers` returns markers by id; inactive volunteers grey; popup card content).
+- [x] Implement.
 
 **6.6 Volunteers in the details modal**
-- [ ] Write failing tests in `incident-views.test.js` (volunteer multi-select in the edit form; `formToPatch` sends `volunteers`; details list assigned volunteers).
-- [ ] Implement.
-- [ ] Move the modal markup into a shared component.
+- [x] Write failing tests in `incident-views.test.js` (volunteer multi-select in the edit form; `formToPatch` sends `volunteers`; details list assigned volunteers).
+- [x] Implement.
+- [x] Move the modal markup into a shared component.
 
 **6.7 Controller and page**
-- [ ] Write `dashboard.html` and the controller wiring (thin, so it's covered by the helper tests plus the E2E check).
-- [ ] Adapt `volunteers.js` to the new API shape.
-- [ ] Add the CSS (tokens, light and dark, the 992px breakpoint, no horizontal scroll at 375px).
+- [x] Write `dashboard.html` and the controller wiring (thin, so it's covered by the helper tests plus the E2E check).
+- [x] Adapt `volunteers.js` to the new API shape.
+- [x] Add the CSS (tokens, light and dark, the 992px breakpoint, no horizontal scroll at 375px).
+
+Notes:
+- The incident details dialog is now shared (`components/incident_modal.html` and `incident-modal.js`); the Incidents page uses it too.
+- `api.js` gains `apiDelete` and a `quiet` option, so live refreshes don't flash the spinner.
+- The Volunteers page shows the new fields; non-operators get an operators-only notice (`operatorsOnlyHtml`).
+- Per the user's request during /execute, the Report incident button sits at the bottom-centre of the map.
+- On the dashboard the legend starts collapsed so it doesn't cover the button; an operator's own choice is still remembered.
+- Popups pan clear of the top badge and the bottom button.
+- On phones the map is hidden under the incident and volunteer sheets so it doesn't take their taps.
+
+Browser check (Playwright, 1280×800 and 375×812, seeded TEMP-LIVE data, cleaned up afterwards):
+- Counts match `/summary/`.
+- A card opens its popup.
+- A pin selects its card.
+- Volunteers are listed nearest first.
+- Assign and Unassign update the badge.
+- A report from another session appears in about 2 s.
+- Panels collapse to 48 px rails.
+- Phone tabs work, with no horizontal scroll.
+- No console errors.
 
 **Acceptance Criteria**:
 - The desktop layout matches the mockup; list and map are linked both ways; assignment updates badges; live updates arrive within 2 s.

@@ -1,0 +1,22 @@
+{# Incident details pop-up: details, map preview, prev/next and quick actions (static/webui/js/incident-modal.js). #}
+<div class="modal fade" id="incidentModal" tabindex="-1" aria-labelledby="incidentModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5" id="incidentModalTitle">Incident</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="incidentDetailActions" class="mb-3"></div>
+        <div id="incidentDetailMap" class="hrs-detail-map mb-3" aria-label="Incident location"></div>
+        <div id="incidentDetailBody" aria-live="polite"></div>
+        <div id="incidentDetailEdit"></div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="incidentPrev"><i class="bi bi-chevron-left" aria-hidden="true"></i> Prev</button>
+        <span class="small text-secondary d-none d-sm-inline">Use ← and → to move between incidents</span>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="incidentNext">Next <i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+</div>

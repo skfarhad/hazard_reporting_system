@@ -36,6 +36,7 @@ The same branch also delivers:
 | Location tab | Operators add, rename and delete districts and thanas (delete is blocked while incidents or volunteers use them) and can upload a GeoJSON boundary, previewed on a small map. |
 | Period dropdown | Today (since midnight, Bangladesh time UTC+6) · Last 24 hours · Last 7 days · Active event. Default Today. Kept in the URL. |
 | Interaction | Status cards filter the list and pins (default Pending). Selecting a list card highlights it, pans the map and opens the pin popup. Clicking a pin highlights and scrolls to its card. "View details" opens the existing details modal. |
+| Report button | "Report incident" floats at the bottom-centre of the map (user request during /execute). |
 | Mobile (< 992px) | The map fills the screen. A bottom bar switches Incidents / Map / Volunteers, and each list is a full-height sheet. On desktop the side panels collapse to a rail via their chevrons, remembered in localStorage. |
 | Assignment | Both places: a volunteer multi-select in the details modal's edit form, and Assign/Unassign on volunteer cards while an incident is selected. With an incident selected, volunteers are listed nearest first. |
 | Delivery | One branch, staged commits per task group, one PR. |

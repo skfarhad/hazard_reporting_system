@@ -146,7 +146,9 @@ export function incidentDetailsHtml(incident, needTypes) {
         ${field('Coordinates', coordinates)}
         ${field('Contact', `<a href="tel:${contact}">${contact}</a>`)}
         ${field('Status', `${statusBadge(incident.validation_status)} <span class="small text-secondary ms-1">Task: ${escapeHtml(incident.task_status)}</span>`)}
-        ${field('Volunteer', incident.volunteer ? escapeHtml(incident.volunteer.full_name) : '<span class="text-secondary">Not assigned</span>')}
+        ${field('Volunteers', (incident.volunteers || []).length
+        ? incident.volunteers.map((v) => escapeHtml(v.full_name)).join(', ')
+        : '<span class="text-secondary">Not assigned</span>')}
         ${field('Source', sourceText(incident))}
         ${field('Reported', timeHtml(incident.created_at))}
         ${field('Updated', timeHtml(incident.updated_at))}
@@ -176,7 +178,44 @@ function errorSlot(name) {
     return `<div class="invalid-feedback d-block" id="incidentEdit-${name}-error" data-error-for="${name}"></div>`;
 }
 
-export function editFormHtml(incident, needTypes, events) {
+// Assigned volunteers stay in the list even when the loaded list doesn't include them.
+function volunteerChoices(incident, volunteers) {
+    const assigned = incident.volunteers || [];
+    const listed = new Set(volunteers.map((v) => v.id));
+    const chosen = new Set(assigned.map((v) => v.id));
+    return [...volunteers, ...assigned.filter((v) => !listed.has(v.id))].map((v) => {
+        const id = `incidentEdit-volunteer-${Number(v.id)}`;
+        const search = `${v.full_name || ''} ${v.contact_number || ''}`.toLowerCase();
+        const inactive = v.is_active === false ? ' (inactive)' : '';
+        return `<div class="form-check" data-volunteer-choice="${Number(v.id)}" data-search="${escapeHtml(search)}">
+            <input class="form-check-input" type="checkbox" name="volunteers" value="${Number(v.id)}" id="${id}"${chosen.has(v.id) ? ' checked' : ''}>
+            <label class="form-check-label" for="${id}">${escapeHtml(v.full_name)}${inactive}
+                <span class="small text-secondary">${escapeHtml(v.contact_number || '')}</span></label>
+        </div>`;
+    }).join('');
+}
+
+function volunteersFieldset(incident, volunteers) {
+    if (!volunteers) return '';
+    return `<fieldset class="mb-3">
+            <legend class="form-label small fw-semibold mb-1">Volunteers</legend>
+            <input type="search" class="form-control form-control-sm mb-2" data-volunteer-search
+                placeholder="Search by name or phone" aria-label="Search volunteers">
+            <div class="hrs-volunteer-choices">${volunteerChoices(incident, volunteers)}</div>
+            ${errorSlot('volunteers')}
+        </fieldset>`;
+}
+
+// Shows only the volunteer choices whose name or phone contains the text.
+export function filterVolunteerChoices(form, text) {
+    const query = String(text || '').trim().toLowerCase();
+    form.querySelectorAll('[data-volunteer-choice]').forEach((choice) => {
+        choice.hidden = Boolean(query) && !choice.dataset.search.includes(query);
+    });
+}
+
+// `volunteers` (the operator volunteer list) adds the assignment checkboxes; without it the form leaves them alone.
+export function editFormHtml(incident, needTypes, events, volunteers = null) {
     const chosen = new Set(incident.needs || []);
     const needs = needTypes.map((t) => {
         const id = `incidentEdit-need-${escapeHtml(t.code)}`;
@@ -197,6 +236,7 @@ export function editFormHtml(incident, needTypes, events) {
             <div class="d-flex flex-wrap gap-2">${needs}</div>
             ${errorSlot('needs')}
         </fieldset>
+        ${volunteersFieldset(incident, volunteers)}
         <div class="row g-3 align-items-end">
             <div class="col-sm-6">
                 <div class="form-check form-switch">
@@ -236,16 +276,17 @@ export function formToPatch(form) {
     if (!needs.length) errors.needs = ['Pick at least one need.'];
     if (people !== null && !(Number.isInteger(people) && people >= 0)) errors.people_count = ['Enter a whole number, 0 or more.'];
     const eventValue = form.elements.event.value;
-    return {
-        body: {
-            needs,
-            life_threatening: form.elements.life_threatening.checked,
-            people_count: people,
-            event: eventValue ? Number(eventValue) : null,
-            task_status: form.elements.task_status.value,
-        },
-        errors,
+    const body = {
+        needs,
+        life_threatening: form.elements.life_threatening.checked,
+        people_count: people,
+        event: eventValue ? Number(eventValue) : null,
+        task_status: form.elements.task_status.value,
     };
+    if (form.querySelector('input[name="volunteers"]')) {
+        body.volunteers = [...form.querySelectorAll('input[name="volunteers"]:checked')].map((i) => Number(i.value));
+    }
+    return { body, errors };
 }
 
 // Shows DRF-style errors ({field: [messages]}, or {detail}) next to their fields; {} clears them.

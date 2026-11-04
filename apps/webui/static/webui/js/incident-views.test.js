@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
     needIcons, hazardLabel, urgencyBadge, locationText, incidentTableRow, incidentCard,
     needChips, eventHazardOptions, pagerHtml, incidentDetailsHtml,
-    statusActionsHtml, editFormHtml, formToPatch, showFieldErrors, editableEvents,
+    statusActionsHtml, editFormHtml, formToPatch, showFieldErrors, editableEvents, filterVolunteerChoices,
 } from './incident-views.js';
 
 export const NEED_TYPES = [
@@ -174,7 +174,10 @@ describe('details', () => {
         district: 'Feni',
         thana: 'Parshuram',
         provider: 'Smoke Test Gateway',
-        volunteer: { id: 4, full_name: 'Rahim Uddin' },
+        volunteers: [
+            { id: 4, full_name: 'Rahim Uddin', contact_number: '01812345678', photo: null },
+            { id: 5, full_name: 'Salma Akter', contact_number: '01912345678', photo: null },
+        ],
         updated_at: '2026-11-04T12:00:00Z',
     };
 
@@ -184,12 +187,12 @@ describe('details', () => {
 
         ['5 people on roof, one injured', 'Rescue', 'Medical', 'Life-threatening', '5 people', 'Feni Flood', 'Flood',
             'Govt. Primary School', 'Parshuram', 'Feni', '23.21000, 91.43000', '01712345678', 'validated', 'open',
-            'Rahim Uddin', 'Smoke Test Gateway'].forEach((value) => expect(text).toContain(value));
+            'Rahim Uddin', 'Salma Akter', 'Smoke Test Gateway'].forEach((value) => expect(text).toContain(value));
         expect(box.querySelector('a[href="tel:01712345678"]')).not.toBeNull();
         expect(box.querySelector('a[href="https://www.google.com/maps?q=23.21,91.43"]').target).toBe('_blank');
         expect(box.querySelectorAll('time')).toHaveLength(2);
 
-        const noPlace = el(`<div>${incidentDetailsHtml({ ...DETAIL, latitude: null, longitude: null, volunteer: null }, NEED_TYPES)}</div>`);
+        const noPlace = el(`<div>${incidentDetailsHtml({ ...DETAIL, latitude: null, longitude: null, volunteers: [] }, NEED_TYPES)}</div>`);
         expect(noPlace.querySelector('a[href*="google.com/maps"]')).toBeNull();
         expect(noPlace.textContent).toContain('No location');
         expect(noPlace.textContent).toContain('Not assigned');
@@ -213,7 +216,7 @@ describe('details', () => {
 
     it('escapes every text field in the details', () => {
         const html = incidentDetailsHtml({ ...DETAIL, description: '<script>x</script>', provider: '<b>p</b>',
-            volunteer: { id: 1, full_name: '<i>v</i>' }, contact_number: '"><img>' }, NEED_TYPES);
+            volunteers: [{ id: 1, full_name: '<i>v</i>' }], contact_number: '"><img>' }, NEED_TYPES);
 
         expect(html).not.toContain('<script>');
         expect(html).not.toContain('<b>p');
@@ -229,9 +232,9 @@ describe('quick actions', () => {
         { id: 5, name: 'Old Fire', hazard: FLOOD, started_at: '2025-01-01T00:00:00Z', ended_at: '2025-01-02T00:00:00Z' },
     ];
 
-    function form(incident = INCIDENT) {
+    function form(incident = INCIDENT, volunteers) {
         const wrap = document.createElement('div');
-        wrap.innerHTML = editFormHtml(incident, NEED_TYPES, editableEvents(EVENTS, incident.event?.id ?? null, new Date('2026-11-04T12:00:00Z')));
+        wrap.innerHTML = editFormHtml(incident, NEED_TYPES, editableEvents(EVENTS, incident.event?.id ?? null, new Date('2026-11-04T12:00:00Z')), volunteers);
         document.body.replaceChildren(wrap);
         return wrap.querySelector('form');
     }
@@ -275,6 +278,59 @@ describe('quick actions', () => {
         f.elements.event.value = '3';
         f.elements.people_count.value = '0';
         expect(formToPatch(f).body).toMatchObject({ event: 3, people_count: 0 });
+    });
+
+    const VOLUNTEERS = [
+        { id: 4, full_name: 'Rahim Uddin', contact_number: '01812345678', is_active: true },
+        { id: 5, full_name: 'Salma Akter', contact_number: '01912345678', is_active: true },
+        { id: 6, full_name: 'Old Hand', contact_number: '01512345678', is_active: false },
+    ];
+
+    it('the edit form lists volunteers to assign, ticks the assigned ones and sends their ids', () => {
+        const f = form({ ...INCIDENT, volunteers: [{ id: 5, full_name: 'Salma Akter' }] }, VOLUNTEERS);
+        const boxes = [...f.querySelectorAll('input[name="volunteers"]')];
+
+        expect(boxes.map((b) => [b.value, b.checked])).toEqual([['4', false], ['5', true], ['6', false]]);
+        expect(f.textContent).toContain('Old Hand (inactive)');
+        f.querySelector('input[name="volunteers"][value="4"]').checked = true;
+        f.querySelector('input[name="volunteers"][value="5"]').checked = false;
+
+        expect(formToPatch(f).body.volunteers).toEqual([4]);
+    });
+
+    it('an assigned volunteer missing from the list stays ticked, so saving does not drop them', () => {
+        const f = form({ ...INCIDENT, volunteers: [{ id: 9, full_name: 'Not Listed' }] }, VOLUNTEERS);
+
+        expect(f.querySelector('input[name="volunteers"][value="9"]').checked).toBe(true);
+        expect(formToPatch(f).body.volunteers).toEqual([9]);
+    });
+
+    it('the volunteer search hides volunteers whose name or phone does not match', () => {
+        const f = form(INCIDENT, VOLUNTEERS);
+        const search = f.querySelector('input[data-volunteer-search]');
+
+        filterVolunteerChoices(f, 'salma');
+        const shown = () => [...f.querySelectorAll('[data-volunteer-choice]')].filter((c) => !c.hidden).map((c) => c.dataset.volunteerChoice);
+        expect(shown()).toEqual(['5']);
+        filterVolunteerChoices(f, '0151');
+        expect(shown()).toEqual(['6']);
+        filterVolunteerChoices(f, '');
+        expect(shown()).toEqual(['4', '5', '6']);
+        expect(search).not.toBeNull();
+    });
+
+    it('without a volunteer list the form leaves assignments alone', () => {
+        const f = form({ ...INCIDENT, volunteers: [{ id: 5, full_name: 'Salma Akter' }] });
+
+        expect(f.querySelector('input[name="volunteers"]')).toBeNull();
+        expect(formToPatch(f).body).not.toHaveProperty('volunteers');
+    });
+
+    it('volunteer names in the edit form are escaped', () => {
+        const html = editFormHtml(INCIDENT, NEED_TYPES, [], [{ id: 1, full_name: '<img src=x>', contact_number: '"><b>' }]);
+
+        expect(html).not.toContain('<img src=x>');
+        expect(html).not.toContain('"><b>');
     });
 
     it('a PATCH body always has at least one need, otherwise the form reports it', () => {
