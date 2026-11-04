@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.incident_manager.constants import IncidentStatus
+from apps.events.tests.factories import event
 from apps.incident_manager.models import Incident, NeedType
 
 
@@ -91,3 +92,14 @@ class IncidentListViewTestCase(APITestCase):
             return len(ctx.captured_queries)
 
         self.assertEqual(count_queries(1), count_queries(20))
+
+    def test_operators_see_the_incidents_event_id_and_name(self):
+        flood = event("Sylhet Flood")
+        self.newer.event = flood
+        self.newer.save()
+        self.client.force_authenticate(self.operator)
+
+        data = self.client.get(self.url).data
+
+        self.assertEqual(data[0]["event"], {"id": flood.id, "name": "Sylhet Flood"})
+        self.assertIsNone(data[1]["event"])

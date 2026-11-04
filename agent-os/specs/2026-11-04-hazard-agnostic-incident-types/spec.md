@@ -140,6 +140,10 @@ graph TB
     `life_threatening` and `people_count`.
   - In `create()`: if `needs` is absent, it parses `description` with `parse_report`. It then
     sets the needs and calls `attach_event`.
+  - *(Added during execution.)* Providers send no district, so `create()` also sets `district`
+    and `thana` from the parsed report when the names match existing ones, ignoring case.
+    Without this, auto-attach could never fire at intake. Fuzzy spell correction (the standalone
+    `smsparser` models) stays out of scope.
   - `IncidentListSerializer` adds `needs` (codes), `life_threatening`, `people_count`, and
     `event` (`{id, name}` or null).
   - `IncidentOperatorSerializer` (PATCH) has writable `validation_status` (choices),
@@ -349,6 +353,8 @@ are patched.
 - A report without a recognised keyword is accepted with the Other need.
 - An unknown need code from a provider is refused with 400.
 - A new incident in a district with an active event is attached to that event.
+- The district and thana named in a report are set on the incident when they match known ones, ignoring case.
+- An unknown district name leaves the incident without a district.
 - The existing provider payload without the new fields is still accepted (regression).
 
 **Lookups:**

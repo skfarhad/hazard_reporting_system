@@ -97,7 +97,7 @@ class IncidentListView(APIView):
         responses={200: IncidentListSerializer(many=True), 401: "Not signed in", 403: "Not an operator"},
     )
     def get(self, request, *args, **kwargs):
-        incidents = Incident.objects.prefetch_related("needs").order_by("-created_at", "-id")[: self.MAX_RESULTS]
+        incidents = Incident.objects.select_related("event").prefetch_related("needs").order_by("-created_at", "-id")[: self.MAX_RESULTS]
         return Response(IncidentListSerializer(incidents, many=True).data)
 
 

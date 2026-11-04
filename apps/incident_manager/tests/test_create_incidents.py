@@ -2,7 +2,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from django.contrib.gis.geos import Point
-from apps.incident_manager.models import Provider, Incident, NeedType
+from apps.events.tests.factories import district, event
+from apps.incident_manager.models import Provider, Incident, NeedType, Thana
 
 
 class IncidentCreateViewTestCase(APITestCase):
@@ -239,3 +240,37 @@ class IncidentIntakeNeedsTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.needs_of_latest(), ["unclassified"])
+
+
+class IntakeLocationAndEventTests(APITestCase):
+    def setUp(self):
+        self.provider = Provider.objects.create(name="SMS Gateway", description="", website_link="", logo_url="")
+        self.client.credentials(HTTP_AUTHORIZATION="Api-Key " + self.provider.api_key)
+        self.url = reverse("incident-create")
+        self.feni = district("Feni")
+        self.parshuram = Thana.objects.create(name="Parshuram", district=self.feni)
+
+    def post(self, description):
+        data = {"contact_number": "017", "latitude": 23.0, "longitude": 91.4, "address": "x", "description": description}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        return Incident.objects.latest("id")
+
+    def test_the_district_and_thana_named_in_a_report_are_set_when_they_match_known_ones(self):
+        incident = self.post("RESCUE#feni#PARSHURAM#School#5 people on roof")
+
+        self.assertEqual(incident.district, self.feni)
+        self.assertEqual(incident.thana, self.parshuram)
+
+    def test_an_unknown_district_name_leaves_the_incident_without_a_district(self):
+        incident = self.post("RESCUE#Atlantis#Nowhere#School#help")
+
+        self.assertIsNone(incident.district)
+        self.assertIsNone(incident.thana)
+
+    def test_a_new_incident_in_a_district_with_an_active_event_is_attached_to_that_event(self):
+        flood = event("Feni Flood", districts=[self.feni])
+
+        incident = self.post("RESCUE#Feni#Parshuram#School#5 people on roof")
+
+        self.assertEqual(incident.event, flood)

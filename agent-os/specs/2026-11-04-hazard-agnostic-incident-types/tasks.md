@@ -1,7 +1,7 @@
 # Task Breakdown: Hazard-agnostic incident types: needs, hazards and events
 
 **Spec**: `2026-11-04-hazard-agnostic-incident-types`
-**Status**: In progress (Task Groups 1-3 done)
+**Status**: In progress (Task Groups 1-4 done)
 **Branch**: `feat/hazard-agnostic-incident-types` (one PR; one green commit per task group)
 
 Every subtask is test-first (`tdd` skill): write the failing test, watch it fail for the expected
@@ -198,38 +198,41 @@ Run commands:
 #### Subtasks (test-first — RED before GREEN):
 
 **4.1 HazardType, Event and active events**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - an active event has started and not ended;
   - ended and future events are not active;
   - the seeded hazard types cover every proposed group.
-- [ ] Verify they fail
-- [ ] Create app `apps.events`; `HazardType(TypeBase, group)`, `Event`, `EventQuerySet.active()`;
+- [x] Verify they fail
+- [x] Create app `apps.events`; `HazardType(TypeBase, group)`, `Event`, `EventQuerySet.active()`;
       migrations 0001 (depends on incident_manager 0008) and 0002 (seed hazards)
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **4.2 `attach_event` and Incident.event**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - an incident in a district covered by an active event is attached to it;
   - ended and not-yet-started events are ignored;
   - when several active events cover the district, the most recently started one wins;
   - an incident without a district is not attached to any event.
-- [ ] Verify they fail
-- [ ] `Incident.event` FK (`"events.Event"`) in incident_manager 0010 (depends on events 0001);
+- [x] Verify they fail
+- [x] `Incident.event` FK (`"events.Event"`) in incident_manager 0010 (depends on events 0001);
       `attach_event()` in `apps/events/services.py`
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **4.3 Events in intake, list, PATCH and lookup**
-- [ ] Write failing tests:
+- [x] Write failing tests:
+  - the district and thana named in a report are set when they match known ones, ignoring case
+    (added during execution: providers send no district, so auto-attach needs this);
+  - an unknown district name leaves the incident without a district;
   - a new incident in a district with an active event is attached to that event;
   - operators see the incident's event (id and name) in the list;
   - an operator can attach an incident to an event, and an unknown event is refused with 400;
   - the events list with `active=true` returns only active events with their hazard;
   - non-operators get 403 on the events list.
-- [ ] Verify they fail
-- [ ] Call `attach_event` in `IncidentSerializer.create`; add `event` to the list and operator
+- [x] Verify they fail
+- [x] Call `attach_event` in `IncidentSerializer.create`; add `event` to the list and operator
       serializers (`select_related`); `EventListView` and `/api/events/`; `HazardTypeAdmin`,
       `EventAdmin`
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **Acceptance Criteria**:
 - Operators can create events in the admin; new incidents attach automatically; events are

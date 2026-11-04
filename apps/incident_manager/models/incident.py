@@ -57,6 +57,9 @@ class Incident(models.Model):
     address = models.CharField(max_length=255)
     needs = models.ManyToManyField(NeedType, related_name="incidents", blank=True)
     life_threatening = models.BooleanField(default=False, db_index=True)
+    event = models.ForeignKey(
+        "events.Event", null=True, blank=True, on_delete=models.SET_NULL, related_name="incidents",
+    )
     people_count = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(

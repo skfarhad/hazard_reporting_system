@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "apps.user",
     "apps.incident_manager",
     "apps.volunteer_hub",
+    "apps.events",
     "apps.webui",
 
 ]

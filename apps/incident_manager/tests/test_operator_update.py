@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.incident_manager.constants import IncidentStatus, TaskStatus
+from apps.events.tests.factories import event
 from apps.incident_manager.models import Incident, NeedType
 
 
@@ -114,3 +115,22 @@ class IncidentOperatorUpdateTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("needs", response.data)
+
+    def test_an_operator_can_attach_an_incident_to_an_event(self):
+        flood = event("Dhaka waterlogging", hazard_code="waterlogging")
+        self.client.force_authenticate(self.operator)
+
+        response = self.client.patch(self.url, {"event": flood.id}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["event"], {"id": flood.id, "name": "Dhaka waterlogging"})
+        self.incident.refresh_from_db()
+        self.assertEqual(self.incident.event, flood)
+
+    def test_an_unknown_event_is_refused_with_400(self):
+        self.client.force_authenticate(self.operator)
+
+        response = self.client.patch(self.url, {"event": 999999}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("event", response.data)
