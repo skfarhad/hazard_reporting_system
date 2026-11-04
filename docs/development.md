@@ -28,10 +28,12 @@ Volunteer photos are uploaded to `MEDIA_ROOT` (`media/`, git-ignored), which Dja
 ## Tests
 
 ```bash
-docker compose run --rm unit_tests       # Django tests (migrate + `manage.py test apps`), as CI runs them
+docker compose run --rm unit_tests       # Django tests (migrate + `manage.py test apps`) in a fresh container
 docker compose exec be python manage.py test apps.incident_manager   # one app, against the running stack
 npm install && npm test                  # web app JS tests (Vitest + jsdom), on the host
 ```
+
+There is no CI at the moment (GitHub Actions were removed): run both suites before merging.
 
 `smsparser/` holds standalone scripts with their own tests; they are not part of the Django suite.
 

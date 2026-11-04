@@ -70,7 +70,7 @@ docker compose exec be python manage.py test --failfast apps.<app>
 - Apps with a `tests/` package (`apps/incident_manager`, `apps/volunteer_hub`): `apps/<app>/tests/test_<module>.py`
 - Apps with a single `tests.py` (`apps/common`, `apps/user`): add to `tests.py`, or convert it to a `tests/` package (with `__init__.py`) when it grows
 - Existing examples: `apps/incident_manager/tests/test_create_incidents.py` (API-key auth via `APIClient.credentials`), `apps/incident_manager/tests/test_model_validation.py`, `apps/volunteer_hub/tests/test_team.py`
-- CI (`.github/workflows/django.yml`) runs `docker compose run --rm unit_tests`, i.e. `run_tests.sh` (`migrate` + `test apps`), plus `npm test` in a `webui` job
+- GitHub Actions CI is turned off for now (no `.github/workflows/`): run `docker compose run --rm unit_tests` (`run_tests.sh`: `migrate` + `test apps`) and `npm test` locally before merging
 - `smsparser/tests.py` is outside the Django apps and is not picked up by `manage.py test`
 
 ---

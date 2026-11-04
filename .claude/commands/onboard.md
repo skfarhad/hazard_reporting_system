@@ -36,7 +36,7 @@ PARALLEL:
 - Read: docker-compose.yaml
 - Read: example.env
 - Read: package.json, vitest.config.js
-- Read: .github/workflows/django.yml
+- Read: .github/workflows/ (if present; CI is turned off for now)
 ```
 
 ### Batch B: Structure Discovery
