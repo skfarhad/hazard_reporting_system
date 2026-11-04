@@ -17,7 +17,9 @@ class ProviderAdmin(admin.ModelAdmin):
 class IncidentAdmin(LeafletGeoAdmin):
     list_display = (
         "contact_number",
+        "source",
         "provider",
+        "reported_by",
         "description",
         "validation_status",
         "task_status",
@@ -32,10 +34,10 @@ class IncidentAdmin(LeafletGeoAdmin):
         "task_status",
         "address",
     )
-    list_filter = ("validation_status", "task_status", "life_threatening", "needs", "provider")
+    list_filter = ("validation_status", "task_status", "life_threatening", "source", "needs", "provider")
     filter_horizontal = ("needs",)
     ordering = ("-created_at",)
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = ("created_at", "updated_at", "source", "reported_by")
 
 
 @admin.register(NeedType)

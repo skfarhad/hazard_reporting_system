@@ -14,10 +14,10 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `apps/incident_manager/constants.py`, `models/incident.py`, migration `0011_…`, `admin.py`, `tests/test_incident_model_source.py` (new)
 
 **1.1 Fields**
-- [ ] Write failing test: existing and provider incidents have the provider source and no reporter
-- [ ] Verify it fails (fields missing)
-- [ ] Add `IncidentSource`, `source`, `reported_by`; `makemigrations`; admin columns
-- [ ] Refactor while green
+- [x] Write failing test: existing and provider incidents have the provider source and no reporter
+- [x] Verify it fails (fields missing)
+- [x] Add `IncidentSource`, `source`, `reported_by`; `makemigrations`; admin columns
+- [x] Refactor while green
 
 **Acceptance Criteria**: migration applies; existing tests green; tests first, now passing
 

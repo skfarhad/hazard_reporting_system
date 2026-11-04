@@ -1,7 +1,8 @@
+from django.conf import settings
 from django.contrib.gis.db import models
 
 from apps.volunteer_hub.models.volunteer import Volunteer
-from apps.incident_manager.constants import IncidentStatus, TaskStatus
+from apps.incident_manager.constants import IncidentSource, IncidentStatus, TaskStatus
 from .provider import Provider
 from .address import District, Thana
 from .types import NeedType
@@ -61,6 +62,12 @@ class Incident(models.Model):
         "events.Event", null=True, blank=True, on_delete=models.SET_NULL, related_name="incidents",
     )
     people_count = models.PositiveIntegerField(null=True, blank=True)
+    source = models.CharField(
+        max_length=16, choices=IncidentSource.choices(), default=IncidentSource.PROVIDER.value, db_index=True,
+    )
+    reported_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="reported_incidents",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(
         auto_now=True
