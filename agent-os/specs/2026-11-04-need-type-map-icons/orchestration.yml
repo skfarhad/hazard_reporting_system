@@ -1,0 +1,12 @@
+# Task groups run in order; each ends with a green commit (see tasks.md).
+task_groups:
+  - name: Need lookup and pin markup
+    claude_code_subagent: general-purpose
+  - name: Drawing pins and popup
+    claude_code_subagent: general-purpose
+  - name: Collapsible map legend
+    claude_code_subagent: general-purpose
+  - name: Styles, dashboard wiring and docs
+    claude_code_subagent: general-purpose
+  - name: Verification
+    claude_code_subagent: general-purpose
