@@ -110,6 +110,22 @@ class IncidentListSerializer(serializers.ModelSerializer):
         return obj.location.x if obj.location else None
 
 
+class IncidentDetailSerializer(IncidentListSerializer):
+    """One incident for the operator details view: the list fields plus places, source and volunteer."""
+
+    district = serializers.CharField(source="district.name", default=None, read_only=True)
+    thana = serializers.CharField(source="thana.name", default=None, read_only=True)
+    provider = serializers.CharField(source="provider.name", default=None, read_only=True)
+    volunteer = serializers.SerializerMethodField()
+
+    class Meta(IncidentListSerializer.Meta):
+        fields = IncidentListSerializer.Meta.fields + ["district", "thana", "provider", "volunteer", "updated_at"]
+        read_only_fields = fields
+
+    def get_volunteer(self, obj):
+        return {"id": obj.volunteer.id, "full_name": obj.volunteer.full_name} if obj.volunteer else None
+
+
 class IncidentOperatorSerializer(serializers.ModelSerializer):
     """What operators may change on an incident. Responds with the list shape."""
 
@@ -122,7 +138,7 @@ class IncidentOperatorSerializer(serializers.ModelSerializer):
         fields = ["validation_status", "task_status", "needs", "life_threatening", "people_count", "event"]
 
     def to_representation(self, instance):
-        return IncidentListSerializer(instance, context=self.context).data
+        return IncidentDetailSerializer(instance, context=self.context).data
 
 
 class NeedTypeSerializer(serializers.ModelSerializer):

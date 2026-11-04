@@ -51,14 +51,14 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `apps/incident_manager/apis.py`, `serializers.py`, `tests/test_incident_detail_api.py` (new), existing PATCH tests
 
 **2.1 GET one incident**
-- [ ] Write failing tests: an operator can fetch one incident with district, thana, provider, volunteer and update time; missing → 404; non-operators cannot fetch
-- [ ] Verify they fail (GET not allowed today)
-- [ ] Implement `IncidentDetailSerializer` and `get`
+- [x] Write failing tests: an operator can fetch one incident with district, thana, provider, volunteer and update time; missing → 404; non-operators cannot fetch
+- [x] Verify they fail (GET not allowed today)
+- [x] Implement `IncidentDetailSerializer` and `get`
 
 **2.2 PATCH response**
-- [ ] Write failing test: updating an incident responds with the detail shape
-- [ ] Verify it fails
-- [ ] Respond with `IncidentDetailSerializer`; existing PATCH tests still pass
+- [x] Write failing test: updating an incident responds with the detail shape
+- [x] Verify it fails
+- [x] Respond with `IncidentDetailSerializer`; existing PATCH tests still pass
 
 **Acceptance Criteria**: FR6–FR7; tests first, now passing
 

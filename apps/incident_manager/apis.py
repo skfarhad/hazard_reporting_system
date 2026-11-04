@@ -7,7 +7,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Incident, NeedType, Provider
 from .filters import IncidentFilter
 from .pagination import IncidentPagination
-from .serializers import IncidentSerializer, IncidentListSerializer, IncidentOperatorSerializer, NeedTypeSerializer
+from .serializers import (
+    IncidentDetailSerializer, IncidentListSerializer, IncidentOperatorSerializer, IncidentSerializer, NeedTypeSerializer,
+)
 from rest_framework.permissions import IsAdminUser
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
@@ -111,18 +113,26 @@ class IncidentListView(generics.ListAPIView):
 
 
 class IncidentDetailView(APIView):
-    """Operators validate, reject or update an incident.
+    """Operators read one incident, and validate, reject or update it.
 
     Saves through the model instance so the pre_save signal still queues the SMS task
     when an incident becomes validated.
     """
 
     permission_classes = [IsAdminUser]
+    queryset = Incident.objects.select_related("event__hazard", "district", "thana", "provider", "volunteer").prefetch_related("needs")
+
+    @swagger_auto_schema(
+        operation_description="One incident with its needs, event, places, provider and volunteer (operators only)",
+        responses={200: IncidentDetailSerializer, 403: "Not an operator", 404: "Not found"},
+    )
+    def get(self, request, pk, *args, **kwargs):
+        return Response(IncidentDetailSerializer(get_object_or_404(self.queryset, pk=pk)).data)
 
     @swagger_auto_schema(
         operation_description="Update an incident's validation or task status (operators only)",
         request_body=IncidentOperatorSerializer,
-        responses={200: IncidentListSerializer, 400: "Invalid data", 403: "Not an operator", 404: "Not found"},
+        responses={200: IncidentDetailSerializer, 400: "Invalid data", 403: "Not an operator", 404: "Not found"},
     )
     def patch(self, request, pk, *args, **kwargs):
         incident = get_object_or_404(Incident, pk=pk)
