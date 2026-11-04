@@ -1,7 +1,7 @@
 # Task Breakdown: Hazard-agnostic incident types: needs, hazards and events
 
 **Spec**: `2026-11-04-hazard-agnostic-incident-types`
-**Status**: In progress (Task Groups 1-2 done)
+**Status**: In progress (Task Groups 1-3 done)
 **Branch**: `feat/hazard-agnostic-incident-types` (one PR; one green commit per task group)
 
 Every subtask is test-first (`tdd` skill): write the failing test, watch it fail for the expected
@@ -155,7 +155,7 @@ Run commands:
 #### Subtasks (test-first — RED before GREEN):
 
 **3.1 `parse_report` (pure, `SimpleTestCase`)**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - a report starting with a known keyword gets that need and the location parts;
   - several keywords joined by plus or comma give every matching need;
   - keywords match regardless of case and surrounding spaces;
@@ -165,20 +165,20 @@ Run commands:
   - a hash sign inside the message is kept as part of the message;
   - empty text gives Other and an empty message;
   - text longer than 2,000 characters is truncated before parsing.
-- [ ] Verify they fail (ImportError)
-- [ ] Implement `ParsedReport` (NamedTuple) and `parse_report(text, keyword_map)`
-- [ ] Refactor while green
+- [x] Verify they fail (ImportError)
+- [x] Implement `ParsedReport` (NamedTuple) and `parse_report(text, keyword_map)`
+- [x] Refactor while green
 
 **3.2 Provider intake uses needs**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - a provider can send explicit needs and triage fields;
   - needs are parsed from the report text when the provider sends none;
   - a report without a recognised keyword is accepted with the Other need;
   - an unknown need code from a provider is refused with 400;
   - the existing provider payload without the new fields is still accepted (regression).
-- [ ] Verify they fail
-- [ ] Extend `IncidentSerializer` (fields and `create()`)
-- [ ] Refactor while green
+- [x] Verify they fail
+- [x] Extend `IncidentSerializer` (fields and `create()`)
+- [x] Refactor while green
 
 **Acceptance Criteria**:
 - `RESCUE+MEDICAL#Feni#Parshuram#School#…` gives rescue and medical; unknown or missing keywords

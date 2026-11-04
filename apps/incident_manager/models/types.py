@@ -18,6 +18,11 @@ class NeedType(TypeBase):
         ]
 
     @classmethod
+    def fallback_code(cls):
+        """Code of the fallback need type, looked up by flag so admins can rename it."""
+        return cls.objects.filter(is_fallback=True).values_list("code", flat=True).first()
+
+    @classmethod
     def keyword_map(cls):
         """{keyword: code} for active need types."""
         return {

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.gis.geos import Point
 from .models import Incident, NeedType
+from .services.report_parser import parse_report
 
 
 class IncidentSerializer(serializers.ModelSerializer):
@@ -10,6 +11,11 @@ class IncidentSerializer(serializers.ModelSerializer):
     )
     location_latitude = serializers.SerializerMethodField()
     location_longitude = serializers.SerializerMethodField()
+    needs = serializers.SlugRelatedField(
+        slug_field="code", many=True, required=False, allow_empty=False,
+        queryset=NeedType.objects.filter(is_active=True),
+        help_text="Need type codes. If omitted, they are read from SMS keywords in the description.",
+    )
 
     class Meta:
         model = Incident
@@ -21,6 +27,9 @@ class IncidentSerializer(serializers.ModelSerializer):
             "additional_info",
             "validation_status",
             "address",
+            "needs",
+            "life_threatening",
+            "people_count",
             "location_latitude",
             "location_longitude",
         ]
@@ -33,7 +42,13 @@ class IncidentSerializer(serializers.ModelSerializer):
             float(longitude), float(latitude), srid=4326
         )  # Create a Point object
 
+        needs = validated_data.pop("needs", None)
         incident = Incident.objects.create(location=location, **validated_data)
+        if not needs:
+            fallback = NeedType.fallback_code()
+            codes = parse_report(incident.description, NeedType.keyword_map(), fallback=fallback).need_codes
+            needs = NeedType.objects.filter(code__in=codes)
+        incident.needs.set(needs)
         return incident
 
     def get_location_latitude(self, obj):
