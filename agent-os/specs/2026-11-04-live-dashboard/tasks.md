@@ -114,21 +114,21 @@ Notes: the list and details now include `district`/`thana` names and `volunteer_
 #### Subtasks (test-first, RED before GREEN):
 
 **3.1 Permission and fields**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_only_operators_can_list_volunteers` (regression: it was AllowAny);
   - `test_operators_see_active_and_inactive_volunteers_with_phone_area_and_photo`.
-- [ ] Implement `IsAdminUser`, the new serializer fields, the `select_related` and the `assigned_incident_count` annotation.
+- [x] Implement `IsAdminUser`, the new serializer fields, the `select_related` and the `assigned_incident_count` annotation.
 
 **3.2 Filters and nearest-first**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_active_district_thana_and_search_filters`;
   - `test_near_orders_volunteers_by_distance_and_reports_km`;
   - a bad `near` gives a 400.
-- [ ] Implement the FilterSet and the `Distance` annotation.
+- [x] Implement the FilterSet and the `Distance` annotation.
 
 **3.3 Summary**
-- [ ] Write a failing test: `test_volunteer_summary_counts_active_inactive_and_total` (with area filters; operator-only).
-- [ ] Implement `VolunteerSummaryView`.
+- [x] Write a failing test: `test_volunteer_summary_counts_active_inactive_and_total` (with area filters; operator-only).
+- [x] Implement `VolunteerSummaryView`.
 
 **Acceptance Criteria**:
 - The Volunteers page (`volunteers.js`) is updated to the new shape in Group 6.
