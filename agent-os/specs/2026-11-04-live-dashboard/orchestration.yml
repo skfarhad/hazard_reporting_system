@@ -1,0 +1,17 @@
+task_groups:
+  - name: Dependencies and data model
+    claude_code_subagent: general-purpose
+  - name: Incident filters, summary and assignment APIs
+    claude_code_subagent: general-purpose
+  - name: Volunteers API (operator-only)
+    claude_code_subagent: general-purpose
+  - name: Notifications (bell) and Location management APIs
+    claude_code_subagent: general-purpose
+  - name: Live updates (Channels and ASGI)
+    claude_code_subagent: general-purpose
+  - name: Dashboard web app
+    claude_code_subagent: general-purpose
+  - name: "Navbar: bell, avatar menu and Location tab"
+    claude_code_subagent: general-purpose
+  - name: Docs and verification
+    claude_code_subagent: general-purpose
