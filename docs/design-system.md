@@ -57,6 +57,12 @@ the `-text` variants (`--hrs-danger-text` …) for text on tinted backgrounds; t
 | `hrs-empty`, `hrs-spinner-overlay` | Empty state; loading overlay |
 | `btn-ghost`, `btn-icon` | Borderless button; square icon button |
 | `hrs-pin hrs-pin--{status}` (`--urgent`), `hrs-pin-count`, `hrs-pin-alert` | Incident map pin: teardrop filled with the main need's colour (`--hrs-pin-fill`) and icon, outline in the status colour, rejected faded, `+N` further needs, pulsing `!` when life-threatening. Built by `incidentPinHtml()` in `map.js` |
+| `hrs-filter-bar`, `hrs-chip-row` | Search + filters toolbar; a row of need chips (`button.hrs-chip[aria-pressed]`), one swipeable line on phones |
+| `hrs-need-icons`, `hrs-need-icon` | An incident's needs as small circles in the need colour (`--hrs-pin-fill`) with the need icon; label in `.visually-hidden` |
+| `hrs-badge-urgent` | Life-threatening badge |
+| `hrs-row-link`, `hrs-incident-card` | Clickable, keyboard-focusable incident row (table, ≥768px) and card (phones) |
+| `hrs-detail-map`, `hrs-detail-fields`, `hrs-edit-form` | Incident details pop-up: map preview, field grid, triage edit form. Need checkboxes are `.btn-check` + `label.hrs-chip` |
+| `.pagination` | Bootstrap pagination mapped to the brand tokens |
 | `hrs-map-legend` (`.is-collapsed`) | Collapsible on-map legend (needs, pin outlines, badges, volunteer). Built by `addLegend()` in `map-legend.js`; open on ≥768px, remembers the operator's choice |
 
 Leaflet's stylesheet loads after `hrs.css`, so map overrides are scoped under `.leaflet-container`.

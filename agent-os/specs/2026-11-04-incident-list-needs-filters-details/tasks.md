@@ -1,7 +1,7 @@
 # Task Breakdown: Incident list: needs and hazard, filters, search and details view
 
 **Spec**: `2026-11-04-incident-list-needs-filters-details`
-**Status**: Ready for Implementation
+**Status**: Implemented (awaiting `/run-tests`)
 
 Django: `docker compose exec be python manage.py test apps.incident_manager.tests.<module>`.
 Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm test`.
@@ -153,12 +153,43 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 ### Task Group 7: Verification and docs
 
 **Priority**: High
-- [ ] `docker compose exec be python manage.py test apps` and `npm test` green
-- [ ] Browser check per spec "Manual" list
-- [ ] `docs/development.md` (list params, pagination, detail GET, breaking change), `docs/design-system.md` (incident card, need icons)
-- [ ] Record results here
+- [x] `docker compose exec be python manage.py test apps` and `npm test` green
+- [x] Browser check per spec "Manual" list
+- [x] `docs/development.md` (list params, pagination, detail GET, breaking change), `docs/design-system.md` (incident card, need icons)
+- [x] Record results here
 
 ---
+
+## Session Notes (2026-11-04, /execute)
+
+**Results**
+- Django: 131 tests, all passing (`apps`), including 18 new in `test_incident_list_filters.py`
+  and 5 in `test_incident_detail_api.py`.
+- Vitest: 10 files, 86 tests, all passing (new: `incident-query.test.js` 9,
+  `incident-views.test.js` 21, `incident-detail.test.js` 4; `api.test.js` +1).
+- The N+1 guard was watched failing (5 vs 24 queries) before `select_related("event__hazard", …)`.
+
+**Browser check (headless Chromium, dev data + 30 temporary incidents, removed afterwards)**
+- Desktop 1280 light, phone 375 light/dark: table vs cards, need chips, filters, search
+  (debounced), Clear, "Showing x–y of n", pager, URL state with Back/Forward.
+- Details pop-up: all fields, map preview with the need pin, ←/→ and buttons, Prev across a page
+  edge (page 2 first → page 1 last), Escape returns focus to the row/card, `#incident-<id>` deep link,
+  full-screen on phones.
+- Quick actions: Validate / Back to pending with toast and row refresh; edit needs + people count
+  saved; "Pick at least one need"; faked 400 shows field and form-level errors.
+- `viewer1` (non-operator) sees the access notice; dashboard shows total and pins from the paginated API.
+
+**Found and fixed during the check**
+- Desktop table too wide in the 900px column: urgency moved under the need icons (5 columns).
+- Need chips took four rows on phones: one swipeable row below 768px.
+- Place repeated the thana ("…, Parshuram, Parshuram, Feni"): not repeated when the address names it (test added).
+- Focus didn't return to the card on phones (hidden table row matched first).
+- Checked need chips in the edit form had no selected style (`.btn-check + .hrs-chip`).
+- Pagination used Bootstrap's default blue; mapped to brand tokens, with readable active text in dark mode.
+
+**Known limits**
+- Dashboard summary cards still count the incidents the map loads (≤500), as before.
+- Validating queues the SMS task, which is still a placeholder.
 
 ## Execution Order
 

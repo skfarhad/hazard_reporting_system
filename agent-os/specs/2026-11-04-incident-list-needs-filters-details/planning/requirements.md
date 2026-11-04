@@ -87,16 +87,16 @@ about it or act on it. This feature turns the page into the operators' triage to
 
 ## Acceptance Criteria
 
-- [ ] List API paginates (25 default, `page_size` ≤ 500) and filters by needs (any), status,
+- [x] List API paginates (25 default, `page_size` ≤ 500) and filters by needs (any), status,
       event/none, hazard, life-threatening and `q`; bad values give 400; constant queries.
-- [ ] Results' `event` carries the hazard.
-- [ ] Detail GET returns the extended shape; PATCH responds with it; both operator-only.
-- [ ] Dashboard map still shows up to 500 incidents.
-- [ ] Incidents page shows needs, urgency, event + hazard; table on desktop, cards on phones.
-- [ ] Filter bar, search, need chips, Clear, "Showing x–y of n", pagination; state in the URL.
-- [ ] Details pop-up with all fields, map preview, Prev/Next (keys too, across pages), deep link.
-- [ ] Validate/Reject/Pending and triage edit save via PATCH, show errors, refresh the row.
-- [ ] Non-operators see the access notice; all tests pass.
+- [x] Results' `event` carries the hazard.
+- [x] Detail GET returns the extended shape; PATCH responds with it; both operator-only.
+- [x] Dashboard map still shows up to 500 incidents.
+- [x] Incidents page shows needs, urgency, event + hazard; table on desktop, cards on phones.
+- [x] Filter bar, search, need chips, Clear, "Showing x–y of n", pagination; state in the URL.
+- [x] Details pop-up with all fields, map preview, Prev/Next (keys too, across pages), deep link.
+- [x] Validate/Reject/Pending and triage edit save via PATCH, show errors, refresh the row.
+- [x] Non-operators see the access notice; all tests pass.
 
 ## Out of Scope
 

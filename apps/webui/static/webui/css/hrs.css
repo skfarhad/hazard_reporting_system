@@ -507,6 +507,23 @@ button.hrs-chip[aria-pressed=true] {
 }
 .leaflet-container .leaflet-control-attribution a { color: var(--hrs-brand); }
 
+/* Bootstrap pagination on the design tokens (light and dark). */
+.pagination {
+    --bs-pagination-color: var(--hrs-brand-text);
+    --bs-pagination-bg: var(--hrs-surface);
+    --bs-pagination-border-color: var(--hrs-border);
+    --bs-pagination-hover-color: var(--hrs-brand-text);
+    --bs-pagination-hover-bg: var(--hrs-surface-muted);
+    --bs-pagination-hover-border-color: var(--hrs-border);
+    --bs-pagination-focus-box-shadow: 0 0 0 .2rem rgba(var(--hrs-brand-rgb), .25);
+    --bs-pagination-active-color: var(--hrs-on-brand);
+    --bs-pagination-active-bg: var(--hrs-brand);
+    --bs-pagination-active-border-color: var(--hrs-brand);
+    --bs-pagination-disabled-bg: var(--hrs-surface);
+    --bs-pagination-disabled-color: var(--hrs-text-subtle);
+    --bs-pagination-disabled-border-color: var(--hrs-border);
+}
+
 /* ---- Incidents list ----
  * Filter bar, need icons (filled with the need colour, like the map pins), clickable rows and phone cards.
  */

@@ -1,6 +1,6 @@
 # Specification: Incident list: needs and hazard, filters, search and details view
 
-**Status:** Planned, ready for `/execute`
+**Status:** Implemented, awaiting `/run-tests`
 
 ## Executive Summary
 
@@ -37,9 +37,9 @@ and correct triage. A new detail GET serves the pop-up. Shipped as one PR with o
 3. A details pop-up with map, Prev/Next and quick actions.
 
 ### Success Criteria
-- [ ] All acceptance criteria in `planning/requirements.md` met.
-- [ ] Every test under Testing Strategy written first, watched fail, passing.
-- [ ] Browser-checked: desktop and phone, light and dark, operator and non-operator.
+- [x] All acceptance criteria in `planning/requirements.md` met.
+- [x] Every test under Testing Strategy written first, watched fail, passing.
+- [x] Browser-checked: desktop and phone, light and dark, operator and non-operator.
 
 ### Non-Goals
 - Volunteer assignment, editing report text/location, bulk actions, full-text search, export,
