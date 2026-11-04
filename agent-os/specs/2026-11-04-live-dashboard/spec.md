@@ -1,6 +1,6 @@
 # Specification: Live three-panel dashboard (incidents, map, volunteers)
 
-**Status:** Implemented (Groups 1–8); next: `/run-tests live-dashboard`
+**Status:** Implemented and tested: Django 231 and Vitest 172 tests passing
 **Branch:** `feat/live-dashboard` (one branch, commits per task group, one PR)
 **Mockup:** `live_dashboard.jpeg` (repo root)
 
@@ -448,6 +448,41 @@ Each test below is written and seen failing before its code. Names are the behav
 - A second browser context creates an incident; the first dashboard shows it within 2 s without reload, and the bell count rises.
 - Phone 375×812: bottom tabs switch sheets; no horizontal scroll.
 - Location tab: create a district and thana, upload GeoJSON, delete refused while in use.
+
+### Test files
+
+**Backend** (in `apps/incident_manager/tests/` unless noted):
+- New:
+  - `test_incident_volunteers.py`
+  - `test_dashboard_filters.py`
+  - `test_incident_summary_api.py`
+  - `test_incident_volunteers_api.py`
+  - `test_notifications_api.py`
+  - `test_place_management_api.py`
+  - `test_dashboard_socket.py`
+  - `apps/volunteer_hub/tests/test_volunteer_photo.py`
+  - `apps/volunteer_hub/tests/test_volunteer_summary_api.py`
+- Updated:
+  - `test_incident_detail_api.py`
+  - `apps/volunteer_hub/tests/test_get_volunteer.py`
+  - `apps/webui/tests/test_pages.py`
+
+**Web app** (in `apps/webui/static/webui/js/`):
+- New:
+  - `dashboard-query.test.js`
+  - `dashboard-views.test.js`
+  - `dashboard-layout.test.js`
+  - `live.test.js`
+  - `notifications.test.js`
+  - `locations-views.test.js`
+- Updated:
+  - `incident-views.test.js`
+  - `map.test.js`
+  - `api.test.js`
+  - `tables.test.js`
+  - `auth.test.js`
+
+**Results:** Django 231/231 and Vitest 172/172 pass. No coverage tool is installed, so coverage is checked by mutation testing (below): 29 mutants, all caught after two tests were added.
 
 ### Mutation checks
 After green, break key lines and confirm a test fails:

@@ -1,7 +1,7 @@
 # Task Breakdown: Live three-panel dashboard (incidents, map, volunteers)
 
 **Spec**: `2026-11-04-live-dashboard`
-**Status**: Implemented; next: `/run-tests live-dashboard`
+**Status**: Tested: all passing (2026-11-04)
 **Branch**: `feat/live-dashboard`. Commit after each group with prefix `feat(live-dashboard):`.
 
 Every subtask is test-first:
@@ -375,6 +375,19 @@ Results:
   - The phone toggle arrow was visible.
   - The volunteer panel had a double border.
   - Dev static files raised ASGI streaming warnings.
+
+## /run-tests results (2026-11-04)
+
+| Suite | How | Result |
+|---|---|---|
+| Django (CI-style) | `docker compose run --rm unit_tests` (migrate + `test apps`) | 231 run, 231 passed, 0 failed |
+| Django (running stack) | `docker compose exec be python manage.py test apps` | 231 passed: incident_manager 182, volunteer_hub 20, user 14, events 11, webui 4 |
+| Web app | `npm test` (Vitest + jsdom, `TZ=UTC`) | 17 files, 172 passed |
+| System check | `manage.py check`, `makemigrations --check` | No issues, no missing migrations |
+
+No external services are called: socket tests use the in-memory channel layer, and the SMS task is patched at `.delay`.
+
+---
 
 ## Execution Order
 
