@@ -21,20 +21,24 @@ spot life-threatening reports first.
 
 ## Functional Requirements
 
-1. Incident markers are icons, not plain circles. Each shows the Bootstrap icon and colour of the
-   incident's **main need**: the first of its needs in need-type `sort_order`.
+1. Incident markers are **teardrop pins** (tip on the exact point), not plain circles. Each pin is
+   filled with the colour of the incident's **main need** (the first of its needs in need-type
+   `sort_order`) and shows that need's Bootstrap icon in white in its head.
 2. An incident with no known need uses the fallback need type (`is_fallback`, "Other"); if need
    types could not be loaded, a generic question-mark icon in grey.
-3. The marker's **ring** shows validation status using the existing status tokens
-   (`--hrs-status-pending|validated|rejected`); rejected markers are faded. Unknown status is
+3. The pin's **outline** shows validation status using the existing status tokens
+   (`--hrs-status-pending|validated|rejected`); rejected pins are also faded. Unknown status is
    treated as pending.
 4. When an incident has more than one need, the marker shows **"+N"** (N = further needs).
 5. **Life-threatening** incidents get a red "!" badge and are drawn above other markers.
 6. The **popup** adds the need labels, "Life-threatening" and "N people" when present.
-7. A **legend** under the map lists each active need type with its icon and label, next to the
-   existing status and volunteer entries.
+7. A **collapsible legend on the map** (bottom-right Leaflet control) has three sections: Needs
+   (icon + label for each active need type), Status (pin outline colours; rejected = faded;
+   "!" = life-threatening) and Volunteer. It starts open on screens ≥768px and collapsed on
+   smaller ones; after the operator toggles it, the choice is remembered in this browser
+   (localStorage, failures ignored). The old footer legend under the map is removed.
 8. The dashboard loads need types from `GET /api/incidents/need-types/`. If that call fails the
-   map still draws (generic icon), and the legend is empty.
+   map still draws (generic icon), and the legend's Needs section is left out.
 9. Volunteer markers are unchanged.
 
 ## Non-Functional Requirements
@@ -53,11 +57,12 @@ spot life-threatening reports first.
 
 - [ ] Markers show the main need's icon and colour; an incident with rescue and food shows rescue.
 - [ ] Unknown/missing needs show the fallback ("Other"); failed need-type load shows a generic icon.
-- [ ] Ring colour shows validation status; rejected markers are faded.
+- [ ] Markers are teardrop pins; the outline colour shows validation status; rejected pins are faded.
 - [ ] "+N" appears for incidents with several needs.
 - [ ] Life-threatening incidents show a red badge and sit above other markers.
 - [ ] Popup lists needs, life-threatening and people count; all text is escaped.
-- [ ] Legend lists need types with icon and label.
+- [ ] A collapsible on-map legend lists needs, status and volunteer; open on desktop, collapsed on
+      phones, choice remembered; the footer legend is gone.
 - [ ] Unsafe icon names or colours from the database never reach the markup.
 - [ ] Works in light and dark themes; Vitest suite passes.
 
