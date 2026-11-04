@@ -56,6 +56,12 @@ the `-text` variants (`--hrs-danger-text` …) for text on tinted backgrounds; t
 | `hrs-search` | Input with a search icon |
 | `hrs-empty`, `hrs-spinner-overlay` | Empty state; loading overlay |
 | `btn-ghost`, `btn-icon` | Borderless button; square icon button |
+| `hrs-pin hrs-pin--{status}` (`--urgent`), `hrs-pin-count`, `hrs-pin-alert` | Incident map pin: teardrop filled with the main need's colour (`--hrs-pin-fill`) and icon, outline in the status colour, rejected faded, `+N` further needs, pulsing `!` when life-threatening. Built by `incidentPinHtml()` in `map.js` |
+| `hrs-map-legend` (`.is-collapsed`) | Collapsible on-map legend (needs, pin outlines, badges, volunteer). Built by `addLegend()` in `map-legend.js`; open on ≥768px, remembers the operator's choice |
 
 Leaflet's stylesheet loads after `hrs.css`, so map overrides are scoped under `.leaflet-container`.
 In dark mode the OpenStreetMap tiles are inverted with a CSS filter (`--hrs-map-tiles-filter`).
+
+Need icons and colours come from the admin-editable need types (`/api/incidents/need-types/`).
+Only Bootstrap Icons names (`[a-z0-9-]+`) and `#RRGGBB` colours are used; anything else falls
+back to a grey question mark. The `/app/design/` page shows sample pins and the legend.

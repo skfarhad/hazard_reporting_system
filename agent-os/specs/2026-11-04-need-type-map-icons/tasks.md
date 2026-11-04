@@ -110,14 +110,14 @@ Run JS tests on the host: `npx vitest run apps/webui/static/webui/js/<file>.test
 - `apps/webui/templates/webui/design.html`, `docs/design-system.md`
 
 **4.1 Wiring**
-- [ ] Fetch `API.needTypes` in parallel; pass to `drawMarkers` and `addLegend`; no toast when it fails (covered by 1.1/3.1 fallback tests; `dashboard.js` is an entry module without tests, like the other pages)
-- [ ] Remove the footer legend from `dashboard.html`
+- [x] Fetch `API.needTypes` in parallel; pass to `drawMarkers` and `addLegend`; no toast when it fails (covered by 1.1/3.1 fallback tests; `dashboard.js` is an entry module without tests, like the other pages)
+- [x] Remove the footer legend from `dashboard.html`
 
 **4.2 Styles**
-- [ ] `.hrs-pin*` and `.hrs-map-legend*` components using `--hrs-*` tokens, scoped under `.leaflet-container`, light/dark
+- [x] `.hrs-pin*` and `.hrs-map-legend*` components using `--hrs-*` tokens, scoped under `.leaflet-container`, light/dark
 
 **4.3 Docs**
-- [ ] Add pin and legend to `docs/design-system.md` and sample pins to `/app/design/`
+- [x] Add pin and legend to `docs/design-system.md` and sample pins to `/app/design/`
 
 **Acceptance Criteria**:
 - Dashboard shows pins and the legend; nothing else on the page changes

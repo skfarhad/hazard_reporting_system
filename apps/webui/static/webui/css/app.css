@@ -2,5 +2,5 @@
 .dashboard-map {
     height: calc(100vh - 290px);
     min-height: 360px;
-    border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0;
+    border-radius: var(--bs-card-inner-border-radius);
 }

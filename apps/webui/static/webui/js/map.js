@@ -47,7 +47,8 @@ export function incidentPinHtml(incident, needTypes) {
 
     return `<span class="hrs-pin hrs-pin--${status}${urgent ? ' hrs-pin--urgent' : ''}" `
         + `style="--hrs-pin-fill:${safeColour(need.colour)}" role="img" aria-label="${escapeHtml(label.join(', '))}">`
-        + `<svg class="hrs-pin-shape" viewBox="0 0 32 42" aria-hidden="true"><path d="${PIN_PATH}"/></svg>`
+        + `<svg class="hrs-pin-shape" viewBox="0 0 32 42" aria-hidden="true">`
+        + `<path class="hrs-pin-ring" d="${PIN_PATH}"/><path class="hrs-pin-body" d="${PIN_PATH}"/></svg>`
         + `<i class="bi bi-${safeIcon(need.icon)} hrs-pin-icon" aria-hidden="true"></i>${count}${alert}</span>`;
 }
 
