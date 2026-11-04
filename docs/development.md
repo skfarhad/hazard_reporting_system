@@ -22,6 +22,30 @@ docker compose exec be python manage.py createsuperuser
 `pyproject.toml`, rebuild the images (`docker compose build be unit_tests celery_worker`) and
 recreate the containers (`docker compose up -d --force-recreate be`).
 
+### Places and boundaries
+
+Bangladesh's divisions, districts, upazilas/thanas and unions, with their boundaries, come from the
+OCHA administrative boundaries for Bangladesh (source: Bangladesh Bureau of Statistics, licence
+CC BY-IGO: <https://data.humdata.org/dataset/cod-ab-bgd>). The files are large and are not in the
+repository: download the GeoJSON set (adm1–adm4) into a folder such as `.local/Bangladesh_GeoJSON/`
+(git-ignored) and load it:
+
+```bash
+docker compose exec be python manage.py import_bd_boundaries .local/Bangladesh_GeoJSON
+```
+
+- It reads the `adm1`–`adm4` files directly in the folder (not `small/` or `admALL` files).
+- Names use the official spellings (Chittagong → Chattogram, Comilla → Cumilla, Jessore → Jashore,
+  Barisal → Barishal, Bogra → Bogura); SMS reports may use either.
+- Shapes are simplified by about 11 m; every area gets a centre point inside it.
+- Every area keeps its national area code (`code`, e.g. Feni `BD2030`). A second run updates areas by
+  code instead of adding them, and places added by hand are taken over by name under the same parent.
+- Names are unique only within their parent (two districts may each have a Kaliganj thana).
+- A missing level file or an unknown parent code stops the import without saving anything.
+
+New reports get their district, thana and union from the boundaries containing their location (see
+`services/incidents.py`). Existing records are not changed by an import.
+
 Volunteer photos are uploaded to `MEDIA_ROOT` (`media/`, git-ignored), which Django serves only while
 `DEBUG=True`. In production, serve that folder from the web server.
 
@@ -73,7 +97,7 @@ live dashboard re-fetches after changes, at most once every 2 seconds per open t
 | POST | `/api/incidents/` | Provider (`Authorization: Api-Key <key>`; create a Provider in the admin to get one) | Submit an incident. Optional `needs` (codes), `life_threatening`, `people_count`; without `needs` they are read from the SMS keywords in `description`. `validation_status` is ignored: new incidents are always pending |
 | POST | `/api/incidents/report/` | Any signed-in user (non-operators 10/hour) | Report an incident from the web app: `description`, `address`, `contact_number` (Bangladeshi mobile, `+880` normalised to `01…`), `latitude`/`longitude` (inside Bangladesh), optional `needs`, `life_threatening`, `people_count`, `district`, `thana` (ids). District/thana: the ones given, else names in SMS keywords, else the boundaries containing the point. Always pending, `source=web`. Responds `{id, validation_status, created_at}`; 429 when limited |
 | GET | `/api/incidents/places/` | Any signed-in user | Districts with their thanas (`[{id, name, thanas: [{id, name}]}]`) for the report form |
-| GET | `/api/incidents/list/` | Operators | Incidents, newest first, paginated: `{count, next, previous, results}`, 25 per page, `page`, `page_size` (max 500). Filters: `needs=rescue,medical` (any of them), `status`, `task_status` (`closed` = resolved), `event=<id>` or `event=none`, `hazard=<code>`, `life_threatening=true\|false`, `period` (`today` from midnight Bangladesh time, `24h`, `7d`, `event` = attached to an active event), `district`/`thana` (ids), `q` (searches description, address, contact, district, thana and event name). Each result has needs, triage fields, `source`, `district`/`thana` names, `volunteer_count` and `event` with its `hazard`. Bad filter values give 400 |
+| GET | `/api/incidents/list/` | Operators | Incidents, newest first, paginated: `{count, next, previous, results}`, 25 per page, `page`, `page_size` (max 500). Filters: `needs=rescue,medical` (any of them), `status`, `task_status` (`closed` = resolved), `event=<id>` or `event=none`, `hazard=<code>`, `life_threatening=true\|false`, `period` (`today` from midnight Bangladesh time, `24h`, `7d`, `event` = attached to an active event), `district`/`thana` (ids), `q` (searches description, address, contact, district, thana and event name). Each result has needs, triage fields, `source`, `district`/`thana`/`union` names, `volunteer_count` and `event` with its `hazard`. Bad filter values give 400 |
 | GET | `/api/incidents/summary/` | Operators | `{pending, resolved, total}` for the list's filters (status filters ignored, so each dashboard card keeps its count). Resolved = task `closed` |
 | GET | `/api/incidents/<id>/` | Operators | One incident: the list fields plus `provider`, `volunteers` (`[{id, full_name, contact_number, photo}]`), `reported_by` (`{id, name}`) and `updated_at` |
 | PATCH | `/api/incidents/<id>/` | Operators | Any of `validation_status`, `task_status`, `needs`, `life_threatening`, `people_count`, `event`, `volunteers` (ids; replaces the list); responds with the detail shape. Validating queues the SMS task (still a placeholder: no SMS is sent yet) |
@@ -81,7 +105,7 @@ live dashboard re-fetches after changes, at most once every 2 seconds per open t
 | GET · POST | `/api/incidents/notifications/` · `notifications/seen/` | Operators | The bell: `{unread, results}` (10 newest pending reports since the user last opened it; the last 24 hours the first time) · mark all seen |
 | GET | `/api/incidents/need-types/` | Any signed-in user | Active need types (English and Bangla labels, icon, colour) |
 | GET | `/api/incidents/places/manage/divisions/` | Operators | Divisions, for the add-district form |
-| GET · POST | `/api/incidents/places/manage/districts/` · `thanas/?district=<id>` | Operators | Districts (division, `has_boundary`, thana/incident/volunteer counts) or thanas · add one (`name`, `division` or `district`, optional `boundary`) |
+| GET · POST | `/api/incidents/places/manage/districts/` · `thanas/?district=<id>` | Operators | Districts (`code`, division, `has_boundary`, thana/incident/volunteer counts) or thanas · add one (`name`, `division` or `district`, optional `boundary`; the name must be new within its division/district, ignoring case; `code` is read-only and set by the boundary import) |
 | GET · PATCH · DELETE | `/api/incidents/places/manage/districts/<id>/` · `thanas/<id>/` | Operators | One place with its `boundary` (GeoJSON MultiPolygon or null) · rename or set `boundary` (a GeoJSON Polygon or MultiPolygon in Bangladesh; `null` clears it) · delete (409 while incidents, volunteers or events use it) |
 | GET | `/api/events/?active=true` | Operators | Events with their hazard and districts; `active=true` keeps ongoing ones |
 | GET | `/api/volunteers/volunteers/` | Operators | All volunteers (active and inactive): phone, `district`/`thana` (`{id, name}`), `photo`, skills, `assigned_incident_count`. Filters: `active`, `district`, `thana`, `q`; `near=lat,lng` lists nearest first and adds `distance_km` |

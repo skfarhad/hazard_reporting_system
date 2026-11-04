@@ -42,3 +42,11 @@ class WebUIPageTests(TestCase):
         self.assertContains(response, 'id="bell"')
         self.assertContains(response, 'id="avatarButton"')
         self.assertContains(response, 'aria-current="page"><i class="bi bi-geo-alt')
+
+
+class LocationPageTests(TestCase):
+    def test_the_location_page_credits_the_boundary_data(self):
+        response = self.client.get("/app/locations/")
+
+        self.assertContains(response, "Boundaries: OCHA / Bangladesh Bureau of Statistics (CC BY-IGO)")
+        self.assertContains(response, 'href="https://data.humdata.org/dataset/cod-ab-bgd"')

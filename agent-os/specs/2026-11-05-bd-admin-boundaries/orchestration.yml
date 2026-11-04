@@ -1,0 +1,11 @@
+task_groups:
+  - name: Name rules, area codes and the Union model
+    claude_code_subagent: general-purpose
+  - name: Import service and command
+    claude_code_subagent: general-purpose
+  - name: Area assignment for new reports
+    claude_code_subagent: general-purpose
+  - name: API, web app and docs
+    claude_code_subagent: general-purpose
+  - name: Real-data run
+    claude_code_subagent: general-purpose

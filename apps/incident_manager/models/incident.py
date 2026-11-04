@@ -4,7 +4,7 @@ from django.contrib.gis.db import models
 from apps.volunteer_hub.models.volunteer import Volunteer
 from apps.incident_manager.constants import IncidentSource, IncidentStatus, TaskStatus
 from .provider import Provider
-from .address import District, Thana
+from .address import District, Thana, Union
 from .types import NeedType
 
 
@@ -27,6 +27,14 @@ class Incident(models.Model):
     district = models.ForeignKey(
         District,
         null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="incidents",
+    )
+    union = models.ForeignKey(
+        Union,
+        null=True,
+        blank=True,
         default=None,
         on_delete=models.SET_NULL,
         related_name="incidents",

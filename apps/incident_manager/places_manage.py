@@ -59,6 +59,21 @@ def count_of(model, **match):
     return Coalesce(Subquery(rows, output_field=IntegerField()), 0)
 
 
+def check_name_free(serializer, attrs, parent_field, label):
+    """Names repeat across Bangladesh, but not (ignoring case) within one parent: say so instead of a DB error."""
+    instance = serializer.instance
+    name = attrs.get("name", instance.name if instance else None)
+    parent = attrs.get(parent_field, getattr(instance, parent_field, None))
+    if name is None or parent is None:
+        return attrs
+    taken = type(serializer).Meta.model.objects.filter(**{parent_field: parent, "name__iexact": name})
+    if instance is not None:
+        taken = taken.exclude(pk=instance.pk)
+    if taken.exists():
+        raise ValidationError({"name": [f"{parent.name} already has a {label} called {name}."]})
+    return attrs
+
+
 class DivisionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Division
@@ -71,7 +86,11 @@ class DistrictSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        fields = ["id", "name", "division", "boundary"]
+        fields = ["id", "name", "code", "division", "boundary"]
+        read_only_fields = ["code"]  # area codes come from the boundary import
+
+    def validate(self, attrs):
+        return check_name_free(self, attrs, "division", "district")
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -90,7 +109,7 @@ class DistrictRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        fields = ["id", "name", "division", "has_boundary", "thana_count", "incident_count", "volunteer_count"]
+        fields = ["id", "name", "code", "division", "has_boundary", "thana_count", "incident_count", "volunteer_count"]
 
     def get_division(self, obj):
         return nested(obj.division)
@@ -102,7 +121,11 @@ class ThanaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thana
-        fields = ["id", "name", "district", "boundary"]
+        fields = ["id", "name", "code", "district", "boundary"]
+        read_only_fields = ["code"]  # area codes come from the boundary import
+
+    def validate(self, attrs):
+        return check_name_free(self, attrs, "district", "thana")
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -118,7 +141,7 @@ class ThanaRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thana
-        fields = ["id", "name", "district", "has_boundary", "incident_count", "volunteer_count"]
+        fields = ["id", "name", "code", "district", "has_boundary", "incident_count", "volunteer_count"]
 
     def get_district(self, obj):
         return nested(obj.district)

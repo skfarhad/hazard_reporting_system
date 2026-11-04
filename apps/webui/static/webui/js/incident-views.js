@@ -131,9 +131,10 @@ export function incidentDetailsHtml(incident, needTypes) {
     const needs = incidentNeeds(incident, needTypes);
     const needList = (needs.length ? needs : [primaryNeed(incident, needTypes)])
         .map((t) => `<span class="d-inline-flex align-items-center gap-1 me-2">${needIcon(t)}${escapeHtml(t.label_en)}</span>`).join('');
-    // Reported addresses often already end with the thana or district; don't say it twice.
+    // Reported addresses often already end with the union, thana or district; don't say it twice.
     const address = incident.address || '';
-    const extra = [incident.thana, incident.district].filter((name) => name && !address.toLowerCase().includes(name.toLowerCase()));
+    const extra = [incident.union, incident.thana, incident.district]
+        .filter((name) => name && !address.toLowerCase().includes(name.toLowerCase()));
     const place = [address, ...extra].filter(Boolean).map(escapeHtml).join(', ');
     const contact = escapeHtml(incident.contact_number);
 

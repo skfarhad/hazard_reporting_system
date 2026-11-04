@@ -109,6 +109,7 @@ class IncidentListSerializer(serializers.ModelSerializer):
     longitude = serializers.SerializerMethodField()
     district = serializers.CharField(source="district.name", default=None, read_only=True)
     thana = serializers.CharField(source="thana.name", default=None, read_only=True)
+    union = serializers.CharField(source="union.name", default=None, read_only=True)
     # Annotated by the views (Count of volunteers); 0 when a view doesn't annotate it.
     volunteer_count = serializers.IntegerField(default=0, read_only=True)
 
@@ -130,6 +131,7 @@ class IncidentListSerializer(serializers.ModelSerializer):
             "longitude",
             "district",
             "thana",
+            "union",
             "volunteer_count",
             "created_at",
         ]

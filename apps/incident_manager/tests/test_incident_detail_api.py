@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.events.tests.factories import district, event
-from apps.incident_manager.models import Incident, NeedType, Provider, Thana
+from apps.incident_manager.models import Incident, NeedType, Provider, Thana, Union
 from apps.volunteer_hub.models import Volunteer
 
 
@@ -61,6 +61,18 @@ class IncidentDetailApiTests(APITestCase):
 
         self.assertEqual((data["district"], data["thana"], data["provider"], data["volunteers"], data["event"]),
                          (None, None, None, [], None))
+        self.assertIsNone(data["union"])
+
+    def test_incident_details_and_list_include_the_union_name(self):
+        self.incident.union = Union.objects.create(name="Mirzanagar", thana=self.incident.thana)
+        self.incident.save()
+        self.client.force_authenticate(self.operator)
+
+        detail = self.client.get(self.url).data
+        listed = self.client.get(reverse("incident-list")).data["results"]
+
+        self.assertEqual(detail["union"], "Mirzanagar")
+        self.assertEqual([row["union"] for row in listed if row["id"] == self.incident.id], ["Mirzanagar"])
 
     def test_fetching_a_missing_incident_returns_404(self):
         self.client.force_authenticate(self.operator)

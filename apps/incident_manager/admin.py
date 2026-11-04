@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Provider, Incident, NeedType
-from .models import Division, District, Thana
+from .models import Division, District, Thana, Union
 from leaflet.admin import LeafletGeoAdmin
 
 
@@ -36,6 +36,7 @@ class IncidentAdmin(LeafletGeoAdmin):
     )
     list_filter = ("validation_status", "task_status", "life_threatening", "source", "needs", "provider")
     filter_horizontal = ("needs", "volunteers")
+    raw_id_fields = ("union",)  # 5,000+ unions: a lookup, not a dropdown
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "updated_at", "source", "reported_by")
 
@@ -69,3 +70,10 @@ class ThanaAdmin(admin.ModelAdmin):
     list_display = ("name", "district", "description")  # Fields to display in list view
     search_fields = ("name", "description", "district__name")  # Fields to search by
     list_filter = ("district",)  # Fields to filter by
+
+
+@admin.register(Union)
+class UnionAdmin(LeafletGeoAdmin):
+    list_display = ("name", "thana", "code")
+    search_fields = ("name", "code", "thana__name", "thana__district__name")
+    raw_id_fields = ("thana",)
