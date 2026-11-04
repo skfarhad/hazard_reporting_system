@@ -1,13 +1,20 @@
 // Leaflet map of incidents and volunteers. Leaflet is loaded from the CDN as the global `L`.
 import { escapeHtml, formatDateTime } from './utils.js';
 import { BANGLADESH_CENTER, BANGLADESH_ZOOM, STATUS_COLORS, VOLUNTEER_COLOR } from './constants.js';
+import { cssVar } from './theme.js';
 
 export function hasCoordinates(item) {
     return Number.isFinite(item?.latitude) && Number.isFinite(item?.longitude);
 }
 
+// Marker colours come from the design tokens (--hrs-status-*, --hrs-volunteer), so they follow the theme.
 export function incidentMarkerColor(status) {
-    return STATUS_COLORS[status] || STATUS_COLORS.pending;
+    const known = status in STATUS_COLORS ? status : 'pending';
+    return cssVar(`--hrs-status-${known}`, STATUS_COLORS[known]);
+}
+
+export function volunteerMarkerColor() {
+    return cssVar('--hrs-volunteer', VOLUNTEER_COLOR);
 }
 
 export function incidentPopup(i) {
@@ -42,7 +49,7 @@ export function drawMarkers(L, map, incidents, volunteers) {
     ).bindPopup(incidentPopup(i))));
     const volunteerLayer = L.layerGroup(volunteers.filter(hasCoordinates).map((v) => L.circleMarker(
         [v.latitude, v.longitude],
-        { radius: 6, color: VOLUNTEER_COLOR, fillOpacity: 0.8 },
+        { radius: 6, color: volunteerMarkerColor(), fillOpacity: 0.8 },
     ).bindPopup(volunteerPopup(v))));
 
     incidentLayer.addTo(map);

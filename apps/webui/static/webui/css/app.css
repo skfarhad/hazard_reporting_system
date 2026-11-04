@@ -1,29 +1,6 @@
+/* Page layouts. Design tokens and components live in hrs.css. */
 .dashboard-map {
     height: calc(100vh - 290px);
     min-height: 360px;
     border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0;
 }
-
-.legend-dot {
-    display: inline-block;
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 50%;
-    margin-right: 0.35rem;
-    vertical-align: -0.05rem;
-}
-.legend-dot.status-pending { background: #f59f00; }
-.legend-dot.status-validated { background: #d63939; }
-.legend-dot.status-rejected { background: #868e96; }
-.legend-dot.volunteer { background: #2fb344; }
-
-.spinner-overlay {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.5);
-    z-index: 2000;
-}
-.spinner-overlay.d-none { display: none !important; }

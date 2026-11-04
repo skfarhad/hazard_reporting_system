@@ -1,0 +1,157 @@
+{% extends "webui/base.html" %}
+{% load static %}
+{% block title %}Design system · Hazard Reporting System{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
+  <div>
+    <p class="hrs-eyebrow mb-1">Reference</p>
+    <h1 class="mb-1">HRS design system</h1>
+    <p class="text-secondary mb-0">Tokens and components from <code>hrs.css</code>. Use the theme button to check both themes.</p>
+  </div>
+</div>
+
+<section class="mb-5">
+  <h2 class="mb-3">Colour</h2>
+  <div class="row g-3 mb-3" id="swatches"></div>
+  <p class="small text-secondary mb-0">Status and volunteer colours are shared by map markers, badges, dots and list items.</p>
+</section>
+
+<section class="mb-5">
+  <h2 class="mb-3">Type</h2>
+  <div class="hrs-card p-4">
+    <p class="hrs-eyebrow mb-2">Eyebrow · 12 / 600 / caps</p>
+    <p class="hrs-display mb-2">Display · 28 / 700</p>
+    <h1>Heading 1 · 24 / 700</h1>
+    <h2>Heading 2 · 20 / 700</h2>
+    <h3>Heading 3 · 18 / 700</h3>
+    <h4>Heading 4 · 16 / 600</h4>
+    <p class="mb-1">Body · 15 / 400. Family stranded on the roof, water rising fast near the school.</p>
+    <p class="mb-1" lang="bn">বাংলা · Noto Sans Bengali: বাড়ির ছাদে পরিবার আটকে আছে, পানি দ্রুত বাড়ছে।</p>
+    <p class="small text-secondary mb-1">Small · 13 · muted. 12 min ago · Mirpur, Dhaka</p>
+    <p class="mb-0 hrs-mono">Mono · 01712-345678 · 23.8103, 90.4125</p>
+  </div>
+</section>
+
+<section class="mb-5">
+  <h2 class="mb-3">Buttons</h2>
+  <div class="hrs-card p-4 d-flex flex-wrap gap-2 align-items-center">
+    <button class="btn btn-primary"><i class="bi bi-check2-circle"></i>Validate</button>
+    <button class="btn btn-outline-danger"><i class="bi bi-x-circle"></i>Reject</button>
+    <button class="btn btn-danger"><i class="bi bi-broadcast"></i>Dispatch</button>
+    <button class="btn btn-success"><i class="bi bi-check2"></i>Resolved</button>
+    <button class="btn btn-outline-primary">Outline</button>
+    <button class="btn btn-outline-secondary">Secondary</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn btn-ghost btn-icon" aria-label="Refresh"><i class="bi bi-arrow-clockwise"></i></button>
+    <button class="btn btn-primary btn-sm">Small</button>
+    <button class="btn btn-primary btn-lg">Large</button>
+    <button class="btn btn-primary" disabled>Disabled</button>
+  </div>
+</section>
+
+<section class="mb-5">
+  <h2 class="mb-3">Status</h2>
+  <div class="hrs-card p-4">
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <span class="hrs-badge hrs-badge-pending"><span class="hrs-dot hrs-dot-pending"></span>pending</span>
+      <span class="hrs-badge hrs-badge-validated"><span class="hrs-dot hrs-dot-validated"></span>validated</span>
+      <span class="hrs-badge hrs-badge-rejected"><span class="hrs-dot hrs-dot-rejected"></span>rejected</span>
+      <span class="hrs-badge hrs-badge-volunteer"><span class="hrs-dot hrs-dot-volunteer"></span>volunteer</span>
+      <span class="hrs-badge">neutral</span>
+    </div>
+    <p class="hrs-eyebrow mb-2">Stat chips</p>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <span class="hrs-chip"><span class="hrs-dot hrs-dot-pending"></span><span class="hrs-chip-count">12</span><span class="hrs-chip-label">pending</span></span>
+      <span class="hrs-chip"><span class="hrs-dot hrs-dot-validated"></span><span class="hrs-chip-count">5</span><span class="hrs-chip-label">validated</span></span>
+      <span class="hrs-chip"><span class="hrs-dot hrs-dot-volunteer"></span><span class="hrs-chip-count">34</span><span class="hrs-chip-label">volunteers</span></span>
+    </div>
+    <p class="hrs-eyebrow mb-2">Filter chips (aria-pressed)</p>
+    <div class="d-flex flex-wrap gap-2" data-chip-group>
+      <button class="hrs-chip" type="button" aria-pressed="true">All</button>
+      <button class="hrs-chip" type="button" aria-pressed="false"><span class="hrs-dot hrs-dot-pending"></span>Pending</button>
+      <button class="hrs-chip" type="button" aria-pressed="false"><span class="hrs-dot hrs-dot-validated"></span>Validated</button>
+      <button class="hrs-chip" type="button" aria-pressed="false"><span class="hrs-dot hrs-dot-rejected"></span>Rejected</button>
+    </div>
+  </div>
+</section>
+
+<section class="mb-5">
+  <h2 class="mb-3">Incident list and stats</h2>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="hrs-card overflow-hidden">
+        <ul class="hrs-list">
+          <li><button class="hrs-list-item is-new" type="button">
+            <span class="hrs-dot hrs-dot-pending"></span>
+            <span class="flex-grow-1"><span class="hrs-list-title">Water entering the house, elderly parents inside</span>
+            <span class="hrs-list-meta d-block">Mirpur, Dhaka · 2 min ago</span></span>
+          </button></li>
+          <li><button class="hrs-list-item" type="button" aria-current="true">
+            <span class="hrs-dot hrs-dot-validated"></span>
+            <span class="flex-grow-1"><span class="hrs-list-title">Family of five stranded on roof</span>
+            <span class="hrs-list-meta d-block">Sylhet Sadar · 12 min ago · selected</span></span>
+          </button></li>
+          <li><button class="hrs-list-item" type="button">
+            <span class="hrs-dot hrs-dot-rejected"></span>
+            <span class="flex-grow-1"><span class="hrs-list-title">Test message</span>
+            <span class="hrs-list-meta d-block">Unknown · 1 h ago</span></span>
+          </button></li>
+        </ul>
+        <div class="hrs-empty border-top"><i class="bi bi-inbox"></i>Empty state: no incidents match.</div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="hrs-card p-4 d-flex gap-4 flex-wrap mb-3">
+        <div class="hrs-stat"><span class="hrs-stat-value">41</span><span class="hrs-stat-label">Incidents today</span></div>
+        <div class="hrs-stat"><span class="hrs-stat-value text-warning">12</span><span class="hrs-stat-label">Pending</span></div>
+        <div class="hrs-stat"><span class="hrs-stat-value text-success">34</span><span class="hrs-stat-label">Volunteers</span></div>
+      </div>
+      <div class="hrs-card p-4">
+        <div class="row g-3">
+          <div class="col-6 hrs-field"><span class="hrs-field-label">Contact</span><span class="hrs-mono">01712-345678</span></div>
+          <div class="col-6 hrs-field"><span class="hrs-field-label">Reported</span><span>12 min ago</span></div>
+          <div class="col-12 hrs-field"><span class="hrs-field-label">Address</span><span>Sylhet Sadar, Sylhet</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mb-5">
+  <h2 class="mb-3">Forms and feedback</h2>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="hrs-card p-4">
+        <div class="hrs-search mb-3"><i class="bi bi-search"></i><input class="form-control" placeholder="Search description, address, phone"></div>
+        <label class="form-label" for="dsSelect">Status</label>
+        <select id="dsSelect" class="form-select mb-3"><option>All statuses</option><option>Pending</option></select>
+        <ul class="nav nav-pills hrs-segmented" role="tablist">
+          <li class="nav-item flex-fill"><button class="nav-link active w-100" type="button">Map</button></li>
+          <li class="nav-item flex-fill"><button class="nav-link w-100" type="button">List</button></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="alert alert-danger d-flex gap-2"><i class="bi bi-exclamation-octagon"></i>Could not reach the server. Retrying in 30 s.</div>
+      <div class="alert alert-warning d-flex gap-2"><i class="bi bi-hourglass-split"></i>12 incidents are waiting for validation.</div>
+      <div class="alert alert-success d-flex gap-2 mb-0"><i class="bi bi-check2-circle"></i>Incident validated. Volunteers will be alerted.</div>
+    </div>
+  </div>
+</section>
+
+<section class="mb-5">
+  <h2 class="mb-3">Table</h2>
+  <div class="hrs-card overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead><tr><th>Reported</th><th>Description</th><th>Contact</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="small text-nowrap">2 min ago</td><td>Water entering the house</td><td class="hrs-mono">01712-345678</td><td><span class="hrs-badge hrs-badge-pending"><span class="hrs-dot hrs-dot-pending"></span>pending</span></td></tr>
+          <tr><td class="small text-nowrap">12 min ago</td><td>Family stranded on roof</td><td class="hrs-mono">01811-223344</td><td><span class="hrs-badge hrs-badge-validated"><span class="hrs-dot hrs-dot-validated"></span>validated</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'webui/js/design.js' %}"></script>{% endblock %}

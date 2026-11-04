@@ -1,7 +1,7 @@
 // Filtering, summaries and table rows for incidents and volunteers (no DOM access).
 import { escapeHtml, formatDateTime } from './utils.js';
 
-const STATUS_BADGES = { pending: 'text-bg-warning', validated: 'text-bg-danger', rejected: 'text-bg-secondary' };
+const STATUSES = ['pending', 'validated', 'rejected'];
 
 function matches(query, values) {
     const q = query.trim().toLowerCase();
@@ -28,8 +28,9 @@ export function summarize(incidents, volunteers) {
 }
 
 export function statusBadge(status) {
-    const css = STATUS_BADGES[status] || 'text-bg-light';
-    return `<span class="badge ${css}">${escapeHtml(status)}</span>`;
+    const css = STATUSES.includes(status) ? `hrs-badge-${status}` : '';
+    const dot = STATUSES.includes(status) ? `<span class="hrs-dot hrs-dot-${status}"></span>` : '';
+    return `<span class="hrs-badge ${css}">${dot}${escapeHtml(status)}</span>`;
 }
 
 export function incidentRow(i) {

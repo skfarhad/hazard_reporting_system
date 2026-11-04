@@ -19,6 +19,15 @@ class WebUIPageTests(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertContains(response, module)
 
+    def test_every_page_loads_the_design_system_and_theme_toggle(self):
+        for path in [*self.PAGES, "/app/design/"]:
+            with self.subTest(path=path):
+                response = self.client.get(path)
+
+                self.assertEqual(response.status_code, 200)
+                self.assertContains(response, "webui/css/hrs.css")
+                self.assertContains(response, "webui/js/theme.js")
+
     def test_root_redirects_to_the_dashboard(self):
         response = self.client.get("/")
 

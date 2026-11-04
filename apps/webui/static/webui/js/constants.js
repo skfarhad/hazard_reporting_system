@@ -13,9 +13,10 @@ export const HOME_PAGE = '/app/';
 export const BANGLADESH_CENTER = [23.685, 90.3563];
 export const BANGLADESH_ZOOM = 7;
 
+// Fallbacks only: the live colours are the --hrs-status-* / --hrs-volunteer tokens in hrs.css.
 export const STATUS_COLORS = {
-    pending: '#f59f00',
-    validated: '#d63939',
-    rejected: '#868e96',
+    pending: '#F59E0B',
+    validated: '#DC2626',
+    rejected: '#64748B',
 };
-export const VOLUNTEER_COLOR = '#2fb344';
+export const VOLUNTEER_COLOR = '#16A34A';
