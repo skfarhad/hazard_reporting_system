@@ -1,0 +1,17 @@
+.git
+.github
+.claude
+.vscode
+.env
+**/__pycache__
+*.pyc
+node_modules
+staticfiles
+media
+docs
+dev_ops_pipeline
+*.jpg
+*.jpeg
+*.png
+*.drawio
+!apps/**/static/**
