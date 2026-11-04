@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { hasCoordinates, incidentMarkerColor, incidentPopup, drawMarkers } from './map.js';
+import { hasCoordinates, incidentMarkerColor, incidentPopup, drawMarkers, createMap } from './map.js';
 import { STATUS_COLORS } from './constants.js';
 
 describe('map helpers', () => {
@@ -50,5 +50,23 @@ describe('drawMarkers', () => {
         drawMarkers(L, map, [], []);
 
         expect(map.fitBounds).not.toHaveBeenCalled();
+    });
+});
+
+describe('createMap', () => {
+    it('requests OSM tiles from the single host and sends the site origin as referrer', () => {
+        // OSM blocks tile requests without a Referer, and Django's default
+        // Referrer-Policy (same-origin) strips it from cross-site requests.
+        const tiles = { addTo: vi.fn() };
+        const L = {
+            map: vi.fn(() => ({ setView: vi.fn().mockReturnThis() })),
+            tileLayer: vi.fn(() => tiles),
+        };
+
+        createMap(L, document.createElement('div'));
+
+        const [url, options] = L.tileLayer.mock.calls[0];
+        expect(url).toBe('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
+        expect(options.referrerPolicy).toBe('strict-origin-when-cross-origin');
     });
 });

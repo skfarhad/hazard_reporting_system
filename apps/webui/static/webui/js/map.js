@@ -24,8 +24,11 @@ export function volunteerPopup(v) {
 
 export function createMap(L, element) {
     const map = L.map(element).setView(BANGLADESH_CENTER, BANGLADESH_ZOOM);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // OSM's tile policy requires a Referer; Django's default Referrer-Policy
+    // (same-origin) would strip it, so send the site origin on tile requests.
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
+        referrerPolicy: 'strict-origin-when-cross-origin',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
     return map;
