@@ -1,7 +1,7 @@
 # Task Breakdown: Report an incident from the web app for staff review
 
 **Spec**: `2026-11-04-report-incident-from-dashboard`
-**Status**: Ready for Implementation
+**Status**: Implemented (awaiting `/run-tests`)
 
 Django: `docker compose exec be python manage.py test apps.incident_manager.tests.<module>`.
 Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm test`.
@@ -122,12 +122,45 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 ### Task Group 7: Verification and docs
 
 **Priority**: High
-- [ ] `docker compose exec be python manage.py test apps` and `npm test` green
-- [ ] Browser check per spec "Manual" list; remove test data afterwards
-- [ ] Docs: `docs/development.md`, `docs/design-system.md`
-- [ ] Record results here
+- [x] `docker compose exec be python manage.py test apps` and `npm test` green
+- [x] Browser check per spec "Manual" list; remove test data afterwards
+- [x] Docs: `docs/development.md`, `docs/design-system.md`
+- [x] Record results here
 
 ---
+
+## Session Notes (2026-11-04, /execute)
+
+**Results**
+- Django: 160 tests, all passing (new: `test_incident_report_api.py` 22, `test_places_api.py` 3,
+  `test_incident_model_source.py` 1, provider status 1, need types 2, source/reporter 1).
+- Vitest: 11 files, 99 tests, all passing (new: `report-form.test.js` 10; panel, Web badge,
+  reporter in details, `drawMarkers` return value).
+- The provider-path refactor into `services/incidents.py` was done under the existing provider,
+  parser and event tests (all green before and after).
+
+**Browser check (headless Chromium; temporary reports and viewer1's phone removed afterwards)**
+- Operator, Incidents page 1280 light: Report button, empty-submit errors with focus on the first
+  field, district -> thana, fake GPS places the pin, submit -> "Report #34 sent for staff review.",
+  new row first: Rescue, 4 people, pending, Web badge, event attached.
+- Non-operator (viewer1), dashboard 375 dark: report panel instead of data, profile phone
+  pre-filled, map tap moves the pin, full-screen form, submit -> toast.
+- Denied geolocation message; faked 429 -> form-level message (form stays open); faked 400 -> field
+  error next to Thana.
+
+**Decisions made while implementing**
+- A thana chosen without a district also sets its district (test added).
+- Boundary detection lives in the shared service, so provider reports get it too once boundary
+  shapes are loaded.
+- The dashboard "Total incidents" card now uses the API's total instead of the loaded page.
+- `operatorAccessNotice` removed (replaced by `reportPanelHtml` on both pages).
+- `drawMarkers` returns its layers so the dashboard can redraw after a report.
+
+**Known limits**
+- The existing global API throttle (`THROTTLE_RATE`, default 100/hour per user; 1000/hour in
+  `example.env`) also applies to operators' normal browsing.
+- Throttle counters use the default local-memory cache (per process).
+- No district/thana boundary shapes are loaded yet, so detection from the pin is inactive in dev.
 
 ## Execution Order
 

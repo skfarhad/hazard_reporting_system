@@ -1,6 +1,6 @@
 # Specification: Report an incident from the web app for staff review
 
-**Status:** Planned, ready for `/execute`
+**Status:** Implemented, awaiting `/run-tests`
 
 ## Executive Summary
 
@@ -40,9 +40,9 @@ of the access notice, and are rate-limited. The provider API also stops acceptin
 3. Operators see web reports (badge, reporter); providers can no longer skip review.
 
 ### Success Criteria
-- [ ] Acceptance criteria in `planning/requirements.md` met.
-- [ ] Every test under Testing Strategy written first, watched fail, passing.
-- [ ] Browser-checked as operator and non-operator, desktop and phone, light and dark.
+- [x] Acceptance criteria in `planning/requirements.md` met.
+- [x] Every test under Testing Strategy written first, watched fail, passing.
+- [x] Browser-checked as operator and non-operator, desktop and phone, light and dark.
 
 ### Non-Goals
 - Anonymous reporting, attachments, "My reports", SMS confirmation, loading boundary shapes.

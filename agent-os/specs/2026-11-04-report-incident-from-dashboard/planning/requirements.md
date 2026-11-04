@@ -77,17 +77,17 @@ quick actions.
 
 ## Acceptance Criteria
 
-- [ ] "Report incident" is on the dashboard and the Incidents page for operators and non-operators.
-- [ ] Non-operators see the report panel, not incident data.
-- [ ] A valid report creates a pending incident with `source=web`, `reported_by`, needs, triage
+- [x] "Report incident" is on the dashboard and the Incidents page for operators and non-operators.
+- [x] Non-operators see the report panel, not incident data.
+- [x] A valid report creates a pending incident with `source=web`, `reported_by`, needs, triage
       fields, contact (normalised), address, district/thana and location; attached to an active
       event when one covers the district.
-- [ ] Clients cannot set the status (web and provider APIs).
-- [ ] Invalid input (missing message/address/location, bad phone, outside Bangladesh, thana not in
+- [x] Clients cannot set the status (web and provider APIs).
+- [x] Invalid input (missing message/address/location, bad phone, outside Bangladesh, thana not in
       district, bad people count, unknown need) gives errors next to the fields.
-- [ ] Non-operators are limited to 10 reports per hour; operators are not.
-- [ ] Operators see the "Web" badge and reporter, and can validate/reject it.
-- [ ] Tests written first and passing.
+- [x] Non-operators are limited to 10 reports per hour; operators are not.
+- [x] Operators see the "Web" badge and reporter, and can validate/reject it.
+- [x] Tests written first and passing.
 
 ## Out of Scope (unless `/plan` decides otherwise)
 
