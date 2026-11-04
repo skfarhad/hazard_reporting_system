@@ -1,8 +1,12 @@
-from django.db.models import Prefetch
+from datetime import timedelta
+
+from django.db.models import Count, Prefetch, Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import no_body, swagger_auto_schema
 from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
@@ -10,12 +14,16 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from apps.volunteer_hub.models import Volunteer
+
+from .constants import IncidentStatus, TaskStatus
 from .filters import IncidentFilter
 from .models import District, Incident, NeedType, Provider, Thana
 from .pagination import IncidentPagination
 from .serializers import (
     DistrictOptionSerializer, IncidentDetailSerializer, IncidentListSerializer, IncidentOperatorSerializer,
-    IncidentReportSerializer, IncidentSerializer, NeedTypeSerializer,
+    IncidentReportSerializer, IncidentSerializer, NeedTypeSerializer, NotificationSerializer,
+    VolunteerAssignmentSerializer,
 )
 
 
@@ -135,6 +143,7 @@ class IncidentListView(generics.ListAPIView):
     queryset = (
         Incident.objects.select_related("event__hazard", "district", "thana")
         .prefetch_related("needs")
+        .annotate(volunteer_count=Count("volunteers", distinct=True))
         .order_by("-created_at", "-id")
     )
 
@@ -146,6 +155,44 @@ class IncidentListView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
 
+class IncidentSummaryView(APIView):
+    """Pending / Resolved / Total counts for the dashboard cards, over the list's filters.
+
+    The status filters are ignored, so each card keeps its own count whichever card is selected.
+    """
+
+    permission_classes = [IsAdminUser]
+    IGNORED_FILTERS = ("status", "task_status")
+
+    @swagger_auto_schema(
+        operation_description="Counts of pending, resolved (task closed) and all incidents for the given filters",
+        responses={200: "{pending, resolved, total}", 400: "Bad filter", 403: "Not an operator"},
+    )
+    def get(self, request, *args, **kwargs):
+        params = request.query_params.copy()
+        for name in self.IGNORED_FILTERS:
+            params.pop(name, None)
+        incidents = IncidentFilter(params, queryset=Incident.objects.all())
+        if not incidents.is_valid():
+            raise ValidationError(incidents.errors)
+        return Response(incidents.qs.aggregate(
+            pending=Count("id", filter=Q(validation_status=IncidentStatus.PENDING.value)),
+            resolved=Count("id", filter=Q(task_status=TaskStatus.CLOSED.value)),
+            total=Count("id"),
+        ))
+
+
+def incident_details(request, pk):
+    """The details shape for one incident, with its volunteers (by name) and their count."""
+    incident = get_object_or_404(
+        Incident.objects.select_related("event__hazard", "district", "thana", "provider", "reported_by")
+        .prefetch_related("needs", Prefetch("volunteers", queryset=Volunteer.objects.order_by("full_name", "id")))
+        .annotate(volunteer_count=Count("volunteers", distinct=True)),
+        pk=pk,
+    )
+    return IncidentDetailSerializer(incident, context={"request": request}).data
+
+
 class IncidentDetailView(APIView):
     """Operators read one incident, and validate, reject or update it.
 
@@ -154,17 +201,13 @@ class IncidentDetailView(APIView):
     """
 
     permission_classes = [IsAdminUser]
-    queryset = (
-        Incident.objects.select_related("event__hazard", "district", "thana", "provider", "volunteer", "reported_by")
-        .prefetch_related("needs")
-    )
 
     @swagger_auto_schema(
-        operation_description="One incident with its needs, event, places, provider and volunteer (operators only)",
+        operation_description="One incident with its needs, event, places, provider and volunteers (operators only)",
         responses={200: IncidentDetailSerializer, 403: "Not an operator", 404: "Not found"},
     )
     def get(self, request, pk, *args, **kwargs):
-        return Response(IncidentDetailSerializer(get_object_or_404(self.queryset, pk=pk)).data)
+        return Response(incident_details(request, pk))
 
     @swagger_auto_schema(
         operation_description="Update an incident's validation or task status (operators only)",
@@ -176,7 +219,73 @@ class IncidentDetailView(APIView):
         serializer = IncidentOperatorSerializer(incident, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response(incident_details(request, pk))
+
+
+class IncidentVolunteersView(APIView):
+    """Operators assign one more volunteer to an incident. Assigning someone twice changes nothing."""
+
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(
+        request_body=VolunteerAssignmentSerializer,
+        responses={200: "{volunteer_count}", 400: "Unknown volunteer", 403: "Not an operator", 404: "Not found"},
+    )
+    def post(self, request, pk, *args, **kwargs):
+        incident = get_object_or_404(Incident, pk=pk)
+        serializer = VolunteerAssignmentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        incident.volunteers.add(serializer.validated_data["volunteer"])
+        return Response({"volunteer_count": incident.volunteers.count()})
+
+
+class IncidentVolunteerView(APIView):
+    """Operators unassign one volunteer from an incident."""
+
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(responses={204: "Unassigned", 403: "Not an operator", 404: "Not assigned"})
+    def delete(self, request, pk, volunteer_id, *args, **kwargs):
+        incident = get_object_or_404(Incident, pk=pk)
+        assigned = get_object_or_404(incident.volunteers, pk=volunteer_id)
+        incident.volunteers.remove(assigned)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class NotificationsView(APIView):
+    """New pending reports for the navbar bell: those created since the operator last opened it.
+
+    Someone who has never opened the bell sees the last 24 hours.
+    """
+
+    permission_classes = [IsAdminUser]
+    LIMIT = 10
+    FIRST_LOOK_BACK = timedelta(hours=24)
+
+    @swagger_auto_schema(responses={200: "{unread, results: [10 newest]}", 403: "Not an operator"})
+    def get(self, request, *args, **kwargs):
+        since = request.user.notifications_seen_at or timezone.now() - self.FIRST_LOOK_BACK
+        unread = (
+            Incident.objects.filter(validation_status=IncidentStatus.PENDING.value, created_at__gt=since)
+            .select_related("district", "thana")
+            .order_by("-created_at", "-id")
+        )
+        return Response({
+            "unread": unread.count(),
+            "results": NotificationSerializer(unread[: self.LIMIT], many=True).data,
+        })
+
+
+class NotificationsSeenView(APIView):
+    """The operator opened the bell: nothing before now is unread any more."""
+
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(request_body=no_body, responses={200: "{unread: 0}", 403: "Not an operator"})
+    def post(self, request, *args, **kwargs):
+        request.user.notifications_seen_at = timezone.now()
+        request.user.save(update_fields=["notifications_seen_at"])
+        return Response({"unread": 0})
 
 
 class NeedTypeListView(APIView):

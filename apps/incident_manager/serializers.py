@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.gis.geos import Point
 
+from apps.volunteer_hub.models import Volunteer
+
 from .constants import IncidentSource
 from .models import District, Incident, NeedType, Thana
 from .services.incidents import create_incident
@@ -105,6 +107,10 @@ class IncidentListSerializer(serializers.ModelSerializer):
     event = serializers.SerializerMethodField()
     latitude = serializers.SerializerMethodField()
     longitude = serializers.SerializerMethodField()
+    district = serializers.CharField(source="district.name", default=None, read_only=True)
+    thana = serializers.CharField(source="thana.name", default=None, read_only=True)
+    # Annotated by the views (Count of volunteers); 0 when a view doesn't annotate it.
+    volunteer_count = serializers.IntegerField(default=0, read_only=True)
 
     class Meta:
         model = Incident
@@ -122,6 +128,9 @@ class IncidentListSerializer(serializers.ModelSerializer):
             "source",
             "latitude",
             "longitude",
+            "district",
+            "thana",
+            "volunteer_count",
             "created_at",
         ]
         read_only_fields = fields
@@ -143,27 +152,31 @@ class IncidentListSerializer(serializers.ModelSerializer):
         return obj.location.x if obj.location else None
 
 
-class IncidentDetailSerializer(IncidentListSerializer):
-    """One incident for the operator details view: the list fields plus places, source and volunteer."""
+class AssignedVolunteerSerializer(serializers.ModelSerializer):
+    """A volunteer assigned to an incident, as shown in the incident details."""
 
-    district = serializers.CharField(source="district.name", default=None, read_only=True)
-    thana = serializers.CharField(source="thana.name", default=None, read_only=True)
+    class Meta:
+        model = Volunteer
+        fields = ["id", "full_name", "contact_number", "photo"]
+        read_only_fields = fields
+
+
+class IncidentDetailSerializer(IncidentListSerializer):
+    """One incident for the operator details view: the list fields plus places, source and volunteers."""
+
     provider = serializers.CharField(source="provider.name", default=None, read_only=True)
-    volunteer = serializers.SerializerMethodField()
+    volunteers = AssignedVolunteerSerializer(many=True, read_only=True)
     reported_by = serializers.SerializerMethodField()
 
     class Meta(IncidentListSerializer.Meta):
         fields = IncidentListSerializer.Meta.fields + [
-            "district", "thana", "provider", "volunteer", "reported_by", "updated_at",
+            "provider", "volunteers", "reported_by", "updated_at",
         ]
         read_only_fields = fields
 
     def get_reported_by(self, obj):
         user = obj.reported_by
         return {"id": user.id, "name": user.full_name or user.username} if user else None
-
-    def get_volunteer(self, obj):
-        return {"id": obj.volunteer.id, "full_name": obj.volunteer.full_name} if obj.volunteer else None
 
 
 class IncidentOperatorSerializer(serializers.ModelSerializer):
@@ -172,13 +185,27 @@ class IncidentOperatorSerializer(serializers.ModelSerializer):
     needs = serializers.SlugRelatedField(
         slug_field="code", many=True, allow_empty=False, queryset=NeedType.objects.filter(is_active=True),
     )
+    volunteers = serializers.PrimaryKeyRelatedField(many=True, queryset=Volunteer.objects.all())
 
     class Meta:
         model = Incident
-        fields = ["validation_status", "task_status", "needs", "life_threatening", "people_count", "event"]
+        fields = ["validation_status", "task_status", "needs", "life_threatening", "people_count", "event", "volunteers"]
 
-    def to_representation(self, instance):
-        return IncidentDetailSerializer(instance, context=self.context).data
+
+class NotificationSerializer(serializers.ModelSerializer):
+    """A new pending report, as listed under the navbar bell."""
+
+    district = serializers.CharField(source="district.name", default=None, read_only=True)
+    thana = serializers.CharField(source="thana.name", default=None, read_only=True)
+
+    class Meta:
+        model = Incident
+        fields = ["id", "description", "district", "thana", "address", "created_at"]
+        read_only_fields = fields
+
+
+class VolunteerAssignmentSerializer(serializers.Serializer):
+    volunteer = serializers.PrimaryKeyRelatedField(queryset=Volunteer.objects.all())
 
 
 class NeedTypeSerializer(serializers.ModelSerializer):

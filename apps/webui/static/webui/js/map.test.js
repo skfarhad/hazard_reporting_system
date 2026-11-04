@@ -131,11 +131,11 @@ describe('incidentIcon', () => {
 
 describe('drawMarkers', () => {
     function fakeLeaflet() {
-        const marker = { bindPopup: vi.fn().mockReturnThis() };
+        const makeMarker = () => ({ bindPopup: vi.fn().mockReturnThis(), on: vi.fn().mockReturnThis() });
         const layer = { addTo: vi.fn().mockReturnThis() };
         return {
-            circleMarker: vi.fn(() => marker),
-            marker: vi.fn(() => marker),
+            circleMarker: vi.fn(makeMarker),
+            marker: vi.fn(makeMarker),
             divIcon: vi.fn((opts) => opts),
             layerGroup: vi.fn(() => layer),
             control: { layers: vi.fn(() => ({ addTo: vi.fn().mockReturnThis() })) },
@@ -183,8 +183,67 @@ describe('drawMarkers', () => {
 
         const drawn = drawMarkers(L, { fitBounds: vi.fn() }, [], []);
 
-        expect(drawn).toHaveLength(3);
-        drawn.forEach((layer) => expect(layer).toBeDefined());
+        expect(drawn.layers).toHaveLength(3);
+        drawn.layers.forEach((layer) => expect(layer).toBeDefined());
+    });
+
+    it('returns each incident and volunteer marker by id, so the page can open or pan to one', () => {
+        const L = fakeLeaflet();
+
+        const drawn = drawMarkers(L, { fitBounds: vi.fn() },
+            [{ id: 7, latitude: 23.8, longitude: 90.4 }, { id: 8, latitude: null, longitude: null }],
+            [{ id: 3, latitude: 24.9, longitude: 91.9, is_active: true }]);
+
+        expect([...drawn.incidentMarkers.keys()]).toEqual([7]);
+        expect(drawn.incidentMarkers.get(7)).toBe(L.marker.mock.results[0].value);
+        expect([...drawn.volunteerMarkers.keys()]).toEqual([3]);
+    });
+
+    it('uses the page\'s popup and click handler for incidents when given', () => {
+        const L = fakeLeaflet();
+        const onIncidentClick = vi.fn();
+        const incident = { id: 7, latitude: 23.8, longitude: 90.4 };
+
+        drawMarkers(L, { fitBounds: vi.fn() }, [incident], [], NEED_TYPES, {
+            incidentPopup: (i) => `card ${i.id}`, onIncidentClick,
+        });
+        const marker = L.marker.mock.results[0].value;
+        const [event, handler] = marker.on.mock.calls[0];
+        handler();
+
+        expect(marker.bindPopup.mock.calls[0][0]).toBe('card 7');
+        expect(event).toBe('click');
+        expect(onIncidentClick).toHaveBeenCalledWith(incident);
+    });
+
+    it('passes the page\'s popup options on, e.g. padding that keeps popups clear of buttons over the map', () => {
+        const L = fakeLeaflet();
+        const popupOptions = { autoPanPaddingBottomRight: [20, 90] };
+
+        drawMarkers(L, { fitBounds: vi.fn() }, [{ id: 1, latitude: 23.8, longitude: 90.4 }], [], [], { popupOptions });
+
+        expect(L.marker.mock.results[0].value.bindPopup.mock.calls[0][1]).toBe(popupOptions);
+    });
+
+    it('can keep the current view instead of zooming to the markers', () => {
+        const map = { fitBounds: vi.fn() };
+
+        drawMarkers(fakeLeaflet(), map, [{ id: 1, latitude: 23.8, longitude: 90.4 }], [], [], { fit: false });
+
+        expect(map.fitBounds).not.toHaveBeenCalled();
+    });
+
+    it('draws inactive volunteers grey and active ones in the volunteer colour', () => {
+        const L = fakeLeaflet();
+
+        drawMarkers(L, { fitBounds: vi.fn() }, [], [
+            { id: 1, latitude: 24.9, longitude: 91.9, is_active: true },
+            { id: 2, latitude: 24.8, longitude: 91.8, is_active: false },
+        ]);
+
+        const [active, inactive] = L.circleMarker.mock.calls.map(([, options]) => options.color);
+        expect(active).toBe('#16A34A');
+        expect(inactive).toBe('#94A3B8');
     });
 
     it('keeps the default view when nothing has coordinates', () => {

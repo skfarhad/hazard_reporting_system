@@ -1,6 +1,8 @@
 // Leaflet map of incidents and volunteers. Leaflet is loaded from the CDN as the global `L`.
 import { escapeHtml, formatDateTime } from './utils.js';
-import { BANGLADESH_CENTER, BANGLADESH_ZOOM, GENERIC_NEED, STATUS_COLORS, VOLUNTEER_COLOR } from './constants.js';
+import {
+    BANGLADESH_CENTER, BANGLADESH_ZOOM, GENERIC_NEED, STATUS_COLORS, VOLUNTEER_COLOR, INACTIVE_VOLUNTEER_COLOR,
+} from './constants.js';
 import { cssVar } from './theme.js';
 
 export function hasCoordinates(item) {
@@ -66,8 +68,10 @@ export function incidentIcon(L, incident, needTypes) {
 }
 
 // The volunteer colour comes from the design token, so it follows the theme.
-export function volunteerMarkerColor() {
-    return cssVar('--hrs-volunteer', VOLUNTEER_COLOR);
+export function volunteerMarkerColor(volunteer = {}) {
+    return volunteer.is_active === false
+        ? cssVar('--hrs-volunteer-inactive', INACTIVE_VOLUNTEER_COLOR)
+        : cssVar('--hrs-volunteer', VOLUNTEER_COLOR);
 }
 
 export function incidentPopup(i, needTypes = []) {
@@ -101,23 +105,37 @@ export function createMap(L, element) {
     return map;
 }
 
-// Draws both layers with a toggle, and zooms to the markers when there are any. Returns the layers
-// and the toggle so a page can `.remove()` them before drawing fresh data.
-export function drawMarkers(L, map, incidents, volunteers, needTypes = []) {
-    const incidentLayer = L.layerGroup(incidents.filter(hasCoordinates).map((i) => L.marker(
-        [i.latitude, i.longitude],
-        { icon: incidentIcon(L, i, needTypes), riseOnHover: true, zIndexOffset: i.life_threatening ? 1000 : 0 },
-    ).bindPopup(incidentPopup(i, needTypes))));
-    const volunteerLayer = L.layerGroup(volunteers.filter(hasCoordinates).map((v) => L.circleMarker(
-        [v.latitude, v.longitude],
-        { radius: 6, color: volunteerMarkerColor(), fillOpacity: 0.8 },
-    ).bindPopup(volunteerPopup(v))));
+// Draws both layers with a toggle, and zooms to the markers when there are any (unless `fit` is false).
+// `incidentPopup(i)`, `popupOptions` and `onIncidentClick(i)` let a page use its own popup and react to clicks.
+// Returns the layers and the toggle (to `.remove()` before drawing fresh data) and the markers by id.
+export function drawMarkers(L, map, incidents, volunteers, needTypes = [], options = {}) {
+    const popup = options.incidentPopup || ((i) => incidentPopup(i, needTypes));
+    const incidentMarkers = new Map();
+    const volunteerMarkers = new Map();
+
+    const incidentLayer = L.layerGroup(incidents.filter(hasCoordinates).map((i) => {
+        const marker = L.marker(
+            [i.latitude, i.longitude],
+            { icon: incidentIcon(L, i, needTypes), riseOnHover: true, zIndexOffset: i.life_threatening ? 1000 : 0 },
+        ).bindPopup(popup(i), options.popupOptions);
+        if (options.onIncidentClick) marker.on('click', () => options.onIncidentClick(i));
+        incidentMarkers.set(i.id, marker);
+        return marker;
+    }));
+    const volunteerLayer = L.layerGroup(volunteers.filter(hasCoordinates).map((v) => {
+        const marker = L.circleMarker(
+            [v.latitude, v.longitude],
+            { radius: 6, color: volunteerMarkerColor(v), fillOpacity: 0.8 },
+        ).bindPopup(volunteerPopup(v));
+        volunteerMarkers.set(v.id, marker);
+        return marker;
+    }));
 
     incidentLayer.addTo(map);
     volunteerLayer.addTo(map);
     const layerControl = L.control.layers(null, { Incidents: incidentLayer, Volunteers: volunteerLayer }).addTo(map);
 
     const points = [...incidents, ...volunteers].filter(hasCoordinates).map((p) => [p.latitude, p.longitude]);
-    if (points.length) map.fitBounds(points, { padding: [30, 30], maxZoom: 12 });
-    return [incidentLayer, volunteerLayer, layerControl];
+    if (points.length && options.fit !== false) map.fitBounds(points, { padding: [30, 30], maxZoom: 12 });
+    return { layers: [incidentLayer, volunteerLayer, layerControl], incidentMarkers, volunteerMarkers };
 }

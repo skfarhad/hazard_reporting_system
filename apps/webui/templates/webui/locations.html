@@ -1,0 +1,44 @@
+{% extends "webui/base.html" %}
+{% load static %}
+{% block title %}Location · Hazard Reporting System{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+  <h1 class="h4 mb-0 me-auto">Location</h1>
+  <span class="small text-secondary">Districts (Zilla) and thanas (Upazilla). Boundaries let web reports find their area from the map pin.</span>
+</div>
+<div data-page-body class="row g-3">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body border-bottom">
+        <form id="addDistrictForm" class="row g-2 align-items-end" novalidate>
+          <div class="col-sm-5">
+            <label class="form-label small fw-semibold" for="newDistrictName">New district</label>
+            <input class="form-control form-control-sm" id="newDistrictName" name="name" maxlength="100" required>
+          </div>
+          <div class="col-sm-4">
+            <label class="form-label small fw-semibold" for="newDistrictDivision">Division</label>
+            <select class="form-select form-select-sm" id="newDistrictDivision" name="division" required></select>
+          </div>
+          <div class="col-sm-3"><button type="submit" class="btn btn-sm btn-primary w-100">Add district</button></div>
+          <div class="col-12 small text-danger" data-error-for="district" role="alert"></div>
+        </form>
+        <input type="search" id="placeSearch" class="form-control form-control-sm mt-3" placeholder="Search districts" aria-label="Search districts">
+      </div>
+      <ul class="hrs-place-list" id="districtList" aria-live="polite"></ul>
+      <div id="districtEmpty" class="card-body text-secondary d-none">No districts match.</div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card hrs-place-editor-card">
+      <div class="card-body" id="placeEditor">
+        <p class="text-secondary mb-0">Choose a district or thana to rename it, set its boundary or delete it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'webui/js/locations.js' %}"></script>{% endblock %}

@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 import os
+import sys
 import datetime
 from pathlib import Path
 from dotenv import load_dotenv
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "drf_yasg",
     "django_filters",
+    "channels",
     # "background_task",
     "corsheaders",
     "rest_framework_swagger",
@@ -72,6 +74,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+# Served by Gunicorn + Uvicorn workers: HTTP and the dashboard WebSocket (config/asgi.py).
+ASGI_APPLICATION = "config.asgi.application"
+
+# Live dashboard nudges go through Redis so every worker's sockets get them.
+# Tests use an in-memory layer, so they don't need Redis.
+CHANNEL_LAYERS = {
+    "default": (
+        {"BACKEND": "channels.layers.InMemoryChannelLayer"}
+        if sys.argv[1:2] == ["test"]
+        else {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {"hosts": [os.getenv("REDIS_URL", "redis://redis:6379/1")]},
+        }
+    ),
+}
 
 # Database settings
 DATABASES = {
@@ -120,7 +137,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "user": os.getenv("THROTTLE_RATE", "100/hour"),
+        "user": os.getenv("THROTTLE_RATE", "1000/hour"),
         # Web incident reports by non-operators (anyone with an account can report).
         "incident_report": os.getenv("INCIDENT_REPORT_RATE", "10/hour"),
     },
@@ -134,6 +151,8 @@ SIMPLE_JWT = {
 # Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
+# The dashboard's "Today" starts at midnight Bangladesh time (UTC+6, no daylight saving).
+DASHBOARD_UTC_OFFSET_HOURS = 6
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -141,6 +160,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Uploads (volunteer photos). Served by Django only in DEBUG; production serves MEDIA_ROOT from the web server.
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", BASE_DIR / "media"))
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

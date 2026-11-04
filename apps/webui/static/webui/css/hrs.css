@@ -53,6 +53,9 @@
     --hrs-status-rejected-rgb: 100, 116, 139;
     --hrs-volunteer: #16A34A;
     --hrs-volunteer-rgb: 22, 163, 74;
+    --hrs-volunteer-inactive: #94A3B8;
+    --hrs-panel-head: #F5F3FF;      /* dashboard panel headers (lavender tint, as in the mockup) */
+    --hrs-highlight: #FAF5FF;       /* selected incident card */
 
     --hrs-hero: linear-gradient(135deg, #0B1B45 0%, #1E3A8A 55%, #2563EB 100%);
     --hrs-shadow: 0 8px 24px rgba(15, 23, 42, .06), 0 1px 4px rgba(15, 23, 42, .04);
@@ -101,6 +104,9 @@
     --hrs-status-rejected-rgb: 148, 163, 184;
     --hrs-volunteer: #4ADE80;
     --hrs-volunteer-rgb: 74, 222, 128;
+    --hrs-volunteer-inactive: #64748B;
+    --hrs-panel-head: #151F36;
+    --hrs-highlight: #1B2742;
 
     --hrs-hero: linear-gradient(135deg, #050B18 0%, #0B1B45 55%, #1E3A8A 100%);
     --hrs-shadow: 0 8px 24px rgba(0, 0, 0, .4);
@@ -659,4 +665,211 @@ button.hrs-chip[aria-pressed=true] {
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* ---- Live dashboard (three panels: incidents · map · volunteers) ----
+ * Desktop: a grid of 320px · map · 320px; a collapsed panel becomes a 48px rail.
+ * Under 992px: the map fills the screen and bottom tabs switch to a full-height incident or volunteer sheet.
+ */
+.hrs-dashboard-main { padding: 0; }
+.hrs-dashboard {
+    --hrs-left: 320px;
+    --hrs-right: 320px;
+    display: grid;
+    grid-template-columns: var(--hrs-left) minmax(0, 1fr) var(--hrs-right);
+    height: calc(100dvh - var(--hrs-navbar-height));
+    transition: grid-template-columns var(--hrs-medium) var(--hrs-ease);
+}
+.hrs-dashboard--no-incidents { --hrs-left: 48px; }
+.hrs-dashboard--no-volunteers { --hrs-right: 48px; }
+
+.hrs-panel {
+    display: flex; flex-direction: column; min-height: 0; min-width: 0;
+    background: var(--hrs-surface); color: var(--hrs-text);
+}
+.hrs-panel--incidents { border-right: 1px solid var(--hrs-border); }
+.hrs-panel--volunteers { border-left: 1px solid var(--hrs-border); border-right: 0; }
+.hrs-panel-head {
+    display: flex; align-items: center; gap: .25rem; min-height: 52px; padding: .5rem .5rem .5rem 1rem;
+    background: var(--hrs-panel-head); border-bottom: 1px solid var(--hrs-border);
+}
+.hrs-panel--volunteers .hrs-panel-head { padding-left: .5rem; }
+.hrs-panel-title { font-size: 1rem; font-weight: 700; margin: 0 auto 0 0; white-space: nowrap; }
+.hrs-panel--volunteers .hrs-panel-title { margin-left: .25rem; }
+.hrs-panel-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.hrs-panel-controls { display: grid; gap: .75rem; padding: 1rem; border-bottom: 1px solid var(--hrs-border); }
+.hrs-period-select { border: 0; padding-left: 0; font-weight: 600; background-color: transparent; }
+.hrs-panel-showing { margin: 0; padding: .75rem 1rem; font-size: .875rem; font-weight: 600; border-bottom: 1px solid var(--hrs-border); }
+
+.hrs-panel.is-collapsed .hrs-panel-body,
+.hrs-panel.is-collapsed .hrs-panel-title,
+.hrs-panel.is-collapsed .hrs-panel-tool { display: none; }
+.hrs-panel.is-collapsed .hrs-panel-head { justify-content: center; padding: .5rem 0; border-bottom: 0; }
+.hrs-panel.is-collapsed { background: var(--hrs-panel-head); }
+.hrs-panel-toggle .bi { transition: transform var(--hrs-medium) var(--hrs-ease); }
+.hrs-panel.is-collapsed .hrs-panel-toggle .bi { transform: rotate(180deg); }
+
+/* Count cards that filter */
+.hrs-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.hrs-stat-card {
+    --hrs-stat: var(--hrs-brand); --hrs-stat-rgb: var(--hrs-brand-rgb);
+    display: flex; flex-direction: column; align-items: flex-start; gap: .15rem; min-height: 56px; padding: .5rem .65rem;
+    border: 1.5px solid transparent; border-radius: var(--hrs-radius-sm);
+    background: rgba(var(--hrs-stat-rgb), .1); color: var(--hrs-text); text-align: left;
+    transition: border-color var(--hrs-fast), background var(--hrs-fast);
+}
+.hrs-stat-card:hover { background: rgba(var(--hrs-stat-rgb), .16); }
+.hrs-stat-card[aria-pressed="true"] { border-color: var(--hrs-stat); }
+.hrs-stat-card:focus-visible { outline: 2px solid var(--hrs-stat); outline-offset: 2px; }
+.hrs-stat-label { font-size: .75rem; color: var(--hrs-stat-text, var(--hrs-text)); }
+.hrs-stat-count { font-size: 1.05rem; font-weight: 700; color: var(--hrs-stat-text, var(--hrs-text)); }
+.hrs-stat-card--pending, .hrs-stat-card--inactive {
+    --hrs-stat: var(--hrs-accent); --hrs-stat-rgb: var(--hrs-accent-rgb); --hrs-stat-text: var(--hrs-accent-text);
+}
+.hrs-stat-card--resolved, .hrs-stat-card--active {
+    --hrs-stat: var(--hrs-success); --hrs-stat-rgb: var(--hrs-success-rgb); --hrs-stat-text: var(--hrs-success-text);
+}
+.hrs-stat-card--all { --hrs-stat-text: var(--hrs-brand-text); }
+
+/* Zilla / Upazilla */
+.hrs-area-row { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.hrs-area-select { position: relative; }
+.hrs-area-select .form-select { background-color: var(--hrs-surface-muted); border-color: transparent; min-height: var(--hrs-control-height); }
+.hrs-area-select--zilla .bi { position: absolute; left: .7rem; top: 50%; transform: translateY(-50%); color: var(--hrs-text-muted); pointer-events: none; }
+.hrs-area-select--zilla .form-select { padding-left: 2rem; }
+.hrs-assign-hint { font-size: .8rem; color: var(--hrs-brand-text); background: rgba(var(--hrs-brand-rgb), .08); border-radius: var(--hrs-radius-sm); padding: .4rem .6rem; }
+
+/* Incident and volunteer cards */
+.hrs-dash-list { list-style: none; margin: 0; padding: 0; }
+.hrs-dash-item { border-bottom: 1px solid var(--hrs-border); }
+.hrs-dash-item.is-selected { background: var(--hrs-highlight); box-shadow: inset 3px 0 0 var(--hrs-brand); }
+.hrs-dash-card {
+    display: grid; gap: .2rem; width: 100%; padding: .85rem 1rem .25rem; text-align: left;
+    border: 0; background: transparent; color: inherit;
+}
+.hrs-dash-card:hover { background: rgba(var(--hrs-brand-rgb), .04); }
+.hrs-dash-card:focus-visible { outline: 2px solid var(--hrs-brand); outline-offset: -2px; }
+.hrs-dash-head { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
+.hrs-dash-title { font-weight: 700; font-size: .9rem; overflow-wrap: anywhere; }
+.hrs-dash-meta { font-size: .78rem; color: var(--hrs-text-muted); text-decoration: none; }
+.hrs-dash-place { font-size: .78rem; color: var(--hrs-text); }
+.hrs-dash-label { color: var(--hrs-text-muted); font-weight: 600; }
+.hrs-dash-message {
+    font-size: .8rem; color: var(--hrs-text);
+    display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.hrs-dash-foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .25rem 1rem .75rem; }
+.hrs-dash-details { padding: 0; font-size: .78rem; }
+.hrs-vol-badge {
+    display: inline-block; padding: .1rem .45rem; border-radius: 4px; font-size: .72rem; font-weight: 600;
+    background: rgba(var(--hrs-brand-rgb), .12); color: var(--hrs-brand-text);
+}
+.hrs-dash-status {
+    flex: none; padding: .05rem .45rem; border: 1px solid currentColor; border-radius: 4px; font-size: .7rem; font-weight: 600;
+}
+.hrs-dash-status--resolved { color: var(--hrs-success-text); }
+.hrs-dash-status--pending { color: var(--hrs-warning-text); }
+.hrs-dash-status--validated { color: var(--hrs-danger-text); }
+.hrs-dash-status--rejected { color: var(--hrs-text-muted); }
+
+.hrs-vol-card { display: flex; align-items: flex-start; gap: .75rem; padding: .85rem 1rem; border-bottom: 1px solid var(--hrs-border); }
+.hrs-vol-card.is-assigned { background: var(--hrs-highlight); }
+.hrs-vol-body { flex: 1; min-width: 0; display: grid; gap: .15rem; }
+.hrs-vol-actions { display: flex; align-items: center; gap: .5rem; margin-top: .25rem; }
+.hrs-vol-actions:empty { display: none; }
+.hrs-vol-distance { font-size: .75rem; color: var(--hrs-text-muted); margin-right: auto; }
+
+.hrs-avatar {
+    position: relative; flex: none; width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(var(--hrs-brand-rgb), .14); color: var(--hrs-brand-text);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: .85rem;
+}
+.hrs-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.hrs-avatar-dot { position: absolute; left: -1px; bottom: 1px; width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--hrs-surface); }
+.hrs-avatar-dot--on { background: var(--hrs-volunteer); }
+.hrs-avatar-dot--off { background: var(--hrs-volunteer-inactive); }
+
+/* Map */
+.hrs-dashboard-map { position: relative; min-width: 0; min-height: 0; }
+.hrs-live-map { position: absolute; inset: 0; }
+.hrs-live-status {
+    position: absolute; z-index: 800; top: .75rem; left: 50%; transform: translateX(-50%);
+    display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .65rem; border-radius: 999px;
+    background: var(--hrs-surface); color: var(--hrs-text); box-shadow: var(--hrs-shadow); font-size: .75rem; font-weight: 600;
+}
+.hrs-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hrs-text-subtle); }
+.hrs-live-status[data-status="live"] .hrs-live-dot { background: var(--hrs-success); box-shadow: 0 0 0 3px rgba(var(--hrs-success-rgb), .25); }
+.hrs-live-status[data-status="reconnecting"] .hrs-live-dot { background: var(--hrs-warning); }
+.hrs-live-status[data-status="offline"] .hrs-live-dot { background: var(--hrs-danger); }
+/* Bottom-centre of the map: clear of the legend and attribution (bottom-right) and, on phones, above the tabs. */
+.hrs-map-report {
+    position: absolute; z-index: 1001; bottom: 1.25rem; left: 50%; transform: translateX(-50%); /* above Leaflet controls */
+    box-shadow: var(--hrs-shadow-lg); border-radius: 999px; padding-inline: 1rem; white-space: nowrap;
+}
+.leaflet-popup-content .hrs-popup-card { display: grid; gap: .2rem; min-width: 220px; max-width: 260px; }
+.leaflet-popup-content .hrs-popup-card .hrs-dash-foot { padding: .35rem 0 0; }
+.leaflet-popup-content .hrs-popup-card .hrs-dash-message { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+.hrs-dash-tabs { display: none; }
+
+@media (max-width: 991.98px) {
+    .hrs-dashboard {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr) auto;
+    }
+    .hrs-dashboard > .hrs-panel,
+    .hrs-dashboard > .hrs-dashboard-map { grid-row: 1; grid-column: 1; border: 0; }
+    .hrs-dashboard:not([data-mobile-tab="incidents"]) > .hrs-panel--incidents,
+    .hrs-dashboard:not([data-mobile-tab="volunteers"]) > .hrs-panel--volunteers { display: none; }
+    /* The map keeps its size under a sheet (Leaflet needn't re-measure) but must not take its taps. */
+    .hrs-dashboard:not([data-mobile-tab="map"]) > .hrs-dashboard-map { visibility: hidden; }
+    /* Side panels are full sheets on phones: no collapsing. */
+    .hrs-panel.is-collapsed .hrs-panel-body { display: block; }
+    .hrs-panel.is-collapsed .hrs-panel-title, .hrs-panel.is-collapsed .hrs-panel-tool { display: inline-flex; }
+    .hrs-dashboard .hrs-panel-toggle { display: none; }
+    .hrs-dash-tabs {
+        display: grid; grid-template-columns: repeat(3, 1fr); grid-row: 2;
+        background: var(--hrs-surface); border-top: 1px solid var(--hrs-border);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    .hrs-dash-tabs button {
+        display: flex; flex-direction: column; align-items: center; gap: .1rem; min-height: 56px;
+        border: 0; background: transparent; color: var(--hrs-text-muted); font-size: .75rem; font-weight: 600;
+    }
+    .hrs-dash-tabs .bi { font-size: 1.15rem; }
+    .hrs-dash-tabs button[aria-selected="true"] { color: var(--hrs-brand); box-shadow: inset 0 2px 0 var(--hrs-brand); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hrs-dashboard, .hrs-panel-toggle .bi { transition: none; }
+}
+
+/* ---- Navbar: notifications bell and account avatar ---- */
+.hrs-bell { position: relative; }
+.hrs-bell .bi { font-size: 1.15rem; }
+.hrs-bell-badge {
+    position: absolute; top: 2px; right: 0; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px;
+    background: var(--hrs-danger); color: #fff; font-size: .68rem; font-weight: 700; line-height: 18px; text-align: center;
+    border: 2px solid var(--hrs-surface);
+}
+.hrs-bell-badge[hidden] { display: none; }
+.hrs-bell-menu { width: min(340px, calc(100vw - 2rem)); max-height: min(70vh, 480px); overflow-y: auto; }
+.hrs-bell-item { display: grid; gap: .1rem; white-space: normal; padding-block: .5rem; border-bottom: 1px solid var(--hrs-border); }
+.hrs-avatar-button { border: 0; padding: 0; background: transparent; border-radius: 50%; }
+.hrs-avatar-button:focus-visible { outline: 2px solid var(--hrs-brand); outline-offset: 2px; }
+
+/* ---- Location tab: districts, thanas and the place editor ---- */
+.hrs-place-list, .hrs-place-thanas { list-style: none; margin: 0; padding: 0; }
+.hrs-place { border-bottom: 1px solid var(--hrs-border); }
+.hrs-place-row { display: flex; align-items: center; gap: .6rem; padding: .6rem 1rem; }
+.hrs-place-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.hrs-place.is-selected > .hrs-place-row, .hrs-place-row.is-selected { background: var(--hrs-highlight); box-shadow: inset 3px 0 0 var(--hrs-brand); }
+.hrs-place-thanas { background: var(--hrs-surface-muted); }
+.hrs-place-row--thana { padding-left: 3.25rem; border-top: 1px solid var(--hrs-border); }
+.hrs-place-map { height: 260px; border-radius: var(--hrs-radius-sm); border: 1px solid var(--hrs-border); }
+@media (min-width: 992px) {
+    .hrs-place-editor-card { position: sticky; top: calc(var(--hrs-navbar-height) + 1rem); }
+}
+@media (max-width: 575.98px) {
+    .hrs-place-row { flex-wrap: wrap; }
+    .hrs-place-row--thana { padding-left: 1rem; }
 }

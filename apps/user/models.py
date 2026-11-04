@@ -30,6 +30,9 @@ class User(AbstractBaseUser, PermissionsMixin, TSFieldsIndexed):
 
     image = models.URLField(null=True, blank=True)
     fb_token = models.TextField(null=True, blank=True)
+    notifications_seen_at = models.DateTimeField(
+        null=True, blank=True, help_text="When the user last opened the notifications bell.",
+    )
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

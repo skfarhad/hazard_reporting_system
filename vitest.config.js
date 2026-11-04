@@ -4,6 +4,9 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
     test: {
         environment: 'jsdom',
+        // A fixed zone for every machine (CI runs in UTC): times shown in Bangladesh time must be
+        // converted on purpose, not happen to match the developer's clock.
+        env: { TZ: 'UTC' },
         include: ['apps/webui/static/webui/js/**/*.test.js'],
     },
 });

@@ -1,9 +1,13 @@
 import django_filters
 from django.db.models import Q
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from .constants import IncidentStatus
+from apps.events.models import Event
+
+from .constants import IncidentStatus, TaskStatus
 from .models import Incident, NeedType
+from .services.periods import PERIODS, period_start
 
 
 class IncidentFilter(django_filters.FilterSet):
@@ -15,6 +19,10 @@ class IncidentFilter(django_filters.FilterSet):
     hazard = django_filters.CharFilter(field_name="event__hazard__code")
     life_threatening = django_filters.BooleanFilter()
     q = django_filters.CharFilter(method="search")
+    period = django_filters.CharFilter(method="filter_period")
+    district = django_filters.NumberFilter(field_name="district_id")
+    thana = django_filters.NumberFilter(field_name="thana_id")
+    task_status = django_filters.ChoiceFilter(choices=TaskStatus.choices())
 
     class Meta:
         model = Incident
@@ -47,3 +55,10 @@ class IncidentFilter(django_filters.FilterSet):
         if value.isdigit():
             return queryset.filter(event_id=int(value))
         raise ValidationError({"event": ["Use an event id or 'none'."]})
+
+    def filter_period(self, queryset, name, value):
+        if value not in PERIODS:
+            raise ValidationError({"period": [f"Use one of: {', '.join(PERIODS)}."]})
+        if value == "event":
+            return queryset.filter(event__in=Event.objects.active())
+        return queryset.filter(created_at__gte=period_start(value, timezone.now()))

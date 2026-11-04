@@ -24,15 +24,15 @@ class IncidentDetailApiTests(APITestCase):
             district=feni,
             thana=Thana.objects.create(name="Parshuram", district=feni),
             provider=Provider.objects.create(name="Smoke Test Gateway"),
-            volunteer=self.volunteer,
             event=event("Feni Flood"),
             life_threatening=True,
             people_count=5,
         )
         self.incident.needs.set(NeedType.objects.filter(code__in=["rescue", "medical"]))
+        self.incident.volunteers.set([self.volunteer])
         self.url = reverse("incident-detail", args=[self.incident.id])
 
-    def test_an_operator_can_fetch_one_incident_with_its_district_thana_provider_volunteer_and_update_time(self):
+    def test_an_operator_can_fetch_one_incident_with_its_district_thana_provider_volunteers_and_update_time(self):
         self.client.force_authenticate(self.operator)
 
         response = self.client.get(self.url)
@@ -45,7 +45,11 @@ class IncidentDetailApiTests(APITestCase):
         self.assertEqual(data["event"]["hazard"]["code"], "flood")
         self.assertEqual((data["district"], data["thana"]), ("Feni", "Parshuram"))
         self.assertEqual(data["provider"], "Smoke Test Gateway")
-        self.assertEqual(data["volunteer"], {"id": self.volunteer.id, "full_name": "Rahim Uddin"})
+        self.assertEqual(data["volunteers"], [
+            {"id": self.volunteer.id, "full_name": "Rahim Uddin", "contact_number": "01800000000", "photo": None},
+        ])
+        self.assertEqual(data["volunteer_count"], 1)
+        self.assertNotIn("volunteer", data)
         self.assertIn("updated_at", data)
         self.assertAlmostEqual(data["latitude"], 23.21)
 
@@ -55,8 +59,8 @@ class IncidentDetailApiTests(APITestCase):
 
         data = self.client.get(reverse("incident-detail", args=[bare.id])).data
 
-        self.assertEqual((data["district"], data["thana"], data["provider"], data["volunteer"], data["event"]),
-                         (None, None, None, None, None))
+        self.assertEqual((data["district"], data["thana"], data["provider"], data["volunteers"], data["event"]),
+                         (None, None, None, [], None))
 
     def test_fetching_a_missing_incident_returns_404(self):
         self.client.force_authenticate(self.operator)
@@ -78,7 +82,7 @@ class IncidentDetailApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["people_count"], 7)
         self.assertEqual(response.data["thana"], "Parshuram")
-        self.assertEqual(response.data["volunteer"]["full_name"], "Rahim Uddin")
+        self.assertEqual(response.data["volunteers"][0]["full_name"], "Rahim Uddin")
 
 
 class IncidentSourceForOperatorsTests(APITestCase):

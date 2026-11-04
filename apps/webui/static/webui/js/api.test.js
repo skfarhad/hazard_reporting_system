@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { apiGet, apiPost, apiPatch } from './api.js';
+import { apiGet, apiPost, apiPatch, apiDelete } from './api.js';
 import { nav, setSession, getAccessToken } from './utils.js';
 
 function mockFetch(status, body) {
@@ -31,6 +31,37 @@ describe('api', () => {
 
         expect(res).toEqual({ ok: true, status: 200, data: [{ id: 1 }] });
         expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe('Bearer tok123');
+    });
+
+    it('sends DELETE with the token and copes with an empty 204 response', async () => {
+        setSession('tok123', {});
+        const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 204, json: () => Promise.reject(new SyntaxError('empty')) });
+        vi.stubGlobal('fetch', fetchMock);
+
+        const res = await apiDelete('/api/incidents/3/volunteers/4/');
+
+        expect(fetchMock.mock.calls[0][1].method).toBe('DELETE');
+        expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe('Bearer tok123');
+        expect(res).toEqual({ ok: true, status: 204, data: null });
+    });
+
+    it('quiet requests (live refreshes) do not cover the page with the spinner', async () => {
+        document.body.innerHTML = '<div id="spinner" class="d-none"></div>';
+        setSession('tok123', {});
+        let finish;
+        vi.stubGlobal('fetch', vi.fn(() => new Promise((resolve) => { finish = resolve; })));
+
+        const quiet = apiGet('/api/incidents/summary/', { quiet: true });
+        const quietShown = !document.getElementById('spinner').classList.contains('d-none');
+        finish({ ok: true, status: 200, json: () => Promise.resolve({}) });
+        await quiet;
+        const loud = apiGet('/api/incidents/summary/');
+        const loudShown = !document.getElementById('spinner').classList.contains('d-none');
+        finish({ ok: true, status: 200, json: () => Promise.resolve({}) });
+        await loud;
+
+        expect(quietShown).toBe(false);
+        expect(loudShown).toBe(true);
     });
 
     it('sends PATCH with a JSON body and the token', async () => {

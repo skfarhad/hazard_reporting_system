@@ -7,8 +7,19 @@ export const API = {
     reportIncident: '/api/incidents/report/',
     places: '/api/incidents/places/',
     incident: (id) => `/api/incidents/${Number(id)}/`,
+    incidentSummary: '/api/incidents/summary/',
+    incidentVolunteers: (id) => `/api/incidents/${Number(id)}/volunteers/`,
+    incidentVolunteer: (id, volunteerId) => `/api/incidents/${Number(id)}/volunteers/${Number(volunteerId)}/`,
+    notifications: '/api/incidents/notifications/',
+    notificationsSeen: '/api/incidents/notifications/seen/',
+    manageDivisions: '/api/incidents/places/manage/divisions/',
+    manageDistricts: '/api/incidents/places/manage/districts/',
+    manageDistrict: (id) => `/api/incidents/places/manage/districts/${Number(id)}/`,
+    manageThanas: '/api/incidents/places/manage/thanas/',
+    manageThana: (id) => `/api/incidents/places/manage/thanas/${Number(id)}/`,
     events: '/api/events/',
     volunteers: '/api/volunteers/volunteers/',
+    volunteerSummary: '/api/volunteers/summary/',
 };
 
 export const LOGIN_PAGE = '/app/login/';
@@ -25,6 +36,7 @@ export const STATUS_COLORS = {
     rejected: '#64748B',
 };
 export const VOLUNTEER_COLOR = '#16A34A';
+export const INACTIVE_VOLUNTEER_COLOR = '#94A3B8';
 
 // Shown for an incident's need when need types could not be loaded or the fallback type is gone.
 export const GENERIC_NEED = { code: '', label_en: 'Unclassified', icon: 'question-circle', colour: '#64748B', is_fallback: true };

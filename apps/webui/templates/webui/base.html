@@ -23,14 +23,38 @@
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav hrs-nav-center gap-lg-1">
-        <li class="nav-item"><a class="nav-link{% if page == 'dashboard' %} active{% endif %}" href="/app/"><i class="bi bi-map me-1"></i>Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link{% if page == 'incidents' %} active{% endif %}" href="/app/incidents/"><i class="bi bi-exclamation-triangle me-1"></i>Incidents</a></li>
-        <li class="nav-item"><a class="nav-link{% if page == 'volunteers' %} active{% endif %}" href="/app/volunteers/"><i class="bi bi-people me-1"></i>Volunteers</a></li>
+        <li class="nav-item"><a class="nav-link{% if page == 'dashboard' %} active{% endif %}" href="/app/"{% if page == 'dashboard' %} aria-current="page"{% endif %}><i class="bi bi-grid-1x2 me-1" aria-hidden="true"></i>Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link{% if page == 'incidents' %} active{% endif %}" href="/app/incidents/"{% if page == 'incidents' %} aria-current="page"{% endif %}><i class="bi bi-life-preserver me-1" aria-hidden="true"></i>Incidents</a></li>
+        <li class="nav-item"><a class="nav-link{% if page == 'volunteers' %} active{% endif %}" href="/app/volunteers/"{% if page == 'volunteers' %} aria-current="page"{% endif %}><i class="bi bi-people me-1" aria-hidden="true"></i>Volunteers</a></li>
+        <li class="nav-item" data-operator-only hidden><a class="nav-link{% if page == 'locations' %} active{% endif %}" href="/app/locations/"{% if page == 'locations' %} aria-current="page"{% endif %}><i class="bi bi-geo-alt me-1" aria-hidden="true"></i>Location</a></li>
       </ul>
-      <div class="d-flex align-items-center gap-2 ms-lg-auto">
-        <span id="currentUser" class="small text-secondary me-1"></span>
-        <button id="themeToggle" class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Toggle theme"></button>
-        <button id="logoutBtn" class="btn btn-outline-secondary btn-sm" type="button"><i class="bi bi-box-arrow-right"></i>Log out</button>
+      <div class="d-flex align-items-center gap-2 ms-lg-auto hrs-nav-tools">
+        <div class="dropdown" id="bell" hidden>
+          <button id="bellButton" class="btn btn-ghost btn-icon hrs-bell" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                  aria-expanded="false" aria-label="Notifications">
+            <i class="bi bi-bell" aria-hidden="true"></i><span id="bellBadge" class="hrs-bell-badge" hidden></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end hrs-bell-menu">
+            <div class="dropdown-header">New reports waiting for review</div>
+            <ul id="bellMenu" class="list-unstyled mb-0" aria-live="polite"></ul>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item small" href="/app/incidents/?status=pending">See all pending incidents</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button id="avatarButton" class="hrs-avatar-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
+            <span class="hrs-avatar"><span id="userInitials" class="hrs-avatar-initials" aria-hidden="true"></span></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end">
+            <div class="dropdown-header" id="userName"></div>
+            <div class="dropdown-item-text d-flex align-items-center justify-content-between gap-3">
+              <span class="small">Theme</span>
+              <button id="themeToggle" class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Toggle theme"></button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button id="logoutBtn" class="dropdown-item" type="button"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Sign out</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

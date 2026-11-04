@@ -1,8 +1,8 @@
-// Volunteers table with search.
+// Volunteers table with search (operators only).
 import { requireLogin, initNavbar } from './auth.js';
 import { apiGet } from './api.js';
 import { API } from './constants.js';
-import { filterVolunteers, volunteerRow } from './tables.js';
+import { filterVolunteers, volunteerRow, operatorsOnlyHtml } from './tables.js';
 import { showToast } from './ui.js';
 
 async function init() {
@@ -13,6 +13,10 @@ async function init() {
     const empty = document.getElementById('volunteerEmpty');
 
     const res = await apiGet(API.volunteers);
+    if (res.status === 403) {
+        document.querySelector('[data-page-body]').innerHTML = operatorsOnlyHtml('volunteers');
+        return;
+    }
     if (!res.ok) showToast('Could not load volunteers.', 'error');
     const volunteers = res.ok ? res.data : [];
 
