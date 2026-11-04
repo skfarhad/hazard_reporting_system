@@ -45,3 +45,14 @@ export function operatorAccessNotice() {
         <strong class="d-block mb-1">Your account isn't an operator yet.</strong>
         Ask an administrator to give you operator access.</div>`;
 }
+
+// Shown to non-operators instead of incident data: anyone with an account can report.
+export function reportPanelHtml() {
+    return `<div class="hrs-report-panel">
+        <i class="bi bi-megaphone" aria-hidden="true"></i>
+        <h2 class="h5 mb-1">Need help or saw an emergency?</h2>
+        <p class="mb-3">Report it. Staff review every report before help is sent.</p>
+        <button type="button" class="btn btn-primary" data-action="report"><i class="bi bi-plus-lg" aria-hidden="true"></i> Report incident</button>
+        <p class="small text-secondary mt-3 mb-0">Operator? Ask an administrator to give you operator access to see incidents.</p>
+    </div>`;
+}

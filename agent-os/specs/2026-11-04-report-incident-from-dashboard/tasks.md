@@ -93,12 +93,12 @@ Vitest: `npx vitest run apps/webui/static/webui/js/<file>.test.js`; full `npm te
 **Files**: `static/webui/js/report-form.js` (+ test, new), `tables.js` (+ test), `incident-views.js` (+ test), `constants.js`
 
 **5.1 Pure helpers**
-- [ ] Write failing tests (report-form.test.js): phone normalising; inside Bangladesh; form → body; missing fields; people count; thana filter; profile phone pre-fill; escaping
-- [ ] Verify they fail; implement `report-form.js`
+- [x] Write failing tests (report-form.test.js): phone normalising; inside Bangladesh; form → body; missing fields; people count; thana filter; profile phone pre-fill; escaping
+- [x] Verify they fail; implement `report-form.js`
 
 **5.2 Panel and source display**
-- [ ] Write failing tests: report panel for non-operators; Web badge in rows/cards; details name the reporter or provider
-- [ ] Verify they fail; implement `reportPanelHtml`, badge, details source
+- [x] Write failing tests: report panel for non-operators; Web badge in rows/cards; details name the reporter or provider
+- [x] Verify they fail; implement `reportPanelHtml`, badge, details source
 
 **Acceptance Criteria**: FR2–FR4, FR12 (UI); tests first, now passing
 

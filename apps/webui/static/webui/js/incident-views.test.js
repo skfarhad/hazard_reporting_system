@@ -119,6 +119,16 @@ describe('table row and card', () => {
     });
 });
 
+describe('source', () => {
+    it('web reports show a Web badge in rows and cards', () => {
+        const web = { ...INCIDENT, source: 'web' };
+
+        expect(table(incidentTableRow(web, NEED_TYPES)).querySelector('.hrs-badge-web')).not.toBeNull();
+        expect(el(incidentCard(web, NEED_TYPES)).querySelector('.hrs-badge-web')).not.toBeNull();
+        expect(table(incidentTableRow({ ...INCIDENT, source: 'provider' }, NEED_TYPES)).querySelector('.hrs-badge-web')).toBeNull();
+    });
+});
+
 describe('filter bar and pager', () => {
     it('need chips show which needs are selected', () => {
         const wrap = el(`<div>${needChips(NEED_TYPES, ['food'])}</div>`);
@@ -190,6 +200,15 @@ describe('details', () => {
 
         expect(box.textContent).toContain('Govt. Primary School, Parshuram, Feni');
         expect(box.textContent).not.toContain('Parshuram, Parshuram');
+    });
+
+    it('the details name the reporter of a web report, or the provider', () => {
+        const web = el(`<div>${incidentDetailsHtml({ ...DETAIL, source: 'web', provider: null, reported_by: { id: 2, name: '<b>Karim</b>' } }, NEED_TYPES)}</div>`);
+        const sms = el(`<div>${incidentDetailsHtml({ ...DETAIL, source: 'provider', reported_by: null }, NEED_TYPES)}</div>`);
+
+        expect(web.textContent).toContain('Web · reported by <b>Karim</b>');
+        expect(web.innerHTML).not.toContain('<b>Karim');
+        expect(sms.textContent).toContain('SMS · Smoke Test Gateway');
     });
 
     it('escapes every text field in the details', () => {
