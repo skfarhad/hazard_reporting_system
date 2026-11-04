@@ -186,25 +186,32 @@ Notes: place management lives in `apps/incident_manager/places_manage.py`. List 
 #### Subtasks (test-first, RED before GREEN):
 
 **5.1 Consumer authentication**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_an_operator_with_a_valid_token_joins_and_gets_ready`;
   - `test_a_non_operator_or_bad_token_is_closed_with_4403_or_4401`;
   - `test_no_auth_message_within_the_timeout_closes_the_socket`.
-- [ ] Implement `DashboardConsumer`, the routing and `ASGI_APPLICATION`.
+- [x] Implement `DashboardConsumer`, the routing and `ASGI_APPLICATION`.
 
 **5.2 Nudges**
-- [ ] Write failing tests:
+- [x] Write failing tests:
   - `test_saving_an_incident_nudges_connected_dashboards_after_commit`;
   - `test_assigning_a_volunteer_and_saving_a_volunteer_send_nudges`;
   - `test_a_channel_layer_error_does_not_break_saving_an_incident`.
-- [ ] Implement `broadcast.notify` and the signals.
+- [x] Implement `broadcast.notify` and the signals.
 
 **5.3 Serve ASGI**
-- [ ] Switch Gunicorn to `uvicorn.workers.UvicornWorker` with `config.asgi:application`.
-- [ ] Set `CHANNEL_LAYERS` from `REDIS_URL`; raise `THROTTLE_RATE` to 1000/hour.
-- [ ] Update `example.env`.
-- [ ] Verify by hand that `ws://localhost:8001/ws/dashboard/` connects (Playwright).
-- [ ] Run the full Django suite in `unit_tests`.
+- [x] Switch Gunicorn to `uvicorn.workers.UvicornWorker` with `config.asgi:application`.
+- [x] Set `CHANNEL_LAYERS` from `REDIS_URL`; raise `THROTTLE_RATE` to 1000/hour.
+- [x] Update `example.env`.
+- [x] Verify by hand that `ws://localhost:8001/ws/dashboard/` connects (Playwright).
+- [x] Run the full Django suite in `unit_tests`.
+
+Notes:
+- `daphne` added as a dev dependency, because `channels.testing` imports it.
+- Socket tests patch `channels.db.close_old_connections`, so the TestCase connection stays open.
+- `routing.websocket_application()` builds the origin check from `ALLOWED_HOSTS`, so the test can set real hosts (dev `.env` uses `*`).
+- `config/workers.AsgiWorker` turns off the unused ASGI lifespan protocol.
+- Checked against the running server with Redis: "ready", then nudges on create and delete, and 4401 for a bad token.
 
 **Acceptance Criteria**:
 - Pages, API and sockets all served by `be` on 8001.

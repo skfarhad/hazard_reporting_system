@@ -1,4 +1,4 @@
-"""gunicorn WSGI server configuration."""
+"""gunicorn configuration: Uvicorn workers serve the ASGI app (HTTP and the dashboard WebSocket)."""
 from multiprocessing import cpu_count
 from os import environ
 from pathlib import Path
@@ -10,7 +10,7 @@ def max_workers():
 
 bind = '0.0.0.0:' + environ.get('PORT', '8000')
 max_requests = 1000
-worker_class = 'gevent'
+worker_class = 'config.workers.AsgiWorker'
 workers = 2
 
 # Development: restart workers when code or templates change (Django caches
