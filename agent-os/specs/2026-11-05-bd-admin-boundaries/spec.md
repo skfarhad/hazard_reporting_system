@@ -1,6 +1,6 @@
 # Specification: Bangladesh administrative boundaries
 
-**Status:** Planned — ready for `/execute bd-admin-boundaries`
+**Status:** Implemented and tested (2026-11-05) — Django 260, Vitest 173, all passing
 
 ## Executive Summary
 
@@ -53,13 +53,13 @@ their district, thana and union from their location.
 3. Idempotent import of the OCHA/BBS GeoJSON files.
 
 ### Success Criteria
-- [ ] After importing `.local/Bangladesh_GeoJSON`: 8 / 64 / 544 / 5,160 rows, every one with a polygon, a centre and a code
-- [ ] Same name accepted under different parents; rejected (400 in the API, constraint in the DB) twice under one parent, ignoring case
-- [ ] Existing Chattogram, Feni and Parshuram rows keep their ids, links and incidents; re-running the import creates nothing new
-- [ ] A report with only a location gets district, thana and union; a point on St. Martin's Island lands in Teknaf
-- [ ] An SMS naming "Comilla" finds Cumilla
-- [ ] Incident details show the union
-- [ ] All tests written first and passing; full Django and Vitest suites green
+- [x] After importing `.local/Bangladesh_GeoJSON`: 8 / 64 / 544 / 5,160 rows, every one with a polygon, a centre and a code
+- [x] Same name accepted under different parents; rejected (400 in the API, constraint in the DB) twice under one parent, ignoring case
+- [x] Existing Chattogram, Feni and Parshuram rows keep their ids, links and incidents; re-running the import creates nothing new
+- [x] A report with only a location gets district, thana and union; a point on St. Martin's Island lands in Teknaf
+- [x] An SMS naming "Comilla" finds Cumilla
+- [x] Incident details show the union
+- [x] All tests written first and passing; full Django and Vitest suites green
 
 ### Non-Goals
 - Upazilas created after the data (Lalmai, Guimara, Eidgaon, Dasar, Madhyanagar)
@@ -161,10 +161,11 @@ No new endpoints.
 - `test_the_same_union_name_is_allowed_in_two_thanas_but_not_twice_in_one`
 - `test_area_codes_are_unique_across_the_country`
 - `test_places_added_by_hand_need_no_area_code`
+- `test_deleting_a_union_keeps_its_incidents_without_a_union`
 
 ### Import — `tests/test_import_bd_boundaries.py` (tiny GeoJSON files written to a temp folder)
 - `test_the_import_builds_divisions_districts_thanas_and_unions_from_area_codes`
-- `test_the_import_uses_official_spellings_for_old_names`
+- `test_old_spellings_become_the_official_ones_as_whole_words`, `test_other_names_and_words_that_merely_contain_an_old_spelling_are_left_alone` (and the hierarchy test checks Chittagong → Chattogram)
 - `test_running_the_import_twice_creates_no_duplicates_and_updates_shapes`
 - `test_the_import_adopts_places_added_by_hand_and_keeps_their_ids_and_incidents`
 - `test_every_imported_area_gets_a_centre_inside_it`
@@ -173,11 +174,13 @@ No new endpoints.
 - `test_a_folder_missing_a_level_file_is_rejected_with_its_name`
 - `test_an_unknown_parent_code_stops_the_import_without_saving_anything`
 - `test_the_command_reports_created_and_updated_counts_per_level`
+- `test_the_command_turns_import_problems_into_command_errors`
 
 ### Area assignment — `tests/test_incident_service.py`
 - `test_a_report_with_only_a_location_gets_its_district_thana_and_union`
 - `test_the_union_comes_from_the_reports_own_thana_when_it_is_known`
 - `test_a_report_outside_every_boundary_gets_no_area`
+- `test_a_report_without_a_location_gets_no_union`
 - `test_an_sms_using_an_old_district_spelling_finds_the_district`
 
 ### API — `tests/test_place_management_api.py`, `tests/test_incident_detail_api.py`
@@ -186,9 +189,19 @@ No new endpoints.
 - `test_place_rows_and_details_show_their_area_code`
 - `test_incident_details_and_list_include_the_union_name`
 - existing `test_creating_a_district_needs_a_division_and_a_unique_name` keeps passing (same division)
+- `apps/webui/tests/test_pages.py`: `test_the_location_page_credits_the_boundary_data`
 
 ### Web (Vitest) — `incident-views.test.js`
 - `incident details list the union with the thana and district, escaped, and leave it out when unknown`
+
+### Test files
+`apps/incident_manager/tests/test_admin_boundary_models.py`, `test_import_bd_boundaries.py`,
+`test_incident_service.py`, `test_place_management_api.py`, `test_incident_detail_api.py`;
+`apps/webui/tests/test_pages.py`; `apps/webui/static/webui/js/incident-views.test.js`.
+
+### Mutation check (2026-11-05)
+12 deliberate breakages, all caught after strengthening two tests (overlapping unions created in an
+order only the thana filter resolves; a C-shaped union whose centroid lies outside it).
 
 ### Real-data check (manual, recorded in tasks.md)
 Run the command on `.local/Bangladesh_GeoJSON` in Docker: counts 8/64/544/5,160, all with polygons,

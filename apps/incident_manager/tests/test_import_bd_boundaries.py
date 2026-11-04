@@ -28,8 +28,14 @@ THANAS = [
     {"ADM3_EN": "Kaliganj", "ADM3_PCODE": "BD203050", "ADM2_PCODE": "BD2030", "geometry": box(91.45, 23.0, 91.6, 23.2)},
     {"ADM3_EN": "Kaliganj", "ADM3_PCODE": "BD404433", "ADM2_PCODE": "BD4044", "geometry": box(89.0, 23.0, 89.15, 23.15)},
 ]
+# A C-shaped union (like a town wrapped round a river bend): its centroid falls outside it.
+C_SHAPE = {"type": "Polygon", "coordinates": [[
+    [91.36, 23.06], [91.44, 23.06], [91.44, 23.08], [91.38, 23.08], [91.38, 23.16],
+    [91.44, 23.16], [91.44, 23.18], [91.36, 23.18], [91.36, 23.06],
+]]}
 UNIONS = [
     {"ADM4_EN": "Abaipur", "ADM4_PCODE": "BD20309401", "ADM3_PCODE": "BD203094", "geometry": box(91.3, 23.0, 91.35, 23.05)},
+    {"ADM4_EN": "Mirzanagar", "ADM4_PCODE": "BD20309402", "ADM3_PCODE": "BD203094", "geometry": C_SHAPE},
     {"ADM4_EN": "Abaipur", "ADM4_PCODE": "BD40443301", "ADM3_PCODE": "BD404433", "geometry": box(89.0, 23.0, 89.05, 23.05)},
 ]
 LEVELS = {1: DIVISIONS, 2: DISTRICTS, 3: THANAS, 4: UNIONS}
@@ -59,7 +65,7 @@ class BuildHierarchyTests(ImportTestCase):
 
         self.assertEqual(
             [Division.objects.count(), District.objects.count(), Thana.objects.count(), Union.objects.count()],
-            [2, 2, 3, 2],
+            [2, 2, 3, 3],
         )
         parshuram = Thana.objects.get(code="BD203094")
         self.assertEqual((parshuram.name, parshuram.district.name, parshuram.district.division.name),
@@ -95,7 +101,7 @@ class RepeatAndAdoptTests(ImportTestCase):
         summary = import_boundaries(self.folder)
 
         self.assertEqual(set(Thana.objects.values_list("id", flat=True)), ids)
-        self.assertEqual(Union.objects.count(), 2)
+        self.assertEqual(Union.objects.count(), 3)
         self.assertEqual(summary["thanas"], {"created": 0, "updated": 3})
         self.assertAlmostEqual(Thana.objects.get(code="BD203094").polygon.extent[0], 91.31)
 
@@ -162,9 +168,9 @@ class CommandTests(ImportTestCase):
             "divisions: 2 created, 0 updated",
             "districts: 2 created, 0 updated",
             "thanas: 3 created, 0 updated",
-            "unions: 2 created, 0 updated",
+            "unions: 3 created, 0 updated",
         ])
-        self.assertEqual(lines[-1], "unions: 0 created, 2 updated")
+        self.assertEqual(lines[-1], "unions: 0 created, 3 updated")
 
     def test_the_command_turns_import_problems_into_command_errors(self):
         with self.assertRaisesMessage(CommandError, "No adm1 (divisions) file in"):

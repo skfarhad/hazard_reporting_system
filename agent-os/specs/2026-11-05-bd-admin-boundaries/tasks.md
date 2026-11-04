@@ -1,7 +1,7 @@
 # Task Breakdown: Bangladesh administrative boundaries
 
 **Spec**: `2026-11-05-bd-admin-boundaries`
-**Status**: Implemented — awaiting `/run-tests`
+**Status**: Implemented and tested
 
 ## Task List
 
@@ -180,3 +180,18 @@ in 4 districts. City wards come through as "unions" (e.g. "Ward No-49").
 
 **Internal Dependencies:**
 - `services/incidents.py` (area assignment), `places_manage.py` (Location tab API), `incident-views.js`.
+
+---
+
+## Test Results (`/run-tests`, 2026-11-05)
+
+- Django (fresh `unit_tests` container: `migrate` + `test apps`): **260 run, 260 passed, 0 failed**
+- Vitest (`npm test`): **173 passed** (17 files)
+- `makemigrations --check`: no changes
+- All test names in the spec exist (one renamed in the spec to match)
+- Mutation check: 12 deliberate breakages (case-insensitive rules in the migration and the API, rename
+  to own name, union limited to the thana, old spellings in SMS, adopting hand-added places, import
+  rollback, centre inside area, simplification, whole-word spellings, read-only code) — all caught.
+  Two tests were strengthened to get there: the overlapping-unions test now creates the wrong union
+  first, and the import fixture has a C-shaped union whose centroid lies outside it.
+

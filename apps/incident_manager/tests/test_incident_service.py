@@ -33,9 +33,10 @@ class AreaFromLocationTests(TestCase):
         self.feni = District.objects.create(name="Feni", division=chattogram, polygon=area(91.3, 22.8, 91.6, 23.2))
         self.parshuram = Thana.objects.create(name="Parshuram", district=self.feni, polygon=area(91.3, 23.0, 91.45, 23.2))
         self.fulgazi = Thana.objects.create(name="Fulgazi", district=self.feni, polygon=area(91.45, 23.0, 91.6, 23.2))
-        self.mirzanagar = Union.objects.create(name="Mirzanagar", thana=self.parshuram, polygon=area(91.3, 23.0, 91.45, 23.1))
-        # Overlaps Parshuram's union (as slivers between simplified shapes can) but belongs to Fulgazi.
+        # Overlaps Parshuram's union (as slivers between simplified shapes can) but belongs to Fulgazi;
+        # created first, so only the thana check can pick Parshuram's union for a Parshuram report.
         self.amjadhat = Union.objects.create(name="Amjadhat", thana=self.fulgazi, polygon=area(91.3, 23.0, 91.6, 23.1))
+        self.mirzanagar = Union.objects.create(name="Mirzanagar", thana=self.parshuram, polygon=area(91.3, 23.0, 91.45, 23.1))
 
     def test_a_report_with_only_a_location_gets_its_district_thana_and_union(self):
         incident = report(Point(91.5, 23.05, srid=4326))
