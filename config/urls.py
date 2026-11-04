@@ -32,6 +32,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/incidents/", include("apps.incident_manager.urls")),
     path("api/volunteers/", include("apps.volunteer_hub.urls")),
+    path("api/events/", include("apps.events.urls")),
     path('api/user/', include('apps.user.urls')),
     # Swagger and Redoc URLs
     path(

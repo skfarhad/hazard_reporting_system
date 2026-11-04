@@ -1,7 +1,10 @@
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.gis.geos import Point
+from apps.incident_manager.models import NeedType
 from apps.volunteer_hub.models import Volunteer
 
 
@@ -110,3 +113,29 @@ class VolunteerListViewTestCase(APITestCase):
         no_location = next(v for v in response.data if v["full_name"] == "No Location")
         self.assertIsNone(no_location["latitude"])
         self.assertIsNone(no_location["longitude"])
+
+    def test_the_volunteer_list_includes_each_volunteers_skills(self):
+        john = Volunteer.objects.get(full_name="John Doe")
+        john.skills.set(NeedType.objects.filter(code__in=["food", "rescue"]))
+
+        response = self.client.get(self.url)
+
+        john_data = next(v for v in response.data if v["full_name"] == "John Doe")
+        jane_data = next(v for v in response.data if v["full_name"] == "Jane Smith")
+        self.assertEqual(sorted(john_data["skills"]), ["food", "rescue"])
+        self.assertEqual(jane_data["skills"], [])
+
+    def test_listing_volunteers_with_skills_uses_the_same_number_of_queries_for_two_or_twenty(self):
+        food = NeedType.objects.get(code="food")
+
+        def count_queries(n):
+            Volunteer.objects.all().delete()
+            for i in range(n):
+                Volunteer.objects.create(
+                    full_name=f"V{i}", contact_number="018", address="x", notes="", is_active=True,
+                ).skills.add(food)
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(self.url)
+            return len(ctx.captured_queries)
+
+        self.assertEqual(count_queries(2), count_queries(20))

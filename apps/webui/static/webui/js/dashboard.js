@@ -2,7 +2,7 @@
 import { requireLogin, initNavbar } from './auth.js';
 import { apiGet } from './api.js';
 import { API } from './constants.js';
-import { summarize } from './tables.js';
+import { summarize, operatorAccessNotice } from './tables.js';
 import { createMap, drawMarkers } from './map.js';
 import { showToast } from './ui.js';
 
@@ -12,6 +12,10 @@ async function init() {
     const map = createMap(window.L, document.getElementById('map'));
 
     const [incidents, volunteers] = await Promise.all([apiGet(API.incidents), apiGet(API.volunteers)]);
+    if (incidents.status === 403) {
+        document.querySelector('[data-page-body]').innerHTML = operatorAccessNotice();
+        return;
+    }
     if (!incidents.ok || !volunteers.ok) {
         showToast('Could not load the map data.', 'error');
     }
