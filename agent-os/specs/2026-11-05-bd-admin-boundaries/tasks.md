@@ -1,7 +1,7 @@
 # Task Breakdown: Bangladesh administrative boundaries
 
 **Spec**: `2026-11-05-bd-admin-boundaries`
-**Status**: Ready for Implementation
+**Status**: Implemented — awaiting `/run-tests`
 
 ## Task List
 
@@ -127,14 +127,22 @@
 ### Task Group 5: Real-data run
 
 **Priority**: High
-**Files**: none (record results here)
+**Files**: none (results recorded here)
 
-- [ ] Run `docker compose exec be python manage.py import_bd_boundaries .local/Bangladesh_GeoJSON`
-- [ ] Check counts 8 / 64 / 544 / 5,160, every row with polygon, centre and code
-- [ ] Chattogram / Feni / Parshuram ids unchanged; incidents still linked
-- [ ] Second run creates 0
-- [ ] Point (20.627, 92.322) → Teknaf thana and its union
-- [ ] Record run time, peak memory and DB size
+- [x] Ran `import_bd_boundaries .local/Bangladesh_GeoJSON` in Docker (2026-11-05)
+- [x] Counts 8 / 64 / 544 / 5,160; every row has polygon, centre (inside its area) and code; all shapes valid
+- [x] Chattogram / Feni / Parshuram kept ids 1 / 1 / 1 (codes BD20 / BD2030 / BD203051); incident 3 still Feni / Parshuram
+- [x] Second run: 0 created, all updated; counts unchanged
+- [x] St. Martin's point (20.627, 92.322) → Chattogram / Cox's Bazar / Teknaf / St.Martin Dwip
+- [x] Results: run 1 = 21 s, peak memory 275 MB; run 2 = 22 s; DB 21 MB → 50 MB; stored points
+      68k / 148k / 357k / 1.05M (divisions / districts / thanas / unions; source ADM3 had 2.8M)
+
+**Location-only reports on real data** (rolled back): Feni town → Feni / Feni Sadar / Feni
+Paurashava (24 ms); Dhanmondi → Dhaka / Dhanmondi / Ward No-49 (5 ms); St. Martin's → Cox's Bazar /
+Teknaf / St.Martin Dwip (5 ms); Bay of Bengal → none (3 ms).
+
+**Notes:** official names in place (Barishal, Chattogram, Cumilla, Bogura, Jashore); Kaliganj exists
+in 4 districts. City wards come through as "unions" (e.g. "Ward No-49").
 
 ---
 
