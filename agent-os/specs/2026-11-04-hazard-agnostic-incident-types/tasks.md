@@ -1,7 +1,7 @@
 # Task Breakdown: Hazard-agnostic incident types: needs, hazards and events
 
 **Spec**: `2026-11-04-hazard-agnostic-incident-types`
-**Status**: In progress (Task Groups 1-4 done)
+**Status**: In progress (Task Groups 1-5 done)
 **Branch**: `feat/hazard-agnostic-incident-types` (one PR; one green commit per task group)
 
 Every subtask is test-first (`tdd` skill): write the failing test, watch it fail for the expected
@@ -254,20 +254,20 @@ Run commands:
 #### Subtasks (test-first — RED before GREEN):
 
 **5.1 Skills field and API**
-- [ ] Write failing test: the volunteer list includes each volunteer's skills
-- [ ] Verify it fails
-- [ ] `Volunteer.skills` (M2M NeedType); `assistance_type` becomes `blank=True, default=""` with a
+- [x] Write failing test: the volunteer list includes each volunteer's skills
+- [x] Verify it fails
+- [x] `Volunteer.skills` (M2M NeedType); `assistance_type` becomes `blank=True, default=""` with a
       deprecation `help_text`; the serializer adds `skills`; the admin uses
       `filter_horizontal`
-- [ ] Refactor while green
+- [x] Refactor while green
 
 **5.2 Migrate assistance types**
-- [ ] Write failing test: existing volunteer assistance types map to skills, and unmapped values
+- [x] Write failing test: existing volunteer assistance types map to skills, and unmapped values
       are kept in notes (call the migration function directly)
-- [ ] Verify it fails
-- [ ] Data step in migration 0006, using the mapping from the spec; reverse is a no-op for notes
-- [ ] Update `test_model_validation.py` if its `assistance_type` assertions change
-- [ ] Refactor while green
+- [x] Verify it fails
+- [x] Data step in migration 0006, using the mapping from the spec; reverse is a no-op for notes
+- [x] Update `test_model_validation.py` if its `assistance_type` assertions change
+- [x] Refactor while green
 
 **Acceptance Criteria**:
 - Volunteers expose skills; existing values are migrated or preserved; `assistance_type` is still

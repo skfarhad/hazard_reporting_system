@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from apps.incident_manager.models.address import District, Thana
+from apps.incident_manager.models.types import NeedType
 
 
 class Volunteer(models.Model):
@@ -26,8 +27,12 @@ class Volunteer(models.Model):
     is_active = models.BooleanField(default=True)
     notes = models.TextField()
     assistance_type = models.CharField(
-        max_length=50
-    )  # e.g., 'food', 'doctor', 'logistics', etc.
+        max_length=50, blank=True, default="",
+        help_text="Deprecated: use skills. Kept for one release after migrating to skills.",
+    )
+    skills = models.ManyToManyField(
+        NeedType, related_name="volunteers", blank=True, help_text="The needs this volunteer can help with.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -3,6 +3,7 @@ from .models import Volunteer
 
 
 class VolunteerSerializer(serializers.ModelSerializer):
+    skills = serializers.SlugRelatedField(slug_field="code", many=True, read_only=True)
     latitude = serializers.SerializerMethodField()
     longitude = serializers.SerializerMethodField()
 
@@ -13,6 +14,7 @@ class VolunteerSerializer(serializers.ModelSerializer):
             "latitude",
             "longitude",
             "assistance_type",
+            "skills",
             "address",
         ]
 

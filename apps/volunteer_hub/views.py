@@ -16,6 +16,6 @@ class VolunteerListView(APIView):
         responses={200: VolunteerSerializer(many=True)},
     )
     def get(self, request, *args, **kwargs):
-        volunteers = Volunteer.objects.filter(is_active=True)
+        volunteers = Volunteer.objects.filter(is_active=True).prefetch_related("skills")
         serializer = VolunteerSerializer(volunteers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
