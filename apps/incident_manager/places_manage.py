@@ -86,7 +86,8 @@ class DistrictSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        fields = ["id", "name", "division", "boundary"]
+        fields = ["id", "name", "code", "division", "boundary"]
+        read_only_fields = ["code"]  # area codes come from the boundary import
 
     def validate(self, attrs):
         return check_name_free(self, attrs, "division", "district")
@@ -108,7 +109,7 @@ class DistrictRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        fields = ["id", "name", "division", "has_boundary", "thana_count", "incident_count", "volunteer_count"]
+        fields = ["id", "name", "code", "division", "has_boundary", "thana_count", "incident_count", "volunteer_count"]
 
     def get_division(self, obj):
         return nested(obj.division)
@@ -120,7 +121,8 @@ class ThanaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thana
-        fields = ["id", "name", "district", "boundary"]
+        fields = ["id", "name", "code", "district", "boundary"]
+        read_only_fields = ["code"]  # area codes come from the boundary import
 
     def validate(self, attrs):
         return check_name_free(self, attrs, "district", "thana")
@@ -139,7 +141,7 @@ class ThanaRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thana
-        fields = ["id", "name", "district", "has_boundary", "incident_count", "volunteer_count"]
+        fields = ["id", "name", "code", "district", "has_boundary", "incident_count", "volunteer_count"]
 
     def get_district(self, obj):
         return nested(obj.district)

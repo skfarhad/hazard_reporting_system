@@ -205,6 +205,16 @@ describe('details', () => {
         expect(box.textContent).not.toContain('Parshuram, Parshuram');
     });
 
+    it('incident details list the union with the thana and district, escaped, and leave it out when unknown', () => {
+        const withUnion = el(`<div>${incidentDetailsHtml({ ...DETAIL, union: 'Mirzanagar' }, NEED_TYPES)}</div>`);
+        const evil = incidentDetailsHtml({ ...DETAIL, union: '<b>U</b>' }, NEED_TYPES);
+        const without = el(`<div>${incidentDetailsHtml({ ...DETAIL, union: null }, NEED_TYPES)}</div>`);
+
+        expect(withUnion.textContent).toContain('Govt. Primary School, Mirzanagar, Parshuram, Feni');
+        expect(evil).not.toContain('<b>U');
+        expect(without.textContent).toContain('Govt. Primary School, Parshuram, Feni');
+    });
+
     it('the details name the reporter of a web report, or the provider', () => {
         const web = el(`<div>${incidentDetailsHtml({ ...DETAIL, source: 'web', provider: null, reported_by: { id: 2, name: '<b>Karim</b>' } }, NEED_TYPES)}</div>`);
         const sms = el(`<div>${incidentDetailsHtml({ ...DETAIL, source: 'provider', reported_by: null }, NEED_TYPES)}</div>`);

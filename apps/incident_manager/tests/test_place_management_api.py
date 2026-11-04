@@ -112,6 +112,20 @@ class DistrictAndThanaCrudTests(PlaceManagementTestCase):
         self.assertIn("name", renamed.data)
         self.assertEqual(unchanged.status_code, status.HTTP_200_OK)
 
+    def test_place_rows_and_details_show_their_area_code(self):
+        feni = District.objects.create(name="Feni", division=self.chattogram, code="BD2030")
+        parshuram = Thana.objects.create(name="Parshuram", district=feni, code="BD203094")
+
+        districts = self.client.get(self.districts_url).data
+        thanas = self.client.get(self.thanas_url).data
+        detail = self.client.get(self.thana_url(parshuram)).data
+        attempt = self.client.patch(self.district_url(feni), {"code": "BD9999"}, format="json")
+
+        self.assertEqual([row["code"] for row in districts], ["BD2030"])
+        self.assertEqual([row["code"] for row in thanas], ["BD203094"])
+        self.assertEqual(detail["code"], "BD203094")
+        self.assertEqual(attempt.data["code"], "BD2030")  # codes come from the import, not the form
+
     def test_non_operators_cannot_manage_places(self):
         feni = district("Feni")
         self.client.force_authenticate(get_user_model().objects.create(username="citizen"))

@@ -141,7 +141,7 @@ class IncidentListView(generics.ListAPIView):
     pagination_class = IncidentPagination
     filterset_class = IncidentFilter
     queryset = (
-        Incident.objects.select_related("event__hazard", "district", "thana")
+        Incident.objects.select_related("event__hazard", "district", "thana", "union")
         .prefetch_related("needs")
         .annotate(volunteer_count=Count("volunteers", distinct=True))
         .order_by("-created_at", "-id")
@@ -185,7 +185,7 @@ class IncidentSummaryView(APIView):
 def incident_details(request, pk):
     """The details shape for one incident, with its volunteers (by name) and their count."""
     incident = get_object_or_404(
-        Incident.objects.select_related("event__hazard", "district", "thana", "provider", "reported_by")
+        Incident.objects.select_related("event__hazard", "district", "thana", "union", "provider", "reported_by")
         .prefetch_related("needs", Prefetch("volunteers", queryset=Volunteer.objects.order_by("full_name", "id")))
         .annotate(volunteer_count=Count("volunteers", distinct=True)),
         pk=pk,

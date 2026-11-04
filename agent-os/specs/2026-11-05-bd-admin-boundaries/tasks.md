@@ -105,19 +105,19 @@
 **4.1 Place management validation**
 - [x] Failing tests: thana name from another district accepted; same name twice in one district → 400 `name` error (not 500) — pulled into Group 1 (dropping the global rule broke the existing duplicate-district test)
 - [x] Implement serializer validation (case-insensitive, per parent)
-- [ ] Failing test + implementation: rows and details show read-only `code`
+- [x] Failing test + implementation: rows and details show read-only `code`
 
 **4.2 Union in incident data**
-- [ ] Failing test: incident list and details include `union` name
-- [ ] Add `union` to the serializer and `select_related`
+- [x] Failing test: incident list and details include `union` name
+- [x] Add `union` to the serializer and `select_related`
 
 **4.3 Union in incident details (web)**
-- [ ] Failing Vitest: details list union with thana and district, escaped; omitted when unknown
-- [ ] Implement in `incident-views.js`
+- [x] Failing Vitest: details list union with thana and district, escaped; omitted when unknown
+- [x] Implement in `incident-views.js`
 
 **4.4 Attribution and docs**
-- [ ] Failing test: Location page shows the OCHA/BBS attribution
-- [ ] Add it; document `import_bd_boundaries` in `docs/development.md`
+- [x] Failing test: Location page shows the OCHA/BBS attribution
+- [x] Add it; document `import_bd_boundaries` in `docs/development.md`
 
 **Acceptance Criteria**:
 - Tests written first, watched fail, now passing
