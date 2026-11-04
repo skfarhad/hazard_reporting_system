@@ -78,12 +78,12 @@
 #### Subtasks:
 
 **3.1 Union by location**
-- [ ] Failing tests: location-only report gets district, thana and union; union limited to the report's thana when known; outside every boundary → no area
-- [ ] Implement union lookup in `create_incident`
+- [x] Failing tests: location-only report gets district, thana and union; union limited to the report's thana when known; outside every boundary → no area
+- [x] Implement union lookup in `create_incident`
 
 **3.2 Old spellings in SMS**
-- [ ] Failing test: SMS naming "Comilla" finds Cumilla
-- [ ] Use `official_name()` in the name lookups
+- [x] Failing test: SMS naming "Comilla" finds Cumilla
+- [x] Use `official_name()` in the name lookups
 
 **Acceptance Criteria**:
 - Tests written first, watched fail, now passing; existing service tests green
