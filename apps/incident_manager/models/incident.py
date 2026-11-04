@@ -54,6 +54,10 @@ class Incident(models.Model):
         default=None,
         on_delete=models.SET_NULL,
         related_name="incidents",
+        help_text="Deprecated: use volunteers. Kept for one release after moving to several volunteers.",
+    )
+    volunteers = models.ManyToManyField(
+        Volunteer, related_name="assigned_incidents", blank=True, help_text="The volunteers assigned to help.",
     )
     address = models.CharField(max_length=255)
     needs = models.ManyToManyField(NeedType, related_name="incidents", blank=True)

@@ -163,3 +163,4 @@ cython_debug/
 
 # Web app JS tests
 node_modules/
+media/

@@ -1,7 +1,7 @@
 # Task Breakdown: Live three-panel dashboard (incidents, map, volunteers)
 
 **Spec**: `2026-11-04-live-dashboard`
-**Status**: Ready for Implementation
+**Status**: In progress
 **Branch**: `feat/live-dashboard`. Commit after each group with prefix `feat(live-dashboard):`.
 
 Every subtask is test-first:
@@ -28,22 +28,24 @@ Every subtask is test-first:
 #### Subtasks (test-first, RED before GREEN):
 
 **1.0 Dependencies (configuration, no behaviour; covered by later tests)**
-- [ ] Add `channels`, `channels-redis`, `uvicorn[standard]` and `Pillow` (versions that support Python 3.8), then rebuild the `be`/`unit_tests` images.
-- [ ] Add MEDIA settings (served in DEBUG) and add `media/` to `.gitignore`.
+- [x] Add `channels`, `channels-redis`, `uvicorn[standard]` and `Pillow` (versions that support Python 3.8), then rebuild the `be`/`unit_tests` images.
+- [x] Add MEDIA settings (served in DEBUG) and add `media/` to `.gitignore`.
 
 **1.1 Several volunteers per incident**
-- [ ] Write a failing test: `test_assigning_volunteers_to_an_incident_keeps_all_of_them`.
-- [ ] Add the `Incident.volunteers` M2M; deprecate the `volunteer` FK (help_text).
-- [ ] Write a failing test: `test_the_data_migration_copies_the_single_volunteer_into_the_volunteers_list`.
-- [ ] Add the reversible data migration in `0012`.
+- [x] Write a failing test: `test_assigning_volunteers_to_an_incident_keeps_all_of_them`.
+- [x] Add the `Incident.volunteers` M2M; deprecate the `volunteer` FK (help_text).
+- [x] Write a failing test: `test_the_data_migration_copies_the_single_volunteer_into_the_volunteers_list`.
+- [x] Add the reversible data migration in `0012`.
 
 **1.2 Volunteer photo**
-- [ ] Write a failing test: `test_a_volunteer_photo_must_be_an_image_of_at_most_2_mb` (JPEG/PNG/WebP).
-- [ ] Add the `photo` ImageField and validators; admin thumbnail; `is_active` in list_filter.
+- [x] Write a failing test: `test_a_volunteer_photo_must_be_an_image_of_at_most_2_mb` (JPEG/PNG/WebP).
+- [x] Add the `photo` ImageField and validators; admin thumbnail; `is_active` in list_filter.
 
 **1.3 Bell last-seen time**
 - [ ] Write a failing test: `User.notifications_seen_at` defaults to null (covered in the 4.x API tests, written first there if simpler).
 - [ ] Add the field and migration.
+
+Notes: added `validate_photo_content` (the model ImageField does not check content, only forms do); admin photo thumbnail tested. 1.3 moved into 4.1, test-first there.
 
 **Acceptance Criteria**:
 - Migrations apply and reverse cleanly; existing single assignments are copied.

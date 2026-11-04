@@ -35,7 +35,7 @@ class IncidentAdmin(LeafletGeoAdmin):
         "address",
     )
     list_filter = ("validation_status", "task_status", "life_threatening", "source", "needs", "provider")
-    filter_horizontal = ("needs",)
+    filter_horizontal = ("needs", "volunteers")
     ordering = ("-created_at",)
     readonly_fields = ("created_at", "updated_at", "source", "reported_by")
 
