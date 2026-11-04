@@ -20,49 +20,82 @@ quick actions.
 
 ## Functional Requirements
 
-1. A **"Report incident"** button on the dashboard (`/app/`) and the Incidents page
-   (`/app/incidents/`) opens a report form (form type to decide in `/plan`).
-2. The form collects (to confirm in `/plan`): message, needs (chips, at least one; or "not sure"
-   → Other), life-threatening, people affected, contact number, address, district and thana,
-   and the location (map pick and/or "use my location").
-3. **Who can report: anyone with an account** (decided 2026-11-04). Non-operators, who today only
-   see the "operator access" notice on the dashboard and Incidents page, must still get the
-   "Report incident" button and form there (but not the incident data).
-4. A new **API endpoint** for signed-in users creates the incident (JWT auth, not the provider API
-   key). The server always sets `validation_status = pending`; clients cannot set it.
-5. The incident records **who reported it** and that it came from the web app (data model to
-   decide in `/plan`), and operators see this in the incident details.
-6. The new incident goes through the same processing as provider reports: needs (explicit or from
-   SMS keywords), district/thana, auto-attach to an active event.
-7. After submitting, the reporter sees a confirmation; operators see the new incident at the top of
-   the list as pending.
-8. Basic abuse protection, since any account can report (rate limit; to confirm in `/plan`).
+### Who and where
+1. **Anyone with an account** can report (decided). Operators and non-operators both get a
+   **"Report incident"** button in the header of the dashboard (`/app/`) and the Incidents page
+   (`/app/incidents/`).
+2. Non-operators still see no incident data: the access notice becomes a panel ("Need help or saw
+   an emergency? Report it. Staff review every report before help is sent." + Report button +
+   "Operator? Ask an admin for access.").
+
+### Form (Bootstrap pop-up, full screen on phones)
+3. Fields:
+   - **What's happening** (message, required, ≤ 2000 characters);
+   - **Needs** chips (optional; none picked → read SMS keywords from the message, else "Other");
+   - **Life-threatening** switch; **People affected** (optional, whole number ≥ 0);
+   - **Contact number** (required, pre-filled from the reporter's profile phone, editable;
+     Bangladeshi mobile `01XXXXXXXXX`, `+8801…`/`8801…` accepted and normalised);
+   - **District** and **Thana** dropdowns (optional; thanas filtered by district);
+   - **Address** (required, ≤ 255);
+   - **Location** (required): tap the map to place the pin (drag to adjust) or "Use my location"
+     (browser GPS); must be inside Bangladesh.
+4. Errors appear next to fields (client checks + server 400s); submit is disabled while sending.
+5. After success: the pop-up closes and a toast says "Report #123 sent for staff review."
+   Operators' list/map refresh and show it as pending.
+
+### API
+6. `POST /api/incidents/report/` (JWT, any signed-in user) creates the incident:
+   `validation_status` is always **pending** (not accepted from the client), `source = "web"`,
+   `reported_by = request.user`. Needs, district/thana and event follow the same rules as provider
+   reports (shared service). Response `201 {id, validation_status, created_at}`.
+7. District/thana: a dropdown choice wins (thana must belong to the district); otherwise the
+   names from SMS keywords in the message; otherwise the district/thana whose boundary contains
+   the pin (works once boundary shapes are loaded); otherwise empty.
+8. **Rate limit**: non-operators 10 reports per hour per account (429 with a clear message);
+   operators are not limited. Rate in settings.
+9. `GET /api/incidents/places/` (any signed-in user): districts with their thanas, for the form.
+10. `GET /api/incidents/need-types/` opens to any signed-in user (read-only labels/icons) so
+    non-operators get the need chips.
+
+### Data and review
+11. `Incident.reported_by` (user, nullable, kept as NULL if the user is deleted) and
+    `Incident.source` (`provider` | `web`, existing rows `provider`).
+12. Operators see the source in the list (small "Web" badge) and "Web · reported by <name>" in the
+    details pop-up; they validate or reject as usual.
+13. **Providers too:** the provider create API no longer accepts `validation_status`; every new
+    incident from any source starts pending.
 
 ## Non-Functional Requirements
 
 - **Performance:** one request to submit; the form loads need types and districts once.
 - **Security:** authenticated only; status forced to pending; validated inputs (phone format,
   coordinates inside Bangladesh, lengths); text escaped everywhere it is shown.
-- **Accessibility:** labelled fields, keyboard-usable map alternative (typed address / "use my
-  location"), errors linked to fields, focus management in the form.
+- **Accessibility:** labelled fields; the map has a keyboard-usable alternative ("Use my
+  location", and the typed address/district/thana); errors linked to fields with
+  `aria-describedby`; focus moves to the first invalid field.
 - **Responsive:** usable on a phone in the field.
 
 ## Acceptance Criteria
 
-- [ ] "Report incident" is available on the dashboard and the Incidents page, to operators and non-operators.
-- [ ] Submitting a valid form creates a pending incident with needs, triage fields, place and
-      location, and attaches it to an active event when it applies.
-- [ ] The server ignores any attempt to set the status; the reporter and source are recorded.
-- [ ] Invalid input shows errors next to the fields.
-- [ ] Operators see the new incident as pending and can validate or reject it.
+- [ ] "Report incident" is on the dashboard and the Incidents page for operators and non-operators.
+- [ ] Non-operators see the report panel, not incident data.
+- [ ] A valid report creates a pending incident with `source=web`, `reported_by`, needs, triage
+      fields, contact (normalised), address, district/thana and location; attached to an active
+      event when one covers the district.
+- [ ] Clients cannot set the status (web and provider APIs).
+- [ ] Invalid input (missing message/address/location, bad phone, outside Bangladesh, thana not in
+      district, bad people count, unknown need) gives errors next to the fields.
+- [ ] Non-operators are limited to 10 reports per hour; operators are not.
+- [ ] Operators see the "Web" badge and reporter, and can validate/reject it.
 - [ ] Tests written first and passing.
 
 ## Out of Scope (unless `/plan` decides otherwise)
 
 - Anonymous (signed-out) reporting.
 - Photo or file attachments.
-- Reporters tracking or editing their reports later.
+- A "My reports" list / reporters tracking or editing their reports.
 - SMS confirmation to the reporter.
+- Loading district/thana boundary shapes (detection works once they are loaded).
 
 ## Notes
 
